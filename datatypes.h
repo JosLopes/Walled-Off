@@ -1,3 +1,6 @@
+#ifndef MY_HEADER_H
+#define MY_HEADER_H
+
 /* A Point in a map */
 typedef struct point {
   int x;
@@ -46,3 +49,5 @@ typedef struct {
     Arma armas[3];;
     Posicao posicao_atual;
 } Personagem;
+
+#endif
