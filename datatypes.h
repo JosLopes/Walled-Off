@@ -1,3 +1,6 @@
+#ifndef MY_HEADER_H
+#define MY_HEADER_H
+
 /* A Point in a map */
 typedef struct point {
   int x;
@@ -24,3 +27,5 @@ typedef struct {
   Point start;
   Point end;
 } Hallway;
+
+#endif
