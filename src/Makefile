@@ -1,16 +1,19 @@
 IDIR = ../include
 CC = gcc
-CFLAGS = -I$(IDIR)
+CFLAGS = -Wall -Wextra -pedantic -O2 -I$(IDIR)
 
 ODIR = obj
 LDIR = ../lib
 
 LIBS = -lm -lcurses
 
-_DEPS = datatypes.h
+# main will be a file, this is just for demonstration purposes. 
+.PHONY: main clean
+
+_DEPS = $(wildcard *.h)
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = movement.o 
+_OBJ = $(wildcard *.c)
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
@@ -19,8 +22,6 @@ $(ODIR)/%.o: %.c $(DEPS)
 
 main: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
-
-.PHONY: clean
 
 clean:
 	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~
