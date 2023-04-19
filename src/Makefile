@@ -9,7 +9,7 @@ LIBS = -lm -lcurses
 # main will be a file, this is just for demonstration purposes. 
 .PHONY: main clean
 
-_DEPS = $(wildcard include/*.h)
+_DEPS = $(wildcard $(IDIR)/*.h)
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 _OBJ = $(wildcard src/*.c)
@@ -23,4 +23,4 @@ main: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 clean:
-	rm -f $(ODIR)/*.o
+	rm -f $(ODIR)/*.o src/*c
