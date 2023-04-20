@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
+#include "datatypes.h"
+
 /*
 Weapon nenhum = {"None", 1, 1};
 Weapon gun = {"Gun", 5, 5};
 Weapon grenade = {"Grenade", 7, 10};
 
-Character character = {"warrior", 100, 0, {{"None", 1, 1}, {"None", 1, 1}, {"None", 1, 1 }}, {0,0}};
 */
+Character character = {"warrior", 100, 0, {{"None", 1, 1}, {"None", 1, 1}, {"None", 1, 1 }}, {0,0}};
     /****************************
     *     Direções:             *
     *         0 = direita       *
