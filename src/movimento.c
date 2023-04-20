@@ -2,72 +2,12 @@
 #include <stdlib.h>
 #include <ncurses.h>
 /*
-TipoArma nenhum = {"Espada longa", 1, 1};
-TipoArma gun = {"Gun", 5, 5};
-TipoArma grenade = {"Arco curto", 7, 10};
+Weapon nenhum = {"None", 1, 1};
+Weapon gun = {"Gun", 5, 5};
+Weapon grenade = {"Grenade", 7, 10};
 
-Personagem personagem = {"warrior", 0, 0, {nenhum, nenhum, nenhum}, {0,0}};
+Character character = {"warrior", 100, 0, {{"None", 1, 1}, {"None", 1, 1}, {"None", 1, 1 }}, {0,0}};
 */
-void movimento (Personagem) {
-      while ((ch = getch()) != 'q') {
-
-        switch(ch) {
-
-            /*Define o movimento das várias direções usando as arrow keys*/
-            case KEY_LEFT:
-                if (x > 0) x--;
-                direction = 2;
-                break;
-            case KEY_RIGHT:
-                if (x < COLS-1) x++;
-                direction = 0;
-                break;
-            case KEY_UP:
-                if (y > 0) y--;
-                direction = 3;
-                break;
-            case KEY_DOWN:
-                if (y < LINES-1) y++;
-                direction = 1;
-                break;
-
-            /*Define a rotação da personagem sobre si mesma*/
-            case 'a':
-                /* a -> rotação 90ª no sentido oposto dos ponteiros do relógio*/
-                direction = (direction + 3) % 4;
-                break;
-            case 'd':
-                /* d -> rotação 90ª no sentido dos ponteiros do relógio*/
-                direction = (direction + 1) % 4;
-                break;
-            default:
-                break;
-        }
-        clear();
-
-        if (direction == 0) {
-            /*direita*/
-            mvprintw(y, x, ">");
-
-        } else if (direction == 1) {
-            /*baixo*/
-            mvprintw(y, x, "v");
-
-        } else if (direction == 2) {
-            /*esquerda*/
-            mvprintw(y, x, "<");
-
-        } else {
-            /*cima*/
-            mvprintw(y, x, "^");
-        }
-        refresh();
-    }
-}
-
-int main() {
-
-    int ch, x = 0, y = 0, direction = 0;
     /****************************
     *     Direções:             *
     *         0 = direita       *
@@ -76,10 +16,75 @@ int main() {
     *         3 = cima          *
     *     q -> quit comand      *
     ****************************/
-    initscr();
-    cbreak();
-    noecho();
-    keypad(stdscr, TRUE);
 
-    return 0;
+void movement (Character p) {
+
+  int ch, x, y, direction = 0;
+  x = p.current_position.x;
+  y = p.current_position.y;
+  while ((ch = getch()) != 'q') {
+    switch(ch) {
+      /*Define the movement of the various directions using the arrow keys*/
+      case KEY_LEFT:
+          if (x > 0) x--;
+          direction = 2;
+          break;
+      case KEY_RIGHT:
+          if (x < COLS-1) x++;
+          direction = 0;
+          break;
+      case KEY_UP:
+          if (y > 0) y--;
+          direction = 3;
+          break;
+      case KEY_DOWN:
+          if (y < LINES-1) y++;
+          direction = 1;
+          break;
+
+        /*Sets the character's rotation about itself*/
+        case 'a':
+            /* a -> 90° rotation counter clockwise*/
+            direction = (direction + 3) % 4;
+            break;
+        case 'd':
+            /* d -> 90° rotation clockwise*/
+            direction = (direction + 1) % 4;
+            break;
+        default:
+            break;
+    }
+    clear();
+
+    if (direction == 0) {
+        /*right*/
+        mvprintw(y, x, ">");
+
+    } else if (direction == 1) {
+        /*down*/
+        mvprintw(y, x, "v");
+
+    } else if (direction == 2) {
+        /*left*/
+        mvprintw(y, x, "<");
+
+    } else {
+        /*up*/
+        mvprintw(y, x, "^");
+    }
+    refresh();
+    p.current_position.x = x;
+    p.current_position.y = y;
+  }
+}
+
+int main() {
+  initscr();
+  cbreak();
+  noecho();
+  keypad(stdscr, TRUE);
+  movement(character);
+  endwin();
+
+  return 0;
 }

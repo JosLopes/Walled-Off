@@ -30,24 +30,28 @@ typedef struct {
 
 /* Position of caracter */
 typedef struct {
-    float x;
-    float y;
-} Posicao;
+  float x;
+  float y;
+} Position;
 
-/* weapon parameters*/
+/* Weapon parameters*/
 typedef struct {
-    char nome[20];
-    int dano;
-    float alcance;
-} Arma;
+  char name[20];
+  int damage;
+  float range;
+} Weapon;
 
-/* caracter parameters */
+Weapon none = {"None", 1, 1};
+Weapon gun = {"Gun", 5, 5};
+Weapon grenade = {"Grenade", 7, 10};
+
+/* Caracter parameters */
 typedef struct {
-    char nome[50];
-    int vida;
-    int xp;
-    Arma armas[3];;
-    Posicao posicao_atual;
-} Personagem;
+  char name[50];
+  int life;
+  int xp;
+  Weapon weapons[3];;
+  Position current_position;
+} Character;
 
 #endif
