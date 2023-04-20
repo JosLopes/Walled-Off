@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <time.h>
+#include <panel.h>
 
 // Definições de constantes para o mapa
 #define MAP_HEIGHT 22
@@ -21,8 +22,9 @@ typedef struct {
 
 // Função que preenche o mapa com o chão
 
-void fillMap(char map[][MAP_WIDTH]) {
-    int i, j;
+void fillMap(char map[][MAP_WIDTH]) { /*this is not how you recive an array, you should have a variable for the lenght and/or width for
+                                        the size of the array (this depends on your needs), example: void fillMap (char *map, int MAP_HEIGHT, int MAP_WIDTH)*/
+    int i, j;                                                                                                                 
 
     for (i = 0; i < MAP_HEIGHT; i++) {
         for (j = 0; j < MAP_WIDTH; j++) {
@@ -117,3 +119,44 @@ void generateCorridors(char map[MAP_HEIGHT][MAP_WIDTH], Room rooms[MAX_ROOMS], i
     }
 }
 
+WINDOW *create_window (int height, int width, int startingX, int startingY) {
+    WINDOW *local_window;
+    
+    local_win = newwin (height, width, startingX, startingY);
+    wborder (local_win, '|', '|', '-', '-', '*', '*', '*', '*');
+    
+    return local_win;
+}
+
+void display_map (WINDOW *main_window, char *map, int height, int width) {
+    int ind;
+    
+    for (){
+    /*Iterar pelo array map e escrever na main_window todos os caracteres necessários (com atributos)
+      Para isso podes utilizar as funcções init_pair (int, cor, cor); funções da secção 6 de output;
+      e funções attron + COLOUR_PAIR (presentes na secção 8);*/
+    }
+}
+
+int main () {
+    //GOODD LUCKK !!!
+    WINDOW *main_window;
+    
+    initsrc ();
+    start_color();
+    raw ();
+    noecho ();
+    
+    /*DONT FORGET, the window is not stdsrd (), it needs special functions
+      w- less, which, besides normal input, only ask for the window to act on;*/
+    main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 2, 2);
+    display_map (main_window, map, MAP_HEIGHT, MAP_WIDTH);
+    
+    //ao terminar tudo, dá refresh;
+    wrefresh (main_window);
+    getch ();   //espera input do jogador;
+    //fazer uma função para destruir a win;
+    endwin ();  //termina o ncurses
+    
+    return 0;
+}
