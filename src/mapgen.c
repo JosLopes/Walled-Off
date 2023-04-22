@@ -56,8 +56,8 @@ void fillMap(int map_height, int map_width, char map[][map_width]) {
 
 /*A função generateRooms recebe como parâmetros o mapa do jogo e uma variável numRooms,
 que indica quantas salas devem ser geradas no mapa.*/
-void generateRooms(int map_height, int map_width, char map[][map_width], Room rooms[], int size_rooms, int numRooms) {
-    int i, j, k;
+int generateRooms(int map_height, int map_width, char map[][map_width], Room rooms[], int size_rooms, int numRooms) {
+    int i, j, k, r=0;
 
     /*O ciclo for cria as salas aleatoriamente. A cada iteração, uma nova sala é gerada. 
     O número de iterações é definido pela variável numRooms.*/
@@ -91,12 +91,14 @@ void generateRooms(int map_height, int map_width, char map[][map_width], Room ro
             }
 
             /*Adiciona a sala à lista de salas */
-            rooms[i].x = roomX;
-            rooms[i].y = roomY;
-            rooms[i].width = room_Width;
-            rooms[i].height = room_Height;
+            rooms[r].x = roomX;
+            rooms[r].y = roomY;
+            rooms[r].width = room_Width;
+            rooms[r].height = room_Height;
+            r ++;
         }
     }
+    return r;;
 }
 
 
@@ -244,6 +246,7 @@ int main () {
     WINDOW *main_window;
     char map[MAP_HEIGHT][MAP_WIDTH];
     Room rooms[MAX_ROOMS];
+    srand(time(NULL));
     int numRooms = rand() % (MAX_ROOMS - 9) + 10;
   
     initscr ();
@@ -252,11 +255,9 @@ int main () {
     noecho ();
     
     fillMap (MAP_HEIGHT, MAP_WIDTH, map);
-    generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, MAX_ROOMS, numRooms);
+    numRooms = generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, MAX_ROOMS, numRooms);
     generateCorridors (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms);
-    placePlayer(MAP_HEIGHT, MAP_WIDTH, map);
     placeEnemies(MAP_HEIGHT, MAP_WIDTH, map);
-
 
     main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 2, 2);
     display_map (main_window, MAP_HEIGHT, MAP_WIDTH, map);
