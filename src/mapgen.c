@@ -6,9 +6,9 @@
 #include <ncurses.h>
 
 /* Definições de constantes para o mapa*/
-#define MAP_HEIGHT 22
-#define MAP_WIDTH 34
-#define MAX_ROOMS 20
+#define MAP_HEIGHT 100
+#define MAP_WIDTH 100
+#define MAX_ROOMS 90
 #define MIN_ROOM_HEIGHT 6
 #define MAX_ROOM_HEIGHT 9
 #define MIN_ROOM_WIDTH 6
@@ -228,7 +228,10 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
     
     local_window = newwin (height, width, startingX, startingY);
     wborder (local_window, '|', '|', '-', '-', '*', '*', '*', '*');
-    
+
+    refresh ();
+    wrefresh (local_window);
+
     return local_window;
 }
 
@@ -240,6 +243,7 @@ void display_map (WINDOW *main_window, int map_height, int map_width, char map[]
         mvwprintw(main_window, j, i, "%c", map[i][j]);
       }
     }
+    wrefresh (main_window);
 }
 
 int main () {
@@ -262,8 +266,6 @@ int main () {
     main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 2, 2);
     display_map (main_window, MAP_HEIGHT, MAP_WIDTH, map);
     
-    //ao terminar tudo, dá refresh;
-    wrefresh (main_window);
     getch ();   //espera input do jogador;
     //fazer uma função para destruir a win;
     endwin ();  //termina o ncurses
