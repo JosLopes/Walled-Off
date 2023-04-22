@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdbool.h>
+#include <ncurses.h>
 
 /* Definições de constantes para o mapa*/
 #define MAP_HEIGHT 22
@@ -27,11 +28,11 @@ Ela percorre todas as posições do mapa e verifica se o caractere atual não é
 ou o caractere do chão (FLOOR_CHAR). Caso não seja nenhum desses, ela preenche a posição com o caractere %,
 indicando que aquele espaço ainda não foi preenchido. */
 
-void fillMap(char map[][MAP_WIDTH]) {
+void fillMap(int map_height, int map_width, char map[][map_width]) {
     int i, j;
 
-    for (i = 0; i < MAP_HEIGHT; i++) {
-        for (j = 0; j < MAP_WIDTH; j++) {
+    for (i = 0; i < map_height; i++) {
+        for (j = 0; j < map_width; j++) {
             if (map[i][j] != WALL_CHAR && map[i][j] != FLOOR_CHAR) {
                 map[i][j] = '%';
             } else {
@@ -55,20 +56,19 @@ void fillMap(char map[][MAP_WIDTH]) {
 
 /*A função generateRooms recebe como parâmetros o mapa do jogo e uma variável numRooms,
 que indica quantas salas devem ser geradas no mapa.*/
-void generateRooms(char map[][MAP_WIDTH], Room rooms[]) {
+void generateRooms(int map_height, int map_width, char map[][map_width], Room rooms[], int size_rooms, int numRooms) {
     int i, j, k;
-    int numRooms = rand() % (MAX_ROOMS - 9) + 10;
 
-/*O ciclo for cria as salas aleatoriamente. A cada iteração, uma nova sala é gerada. 
-O número de iterações é definido pela variável numRooms.*/
+    /*O ciclo for cria as salas aleatoriamente. A cada iteração, uma nova sala é gerada. 
+    O número de iterações é definido pela variável numRooms.*/
     for (i = 0; i < numRooms; i++) {
         /*Define as dimensões da sala*/
         int room_Width = rand() % (MAX_ROOM_WIDTH - MIN_ROOM_WIDTH + 1) + MIN_ROOM_WIDTH;
         int room_Height = rand() % (MAX_ROOM_HEIGHT - MIN_ROOM_HEIGHT + 1) + MIN_ROOM_HEIGHT;
 
         /* Escolhe uma posição aleatória para a sala*/
-        int roomX = rand() % (MAP_WIDTH - room_Width - 1) + 1;
-        int roomY = rand() % (MAP_HEIGHT - room_Height - 1) + 1;
+        int roomX = rand() % (map_width - room_Width - 1) + 1;
+        int roomY = rand() % (map_height - room_Height - 1) + 1;
 
         /* Verifica se a sala se sobrepõe a outra sala existente*/
         int overlap = 0;
@@ -100,7 +100,7 @@ O número de iterações é definido pela variável numRooms.*/
 }
 
 
-void generateCorridors(char map[][MAP_WIDTH], Room rooms[], int numRooms) {
+void generateCorridors(int map_height, int map_width, char map[][map_width], Room rooms[], int numRooms) {
     /* Percorre todas as salas*/
     for (int i = 0; i < numRooms; i++) {
         /*Pega a posição da sala atual*/
@@ -145,7 +145,7 @@ void generateCorridors(char map[][MAP_WIDTH], Room rooms[], int numRooms) {
                 }
             }
 
-            / Cria corredor horizontal ou vertical se não houver sobreposição
+            // Cria corredor horizontal ou vertical se não houver sobreposição
             if (!overlap) {
                 if (currentX == nextX) { /* Corredor vertical*/
                     for (int y = currentY; y < nextY; y++) {
@@ -165,23 +165,23 @@ void generateCorridors(char map[][MAP_WIDTH], Room rooms[], int numRooms) {
     }
 }
 
-void placePlayer(char map[][MAP_WIDTH], int room_Count) {
+void placePlayer(int map_height, int map_width, char map[][map_width]) {
     int playerX, playerY;
-    /* escolhe uma sala aleatória*/
-    int room_Number = rand() % room_Count;
 
     /*coloca o personagem em uma posição aleatória dentro da sala escolhida*/
-    playerX = rand() % (MAP_WIDTH - 2) + 1;
-    playerY = rand() % (MAP_HEIGHT - 2) + 1;
+    playerX = rand() % (map_width - 2) + 1;
+    playerY = rand() % (map_height - 2) + 1;
     while (!(map[playerY][playerX] == '.' && map[playerY-1][playerX] == '#' && map[playerY+1][playerX] == '#' && map[playerY][playerX-1] == '#' && map[playerY][playerX+1] == '#')) {
-        playerX = rand() % (MAP_WIDTH - 2) + 1;
-        playerY = rand() % (MAP_HEIGHT - 2) + 1;
+        playerX = rand() % (map_width - 2) + 1;
+        playerY = rand() % (map_height - 2) + 1;
     }
     map[playerY][playerX] = '@';
 }
 
-
-void placeEnemies(char map[MAP_HEIGHT][MAP_WIDTH], int num_goblins, int num_orcs, int num_skeletons) {
+void placeEnemies(char map_height, int map_width, char map[][map_width]) {
+    int num_goblins = rand() % 10;  /* Gera um número aleatório entre 0 e 9 para o número de goblins */
+    int num_orcs = rand() % 5;  /* Gera um número aleatório entre 0 e 4 para o número de orcs */
+    int num_skeletons = rand() % 20;  /* Gera um número aleatório entre 0 e 19 para o número de esqueletos */
     int num_enemies = num_goblins + num_orcs + num_skeletons;
 
     /* Gerar inimigos aleatoriamente nas salas*/
@@ -191,8 +191,8 @@ void placeEnemies(char map[MAP_HEIGHT][MAP_WIDTH], int num_goblins, int num_orcs
         int row, col;
         /*Encontrar uma posição aleatória nas salas*/
         do {
-            row = rand() % (MAP_HEIGHT - 2) + 1;
-            col = rand() % (MAP_WIDTH - 2) + 1;
+            row = rand() % (map_height - 2) + 1;
+            col = rand() % (map_width - 2) + 1;
         } while (map[row][col] != '.' ||  /* Não é uma sala*/
                  map[row-1][col] == '|' || map[row+1][col] == '|' || map[row][col-1] == '-' || map[row][col+1] == '-' ||  /*Está em um corredor*/
                  map[row][col] == '@');  /* Está ocupado pelo personagem*/
@@ -220,38 +220,46 @@ void placeEnemies(char map[MAP_HEIGHT][MAP_WIDTH], int num_goblins, int num_orcs
         }
     }
 }
+
 WINDOW *create_window (int height, int width, int startingX, int startingY) {
     WINDOW *local_window;
     
-    local_win = newwin (height, width, startingX, startingY);
-    wborder (local_win, '|', '|', '-', '-', '*', '*', '*', '*');
+    local_window = newwin (height, width, startingX, startingY);
+    wborder (local_window, '|', '|', '-', '-', '*', '*', '*', '*');
     
-    return local_win;
+    return local_window;
 }
 
-void display_map (WINDOW *main_window, char *map, int height, int width) {
-    int ind;
+void display_map (WINDOW *main_window, int map_height, int map_width, char map[][map_width]) {
+    int i, j;
     
-    for (){
-    /*Iterar pelo array map e escrever na main_window todos os caracteres necessários (com atributos)
-      Para isso podes utilizar as funcções init_pair (int, cor, cor); funções da secção 6 de output;
-      e funções attron + COLOUR_PAIR (presentes na secção 8);*/
+    for (i=0; i < map_height; i++) {
+      for (j=0; j < map_width; j++) {
+        mvwprintw(main_window, j, i, "%c", map[i][j]);
+      }
     }
 }
 
 int main () {
-    //GOODD LUCKK !!!
     WINDOW *main_window;
-    
-    initsrc ();
+    char map[MAP_HEIGHT][MAP_WIDTH];
+    Room rooms[MAX_ROOMS];
+    int numRooms = rand() % (MAX_ROOMS - 9) + 10;
+  
+    initscr ();
     start_color();
     raw ();
     noecho ();
     
-    /*DONT FORGET, the window is not stdsrd (), it needs special functions
-      w- less, which, besides normal input, only ask for the window to act on;*/
+    fillMap (MAP_HEIGHT, MAP_WIDTH, map);
+    generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, MAX_ROOMS, numRooms);
+    generateCorridors (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms);
+    placePlayer(MAP_HEIGHT, MAP_WIDTH, map);
+    placeEnemies(MAP_HEIGHT, MAP_WIDTH, map);
+
+
     main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 2, 2);
-    display_map (main_window, map, MAP_HEIGHT, MAP_WIDTH);
+    display_map (main_window, MAP_HEIGHT, MAP_WIDTH, map);
     
     //ao terminar tudo, dá refresh;
     wrefresh (main_window);
