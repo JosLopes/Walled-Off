@@ -18,7 +18,7 @@ $(ODIR)/%.o: src/%.c $(DEPS)
 	mkdir -p $(ODIR)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-walled-off: $(OBJ) $(DEPS)
+walled-off: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 .PHONY: clean
