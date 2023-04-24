@@ -155,12 +155,12 @@ void generateCorridors(int map_width, char map[][map_width], Room rooms[], int n
 }
 
 void place_player(int map_height, int map_width, char map[][map_width]) {
-    int x, y;
+   
     do {
-        x = rand() % (map_height-1) +1;
-        y = rand() % (map_width-1) +1;
+        Character.x = rand() % (map_height-1) +1;
+        Character.y = rand() % (map_width-1) +1;
     } while (map[y][x] != FLOOR_CHAR);
-    map[y][x] = PLAYER_CHAR;
+    map[y][x] = PLAYER_CHAR_UP;
 }
 
 void place_enemies(int map_height, int map_width, char map[][MAP_WIDTH], int num_goblins, int num_skeletons, int num_orcs) {
