@@ -2,38 +2,9 @@
 #include <panel.h>
 #include <stdlib.h>
 #include <time.h>
-#include <stdbool.h>
 #include <ncurses.h>
-
-/* Definições de constantes para o mapa*/
-#define MAP_HEIGHT 50
-#define MAP_WIDTH 100
-#define MAX_ROOMS 50
-#define MIN_ROOM_HEIGHT 6
-#define MAX_ROOM_HEIGHT 15
-#define MIN_ROOM_WIDTH 6
-#define MAX_ROOM_WIDTH 16
-#define WALL_CHAR '#'
-#define FLOOR_CHAR '.'
-
-/*Estrutura de dados para representar uma sala*/
-typedef struct {
-    int x, y;
-    int width, height;
-    int is_overlaping;
-} Room;
-
-typedef struct
-{
-  int startingX;
-  int startingY;
-} Bridge;
-
-typedef struct
-{
-  int startingX, startingY;
-  int pathX, pathY;
-} Vector;
+#include "datatypes.h"
+#include "mapgen.h"
 
 /*  é responsável por preencher o mapa com o caractere do chão (FLOOR_CHAR). 
 Ela percorre todas as posições do mapa e verifica se o caractere atual não é o caractere da parede (WALL_CHAR) 
@@ -46,7 +17,7 @@ void fillMap(int map_height, int map_width, char map[][map_width]) {
 
     for (i = 0; i < map_height; i++) {
         for (j = 0; j < map_width; j++) {
-                map[i][j] = ' ';
+                map[i][j] = FIRE_CHAR;
         }
     }
 
@@ -65,7 +36,7 @@ void fillMap(int map_height, int map_width, char map[][map_width]) {
 /*A função generateRooms recebe como parâmetros o mapa do jogo e uma variável numRooms,
 que indica quantas salas devem ser geradas no mapa.*/
 int generateRooms(int map_height, int map_width, char map[][map_width], Room rooms[], int numRooms) {
-    int i, j, k, r = 0, number_of_non_overlaping_rooms = 0;
+    int i, j, k, number_of_non_overlaping_rooms = 0;
 
     /*O ciclo for cria as salas aleatoriamente. A cada iteração, uma nova sala é gerada. 
     O número de iterações é definido pela variável numRooms.*/
@@ -111,9 +82,9 @@ int generateRooms(int map_height, int map_width, char map[][map_width], Room roo
     return number_of_non_overlaping_rooms;
 }
 
-void generateCorridors(int map_height, int map_width, char map[][map_width], Room rooms[], int numRooms, int number_of_non_overlaping_rooms) 
+void generateCorridors(int map_width, char map[][map_width], Room rooms[], int numRooms, int number_of_non_overlaping_rooms) 
 {
-  int room_number = 0, bridges_placed = 0, bridge_ind = 0, path, temp;
+  int room_number = 0, bridges_placed = 0, bridge_ind = 0, temp;
   Bridge bridges[number_of_non_overlaping_rooms];
   Vector vector;
 
@@ -152,35 +123,77 @@ void generateCorridors(int map_height, int map_width, char map[][map_width], Roo
     if ((directionX > 0 && directionY > 0) || (directionX < 0 && directionY < 0))
     {
       // percorre o corredor, desenhando o chão (FLOOR_CHAR) em cada posição
-      for (vector.startingX; vector.startingX <= endingX; vector.startingX++) {
+      for (; vector.startingX <= endingX; vector.startingX++) {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
       }
     
-      for (vector.startingY; vector.startingY <= endingY; vector.startingY++) {
+      for (; vector.startingY <= endingY; vector.startingY++) {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
       }
     } 
     else if (directionX < 0 && directionY > 0) 
     {
-      for (vector.startingX; vector.startingX > endingX; vector.startingX--) {
+      for (; vector.startingX > endingX; vector.startingX--) {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
       }
     
-      for (vector.startingY; vector.startingY <= endingY; vector.startingY++) {
+      for (; vector.startingY <= endingY; vector.startingY++) {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
       }
     }
     else if (directionX > 0 && directionY < 0) 
     {
-      for (vector.startingX; vector.startingX <= endingX; vector.startingX++) {
+      for (; vector.startingX <= endingX; vector.startingX++) {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
       }
     
-      for (vector.startingY; vector.startingY > endingY; vector.startingY--) {
+      for (; vector.startingY > endingY; vector.startingY--) {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
       }
     }
   }
+}
+
+void place_player(int map_height, int map_width, char map[][map_width]) {
+    int x, y;
+    do {
+        x = rand() % (map_height-1) +1;
+        y = rand() % (map_width-1) +1;
+    } while (map[y][x] != FLOOR_CHAR);
+    map[y][x] = PLAYER_CHAR;
+}
+
+void place_enemies(int map_height, int map_width, char map[][MAP_WIDTH], int num_goblins, int num_skeletons, int num_orcs) {
+    int i, x, y;
+    char symbols[] = {'g', 's', 'o'}; // símbolos para representar os diferentes tipos de inimigos
+    srand(time(NULL)); // inicializa a semente do gerador de números aleatórios
+    // coloca os goblins
+    for (i = 0; i < num_goblins; i++) {
+        do {
+            x = rand() % map_width;
+            y = rand() % map_height;
+        } while (map[y][x] != FLOOR_CHAR);
+        Enemy goblin = {x, y, symbols[0]};
+        map[y][x] = goblin.symbol;
+    }
+    // coloca os esqueletos
+    for (i = 0; i < num_skeletons; i++) {
+        do {
+            x = rand() % map_width;
+            y = rand() % map_height;
+        } while (map[y][x] != FLOOR_CHAR);
+        Enemy skeleton = {x, y, symbols[1]};
+        map[y][x] = skeleton.symbol;
+    }
+    // coloca os orcs
+    for (i = 0; i < num_orcs; i++) {
+        do {
+            x = rand() % map_width;
+            y = rand() % map_height;
+        } while (map[y][x] != FLOOR_CHAR);
+        Enemy orc = {x, y, symbols[2]};
+        map[y][x] = orc.symbol;
+    }
 }
 
 WINDOW *create_window (int height, int width, int startingX, int startingY) {
@@ -204,33 +217,4 @@ void display_map (WINDOW *main_window, int map_height, int map_width, char map[]
       }
     }
     wrefresh (main_window);
-}
-
-int main () {
-    WINDOW *main_window;
-    char map[MAP_HEIGHT][MAP_WIDTH];
-    Room rooms[MAX_ROOMS];
-    int number_of_non_overlaping_rooms;
-    srand(time(NULL));
-    int numRooms = rand() % (MAX_ROOMS - 35) + 10;
-
-    initscr ();
-    start_color();
-    raw ();
-    noecho ();
-    
-    main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 2, 2);
-
-    fillMap (MAP_HEIGHT, MAP_WIDTH, map);
-    number_of_non_overlaping_rooms = generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms);
-    generateCorridors (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms, number_of_non_overlaping_rooms);
-    display_map (main_window, MAP_HEIGHT, MAP_WIDTH, map);
-
-    wrefresh (main_window);
-
-    getch ();   //espera input do jogador;
-    //fazer uma função para destruir a win;
-    endwin ();  //termina o ncurses
-    
-    return 0;
 }
