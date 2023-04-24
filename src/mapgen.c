@@ -5,6 +5,7 @@
 #include <ncurses.h>
 #include "datatypes.h"
 #include "mapgen.h"
+#include "defines.h"
 
 /*  é responsável por preencher o mapa com o caractere do chão (FLOOR_CHAR). 
 Ela percorre todas as posições do mapa e verifica se o caractere atual não é o caractere da parede (WALL_CHAR) 
@@ -154,16 +155,17 @@ void generateCorridors(int map_width, char map[][map_width], Room rooms[], int n
   }
 }
 
-void place_player(int map_height, int map_width, char map[][map_width]) {
-    int x, y;
+
+void place_player(int map_height, int map_width, char map[][map_width], Character character) {
+   
     do {
-        x = rand() % (map_height-1) +1;
-        y = rand() % (map_width-1) +1;
-    } while (map[y][x] != FLOOR_CHAR);
-    map[y][x] = PLAYER_CHAR;
+        character.x = rand() % (map_height-1) +1;
+        character.y = rand() % (map_width-1) +1;
+    } while (map[character.y][character.x] != FLOOR_CHAR);
+    map[character.y][character.x] = PLAYER_CHAR_UP;
 }
 
-void place_enemies(int map_height, int map_width, char map[][MAP_WIDTH], int num_goblins, int num_skeletons, int num_orcs) {
+void place_enemies(int map_height, int map_width, char map[][map_width], int num_goblins, int num_skeletons, int num_orcs) {
     int i, x, y;
     char symbols[] = {'g', 's', 'o'}; // símbolos para representar os diferentes tipos de inimigos
     srand(time(NULL)); // inicializa a semente do gerador de números aleatórios
