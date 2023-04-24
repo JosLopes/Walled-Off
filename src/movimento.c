@@ -26,7 +26,7 @@ typedef struct
   Position current_position;
 } Character;
 
-Character p = {"warrior", 100, 0, {{"None", 1, 1}, {"None", 1, 1}, {"None", 1, 1}}, {0, 0}};
+Character c = {"warrior", 100, 0, {{"None", 1, 1}, {"None", 1, 1}, {"None", 1, 1}}, {0, 0}};
 void vision(int x, int y, char per)
 {
 
@@ -88,11 +88,12 @@ void vision(int x, int y, char per)
  *         3 = cima          *
  *     q -> quit comand      *
  ****************************/
-void movement(Character p){
+void movement(Character c){
+  Position p = c.current_position;
   char per = 'V';
   int ch, x, y, direction = 0;
-  x = p.current_position.x;
-  y = p.current_position.y;
+  x = c.current_position.x;
+  y = c.current_position.y;
   while ((ch = getch()) != 'q')
   {
     switch (ch)
@@ -155,9 +156,14 @@ void movement(Character p){
     }
     vision(x, y, per);
     refresh();
-    p.current_position.x = x;
-    p.current_position.y = y;
+    c.current_position.x = x;
+    c.current_position.y = y;
   }
+}
+
+int movement_restrictions (Position p){
+  
+
 }
 
 int main()
@@ -166,7 +172,7 @@ int main()
   cbreak();
   noecho();
   keypad(stdscr, TRUE);
-  movement(p);
+  movement(c);
   endwin();
 
   return 0;
