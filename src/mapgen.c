@@ -159,8 +159,8 @@ void place_player(int map_height, int map_width, char map[][map_width]) {
     do {
         Character.x = rand() % (map_height-1) +1;
         Character.y = rand() % (map_width-1) +1;
-    } while (map[y][x] != FLOOR_CHAR);
-    map[y][x] = PLAYER_CHAR_UP;
+    } while (map[Character.y][Character.x] != FLOOR_CHAR);
+    map[Character.y][Character.x] = PLAYER_CHAR_UP;
 }
 
 void place_enemies(int map_height, int map_width, char map[][MAP_WIDTH], int num_goblins, int num_skeletons, int num_orcs) {
