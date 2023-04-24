@@ -2,25 +2,26 @@ IDIR = include
 CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -O2 -I$(IDIR)
 
+all: walled-off
+
 ODIR = src/obj
 
 LIBS = -lm -lcurses
 
-# main will be a file, this is just for demonstration purposes. 
-.PHONY: clean
+DEPS = $(wildcard $(IDIR)/*.h)
 
-_DEPS = $(wildcard $(IDIR)/*.h)
-DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
+OBJ = $(patsubst src/%.c, $(ODIR)/%.o, $(wildcard src/*.c))
 
-_OBJ = $(wildcard src/*.c)
-OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
+$(info $$OBJ is [${OBJ}])
 
-
-$(ODIR)/%.o: %.c $(DEPS)
+$(ODIR)/%.o: src/%.c $(DEPS)
+	mkdir -p $(ODIR)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 walled-off: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
+.PHONY: clean
+
 clean:
-	rm -f $(ODIR)/*.o
+	rm -f $(ODIR)/*.o walled-off
