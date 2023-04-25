@@ -1,123 +1,54 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
-// #include "datatypes.h"
+#include "datatypes.h"
+#include "defines.h"
+#include "movement.h"
 
-/* Weapon parameters*/
-typedef struct
-{
-  char name[20];
-  int damage;
-  float range;
-} Weapon;
-/* Position of caracter */
-typedef struct
-{
-  int x;
-  int y;
-} Position;
-/* Caracter parameters */
-typedef struct
-{
-  char name[50];
-  int life;
-  int xp;
-  Weapon weapons[3];
-  Position current_position;
-} Character;
-
-Character c = {"warrior", 100, 0, {{"None", 1, 1}, {"None", 1, 1}, {"None", 1, 1}}, {0, 0}};
-void vision(int x, int y, char per)
-{
-
-  int raio = 3;
-  //  Create a 20x20 grid of characters
-  int height = 1000, width = 1000;
-
-  init_pair(1, COLOR_WHITE, COLOR_BLACK);
-  init_pair(2, COLOR_GREEN, COLOR_BLACK);
-  init_pair(3, COLOR_BLUE, COLOR_BLACK);
-
-  /*...Define um mapa vazio...*/
-  char grid[height][width];
-  // Fill the grid with spaces
-  for (int i = 0; i < height; i++)
-  {
-    for (int j = 0; j < width; j++)
-    {
-      grid[i][j] = ' ';
-    }
-  }
-  // Check the radius around the center character and turn those cells white
-  for (int i = x - raio; i <= x + raio; i++)
-  {
-    for (int j = y - raio; j <= y + raio; j++)
-    {
-      if (i == x && j == y)
-      {
-        grid[i][j] = per;
-      }
-      else if (i >= 0 && i < height && j >= 0 && j < width)
-      {
-        if ((i - x) * (i - x) + (j - y) * (j - y) <= raio * raio){
-          /*Color isn't working*/
-          attron(COLOR_PAIR(3) | A_BOLD);
-          bkgdset(COLOR_PAIR(3));
-          grid[i][j] = '.';
-          attroff(COLOR_PAIR(3) | A_BOLD);
-        }
-      }
-    }
-  }
-  // Print the grid to the screen
-  for (int i = 0; i < height; i++)
-  {
-    for (int j = 0; j < width; j++)
-    {
-      mvprintw(i, j, "%c", grid[i][j]);
-    }
-  }
-}
-
-/* Movement function */
 /****************************
- *     Direções:             *
- *         0 = direita       *
- *         1 = baixo         *
- *         2 = esquerda      *
- *         3 = cima          *
+ *     Directions:           *
+ *         0 = right         *
+ *         1 = down          *
+ *         2 = left          *
+ *         3 = up            *
  *     q -> quit comand      *
  ****************************/
-void movement(Character c){
-  Position p = c.current_position;
+void movement(Character *character, WINDOW *main_window){
   char per = 'V';
-  int ch, x, y, direction = 0;
-  x = c.current_position.x;
-  y = c.current_position.y;
+  int ch, direction = 0;
+
   while ((ch = getch()) != 'q')
   {
     switch (ch)
     {
     /*Define the movement of the various directions using the arrow keys*/
     case KEY_LEFT:
-      if (y > 0)
-        y--;
-      direction = 2;
+      if (character -> x > 0)
+      {
+        character -> x --;
+        direction = 2;
+      }
       break;
     case KEY_RIGHT:
-      if (y < COLS - 1)
-        y++;
-      direction = 0;
+      if (character -> x < COLS - 1)
+      {
+        character -> x ++;
+        direction = 0;
+      }
       break;
     case KEY_UP:
-      if (x > 0)
-        x--;
-      direction = 3;
+      if (character -> y > 0)
+      {
+        character -> y--;
+        direction = 3;
+      }
       break;
     case KEY_DOWN:
-      if (x < LINES - 1)
-        x++;
-      direction = 1;
+      if (character -> y < LINES - 1)
+      {
+        character -> y++;
+        direction = 1;
+      }
       break;
 
     /*Sets the character's rotation about itself*/
@@ -132,7 +63,9 @@ void movement(Character c){
     default:
       break;
     }
-    clear();
+
+    /*WARNING*/
+    /*Define a fuction to remove this clear*/
 
     if (direction == 0)
     {
@@ -154,26 +87,7 @@ void movement(Character c){
       /*up*/
       per = '^';
     }
-    vision(x, y, per);
-    refresh();
-    c.current_position.x = x;
-    c.current_position.y = y;
+    mvwprintw(main_window, character -> y, character -> x, "%c", per);
+    wrefresh(main_window);
   }
-}
-
-int movement_restrictions (Position p){
-  
-
-}
-
-int main()
-{
-  initscr();
-  cbreak();
-  noecho();
-  keypad(stdscr, TRUE);
-  movement(c);
-  endwin();
-
-  return 0;
 }

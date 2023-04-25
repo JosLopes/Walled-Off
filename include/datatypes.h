@@ -39,11 +39,11 @@ typedef struct {
 
 /* Caracter parameters */
 typedef struct {
+  int x, y;
   char name[50];
   int life;
   int xp;
   Weapon weapons[3];
-  Position current_position;
 } Character;
 
 #endif
