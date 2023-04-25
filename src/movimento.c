@@ -5,7 +5,6 @@
 #include "defines.h"
 #include "movement.h"
 
-/* Movement function */
 /****************************
  *     Directions:           *
  *         0 = right         *
@@ -14,8 +13,7 @@
  *         3 = up            *
  *     q -> quit comand      *
  ****************************/
-
-void movement(Character character, WINDOW *main_window){
+void movement(Character *character, WINDOW *main_window){
   char per = 'V';
   int ch, direction = 0;
 
@@ -25,30 +23,30 @@ void movement(Character character, WINDOW *main_window){
     {
     /*Define the movement of the various directions using the arrow keys*/
     case KEY_LEFT:
-      if (character.x > 0)
+      if (character -> x > 0)
       {
-        character.x--;
+        character -> x --;
         direction = 2;
       }
       break;
     case KEY_RIGHT:
-      if (character.x < COLS - 1)
+      if (character -> x < COLS - 1)
       {
-        character.x++;
+        character -> x ++;
         direction = 0;
       }
       break;
     case KEY_UP:
-      if (character.y > 0)
+      if (character -> y > 0)
       {
-        character.y--;
+        character -> y--;
         direction = 3;
       }
       break;
     case KEY_DOWN:
-      if (character.y < LINES - 1)
+      if (character -> y < LINES - 1)
       {
-        character.y++;
+        character -> y++;
         direction = 1;
       }
       break;
@@ -89,7 +87,7 @@ void movement(Character character, WINDOW *main_window){
       /*up*/
       per = '^';
     }
-    mvwprintw(main_window, character.y, character.x, "%c", per);
+    mvwprintw(main_window, character -> y, character -> x, "%c", per);
     wrefresh(main_window);
   }
 }
