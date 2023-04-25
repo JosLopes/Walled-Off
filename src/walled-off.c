@@ -42,7 +42,7 @@ int main () {
 
     wrefresh (main_window);
 
-    movement (&character, main_window);
+    movement (&character, MAP_HEIGHT, MAP_WIDTH, map, main_window);
     keypad (main_window, TRUE);
 
     getch ();

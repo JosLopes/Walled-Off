@@ -19,11 +19,6 @@ typedef struct
   int pathX, pathY;
 } Vector;
 
-/* Position of caracter */
-typedef struct {
-  float x;
-  float y;
-} Position;
 
 typedef struct {
     int x, y;
@@ -40,6 +35,7 @@ typedef struct {
 /* Caracter parameters */
 typedef struct {
   int x, y;
+  char direction;
   char name[50];
   int life;
   int xp;
