@@ -3,6 +3,6 @@
 #ifndef MOVEMENT_H
 #define MOVEMENT_H
 
-void movement (Character character, WINDOW *main_window);
+void movement (Character *character, WINDOW *main_window);
 
 #endif
