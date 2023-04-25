@@ -156,7 +156,6 @@ void generateCorridors(int map_width, char map[][map_width], Room rooms[], int n
 }
 
 void place_player(int map_height, int map_width, char map[][map_width], Character *character) {
-   
     do {
         character -> x = rand() % (map_height-1) +1;
         character -> y = rand() % (map_width-1) +1;
