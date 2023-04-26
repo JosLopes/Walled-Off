@@ -10,17 +10,17 @@
 int movement_restrictions(int x, int y, char map[][MAP_WIDTH])
 {
   /*in case he is trying to move into a wall it stays in the same place*/
-  if (map[x][y] == WALL_CHAR)
+  if (map[y][x] == WALL_CHAR)
   {
     return 1; /*true -> can't move*/
   }
   /*in case he is trying to move into a enemy it stays in the same place*/
-  else if (map[x][y] == ENEMY_O || map[x][y] == ENEMY_G || map[x][y] == ENEMY_S)
+  else if (map[y][x] == ENEMY_O || map[y][x] == ENEMY_G || map[y][x] == ENEMY_S)
   {
     return 1;
   }
   /*in case the position is outside the map limits*/
-  else if (x >= MAP_HEIGHT || y >= MAP_WIDTH || x < 0 || y < 0)
+  else if (y >= MAP_HEIGHT || x >= MAP_WIDTH || x < 0 || y < 0)
   {
     return 1;
   }
@@ -176,7 +176,7 @@ void movement(Character *character, int map_height, int map_width, char map[][ma
 
 /*
 void damage (Character *character, WINDOW *main_window){
-  if (map [character -> x][character -> y] == FIRE_CHAR)
+  if (map [character -> y][character -> x] == FIRE_CHAR)
   {
     character -> life = character -> life - 20;
   }
