@@ -18,5 +18,6 @@
 #define ENEMY_G 'g'
 #define ENEMY_S 's'
 #define ENEMY_O 'o'
+#define MAX_HEALTH 100
 
 #endif
