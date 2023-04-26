@@ -29,9 +29,10 @@ void init_enemy (Enemy *enemy, Tag tag, char name[], symbol, damage)
   enemy -> damage = damage;
 }
 
-void place_enemies ()
+void place_enemies(char map[][map_width], Non_overlaping_rooms no_overlpg[], int nor_size, Enemy *enemy) 
 {
-  
-} 
+  srand(time(NULL)); /* initializes the seed for random numbers */
+
+}
 
 
