@@ -25,10 +25,7 @@ bool isWithinRange(Enemy enemy, int charX, int charY, int range) {
 }
 
 
-void damage (Character character,int map_height, int map_width, char map[][map_width], WINDOW *main_window){
-  if () {
-
-  }
+void damage (Character *character,int map_height, int map_width, char map[][map_width], WINDOW *main_window){
 
 
   if (map [character -> y][character -> x] == FIRE_CHAR)
@@ -37,10 +34,10 @@ void damage (Character character,int map_height, int map_width, char map[][map_w
   }
 }
 
-void potion (Character character, WINDOW *main_window) {
+/*void potion (Character character, WINDOW *main_window) {
 
 }
 
 void food (Character character, WINDOW *main_window) {
 
-}
+}*/
