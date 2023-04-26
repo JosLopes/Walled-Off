@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
+#include <math.h>
 #include "datatypes.h"
 #include "defines.h"
 #include "movement.h"
@@ -13,58 +14,36 @@ HEALTH is going to be affected by:
 
 xP is going to be affected by:
 -Potions
--
+-Mobs until a certain %
 */
 
-/* Function to check if the character is within range */
-bool isWithinRange(Enemy enemy, int charX, int charY, int range) {
-  int distX = charX - enemy.x;
-  int distY = charY - enemy.y;
-  int distance = sqrt(distX * distX + distY * distY);
-  return distance <= range;
-}
-
-int range (Character *character,int map_height, int map_width, char map[][map_width], WINDOW *main_window) {
-  int x = character->x, y = character->y;
-  for (y; y < range; y++){
-    for (x; x < range; x++){
-      if (map[y][x] == ENEMY_G || map[y][x] == ENEMY_O || map[y][x] == ENEMY_S) {
-        return 1; /*true -> should receive damage*/
-      }
-    }
-  }
-  return 0; /*false -> free path*/
-}
-
-void detect_enemy (Character *character,int map_height, int map_width, char map[][map_width], WINDOW *main_window){
-  int x = character->x, y = character->y;
-  for (y; y < range; y++){
-    for (x; x < range; x++){
-      if (map[y][x] == ENEMY_G || map[y][x] == ENEMY_O || map[y][x] == ENEMY_S) {
-        return 1; /*true -> should receive damage*/
-      }
-    }
-  }
-
-}
-
-void damage (Character *character,int map_height, int map_width, char map[][map_width], WINDOW *main_window){
-
-
+/* function that takes in a map, a character, and an array of enemies, and 
+decrements the character's life if they are attacked by an enemy within range */
+void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], int num_enemies) 
+{
+  /*case character is crossing the fire*/
   if (map [character -> y][character -> x] == FIRE_CHAR)
   {
     character -> life = character -> life - 10;
   }
-  else if (range (character, map_height, map_width, map[][map_width], WINDOW *main_window ))
+
+  /*cross the array of enemies checking if there's any attacking the character*/
+  for (int i = 0; i < num_enemies; i++) 
   {
+    Enemy* enemy = &enemies[i];
+    int distance = sqrt(pow(character->x - enemy->x, 2) + pow(character->y - enemy->y, 2));
     
+    /*case character is on the range of attack of enemy*/
+    if (distance <= enemy->tag.range) 
+    {
+      /*Enemy is within range, so decrement character's life*/
+      character->life -= enemy->damage;
+      
+      /*Check if character is dead*/
+      if (character->life <= 0) 
+      {
+        exit(0);
+      }
+    }
   }
 }
-
-/*void potion (Character character, WINDOW *main_window) {
-
-}
-
-void food (Character character, WINDOW *main_window) {
-
-}*/

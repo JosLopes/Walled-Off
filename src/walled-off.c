@@ -12,7 +12,7 @@ void init_character(Character *character)
   character -> x = 0;
   character -> y = 0;
   character -> direction = '^';
-  character -> life = 100;
+  character -> life = MAX_HEALTH;
   character -> xp = 0;
 }
 
