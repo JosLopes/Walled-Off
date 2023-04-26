@@ -21,9 +21,6 @@ int main () {
   srand(time(NULL));
   Character character;
   int numRooms = rand() % (MAX_ROOMS - 35) + 10;
-  int num_goblins = rand() % 10;
-  int num_orcs = rand() % 10;
-  int num_skeletons = rand() % 10;
 
   /*initializes the curses library and sets up terminal I/O*/
   if (initscr() == NULL)
@@ -43,16 +40,18 @@ int main () {
   init_character (&character);
   fillMap (MAP_HEIGHT, MAP_WIDTH, map);
   number_of_non_overlaping_rooms = generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms);
-  generateCorridors (MAP_WIDTH, map, rooms, numRooms, number_of_non_overlaping_rooms);
+
+  Non_overlaping_rooms not_overlpg[number_of_non_overlaping_rooms];
+
+  init_non_overlaping_rooms (rooms, numRooms, no_overlpg, nor_size);
+  generateCorridors (MAP_WIDTH, map, not_overlpg, number_of_non_overlaping_rooms);
   place_player (MAP_HEIGHT, MAP_WIDTH, map, &character);
-  place_enemies (MAP_HEIGHT, MAP_WIDTH, map, num_goblins, num_skeletons, num_orcs);
   display_map (main_window, MAP_HEIGHT, MAP_WIDTH, map);
 
   wrefresh (main_window);
 
   /* Enable keyboard input and non-blocking input mode */
   /*  wrefresh(main_window);*/
-  nodelay(main_window, TRUE);
   keypad(main_window, TRUE); /*enable the interpretation of special keys*/
   movement (&character, MAP_HEIGHT, MAP_WIDTH, map, main_window);
 
