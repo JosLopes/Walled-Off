@@ -36,9 +36,13 @@ void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], i
     /*case character is on the range of attack of enemy*/
     if (distance <= enemy->tag.range) 
     {
-      /*Enemy is within range, so decrement character's life*/
-      character->life -= enemy->damage;
-      
+      if ((character->xp > 25)) {
+        character->xp -= enemy->damage;
+      } else {
+        /*Enemy is within range, so decrement character's life*/
+        character->life -= enemy->damage;
+      }
+
       /*Check if character is dead*/
       if (character->life <= 0) 
       {
