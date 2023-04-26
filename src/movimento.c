@@ -7,15 +7,20 @@
 #include "mapgen.h"
 
 /*movement restriction*/
-int movement_restrictions (int x, int y, char map[][MAP_WIDTH])
+int movement_restrictions(int x, int y, char map[][MAP_WIDTH])
 {
   /*in case he is trying to move into a wall it stays in the same place*/
-  if (map [x][y] == WALL_CHAR)
+  if (map[x][y] == WALL_CHAR)
   {
     return 1; /*true -> can't move*/
   }
   /*in case he is trying to move into a enemy it stays in the same place*/
-  else if (map [x][y] == ENEMY_O || map [x][y] == ENEMY_G || map [x][y] == ENEMY_S)
+  else if (map[x][y] == ENEMY_O || map[x][y] == ENEMY_G || map[x][y] == ENEMY_S)
+  {
+    return 1;
+  }
+  /*in case the position is outside the map limits*/
+  else if (x >= MAP_HEIGHT || y >= MAP_WIDTH || x < 0 || y < 0)
   {
     return 1;
   }
@@ -35,122 +40,133 @@ int movement_restrictions (int x, int y, char map[][MAP_WIDTH])
 void movement(Character *character, int map_height, int map_width, char map[][map_width], WINDOW *main_window)
 {
   char previous_char = FLOOR_CHAR;
-  int ch, direction = 0;
+  int ch;
 
-  while ((ch = getch()) != 'q')
+  while ((ch = wgetch(main_window)) != 'q')
   {
+    /*Clear previous character position*/
+    mvwprintw(main_window, character->y, character->x, " ");
+
+    /*Update character position based on input*/
     switch (ch)
     {
     /*Define the movement of the various directions using the arrow keys*/
     case KEY_LEFT:
-      if (character -> x > 0)
+      /*movement restriction*/
+      /*in case the caracter can't move*/
+      if (movement_restrictions(character->x - 1, character->y, map))
       {
-        /*movement restriction*/
-        /*in case the caracter can't move*/
-        if (movement_restrictions(character -> x - 1, character -> y, map))
-        {
-          direction = 2;
-        }
-        else 
-        {
-          /*restores the previous character in the map*/
-          map [character -> x][character -> y] = previous_char;  /*guarda a posição atual no */
-          previous_char = map [-- character -> x][character -> y];
-          map [character -> x][character -> y] = PLAYER_CHAR_LEFT;
-          direction = 2;
-        }
+        character->direction = PLAYER_CHAR_LEFT;
+        map[character->y][character->x] = PLAYER_CHAR_LEFT;
+      }
+      else
+      {
+        /*restores the previous character in the map*/
+        map[character->y][character->x] = previous_char;
+        previous_char = map[character->y][--character->x];
+        map[character->y][character->x] = PLAYER_CHAR_LEFT;
+        character->direction = PLAYER_CHAR_LEFT;
       }
       break;
 
     case KEY_RIGHT:
-      if (character -> x < COLS - 1)
+      if (movement_restrictions(character->x + 1, character->y, map))
       {
-        if (movement_restrictions(character -> x+1, character -> y, map))
-        {
-          direction = 0;
-        }
-        else 
-        {
-          map [character -> x][character -> y] = previous_char;
-          previous_char = map [++ character -> x][character -> y];
-          map [character -> x][character -> y] = PLAYER_CHAR_RIGHT;
-          direction = 0;
-        }
+        character->direction = PLAYER_CHAR_RIGHT;
+        map[character->y][character->x] = PLAYER_CHAR_RIGHT;
+      }
+      else
+      {
+        map[character->y][character->x] = previous_char;
+        previous_char = map[character->y][++character->x];
+        map[character->y][character->x] = PLAYER_CHAR_RIGHT;
+        character->direction = PLAYER_CHAR_RIGHT;
       }
       break;
     case KEY_UP:
-      if (character -> y > 0)
+      if (movement_restrictions(character->x, character->y - 1, map))
       {
-        if (movement_restrictions(character -> x, character -> y - 1, map))
-        {
-          direction = 3;
-        }
-        else 
-        {
-          map [character -> x][character -> y] = previous_char;
-          previous_char = map [character -> x][-- character -> y];
-          map [character -> x][character -> y] = PLAYER_CHAR_UP;
-          direction = 3;
-        }
+        character->direction = PLAYER_CHAR_UP;
+        map[character->y][character->x] = PLAYER_CHAR_UP;
+      }
+      else
+      {
+        map[character->y][character->x] = previous_char;
+        previous_char = map[--character->y][character->x];
+        map[character->y][character->x] = PLAYER_CHAR_UP;
+        character->direction = PLAYER_CHAR_UP;
       }
       break;
     case KEY_DOWN:
-      if (character -> y < LINES - 1)
+      if (movement_restrictions(character->x, character->y + 1, map))
       {
-        if (movement_restrictions(character -> x, character -> y + 1, map))
-        {
-          direction = 1;
-        }
-        else 
-        {
-          map [character -> x][character -> y] = previous_char;
-          previous_char = map [character -> x][++ character -> y];
-          map [character -> x][character -> y] = PLAYER_CHAR_DOWN;
-          direction = 1;
-        }
+        character->direction = PLAYER_CHAR_DOWN;
+        map[character->y][character->x] = PLAYER_CHAR_DOWN;
+      }
+      else
+      {
+        map[character->y][character->x] = previous_char;
+        previous_char = map[++character->y][character->x];
+        map[character->y][character->x] = PLAYER_CHAR_DOWN;
+        character->direction = PLAYER_CHAR_DOWN;
       }
       break;
-
+    
     /*Sets the character's rotation about itself*/
+    /* a -> 90° rotation counterclockwise*/
     case 'a':
-      /* a -> 90° rotation counter clockwise*/
-      direction = (direction + 3) % 4;
+      switch (character->direction)
+      {
+        case PLAYER_CHAR_UP:
+          map[character->y][character->x] = PLAYER_CHAR_LEFT;
+          character->direction = PLAYER_CHAR_LEFT;
+          break;
+        case PLAYER_CHAR_LEFT:
+          map[character->y][character->x] = PLAYER_CHAR_DOWN;
+          character->direction = PLAYER_CHAR_DOWN;
+          break;
+        case PLAYER_CHAR_DOWN:
+          map[character->y][character->x] = PLAYER_CHAR_RIGHT;
+          character->direction = PLAYER_CHAR_RIGHT;
+          break;
+        case PLAYER_CHAR_RIGHT:
+          map[character->y][character->x] = PLAYER_CHAR_UP;
+          character->direction = PLAYER_CHAR_UP;
+          break;
+      }
       break;
+    /* d -> 90° rotation clockwise*/
     case 'd':
-      /* d -> 90° rotation clockwise*/
-      direction = (direction + 1) % 4;
+      switch (character->direction)
+      {
+        case PLAYER_CHAR_UP:
+          map[character->y][character->x] = PLAYER_CHAR_RIGHT;
+          character->direction = PLAYER_CHAR_RIGHT;
+          break;
+        case PLAYER_CHAR_RIGHT:
+          map[character->y][character->x] = PLAYER_CHAR_DOWN;
+          character->direction = PLAYER_CHAR_DOWN;
+          break;
+        case PLAYER_CHAR_DOWN:
+          map[character->y][character->x] = PLAYER_CHAR_LEFT;
+          character->direction = PLAYER_CHAR_LEFT;
+          break;
+        case PLAYER_CHAR_LEFT:
+          map[character->y][character->x] = PLAYER_CHAR_UP;
+          character->direction = PLAYER_CHAR_UP;
+          break;
+      }
       break;
     default:
       break;
     }
 
-    /*WARNING*/
-    /*Define a fuction to remove this clear*/
 
-    if (direction == 0)
+    /*Redraw map*/
+    for (int i = 0; i < map_width; i++)
     {
-      /*right*/
-      character -> direction = PLAYER_CHAR_RIGHT;
-    }
-    else if (direction == 1)
-    {
-      /*down*/
-      character -> direction = PLAYER_CHAR_DOWN;
-    }
-    else if (direction == 2)
-    {
-      /*left*/
-      character -> direction = PLAYER_CHAR_LEFT;
-    }
-    else
-    {
-      /*up*/
-      character -> direction = PLAYER_CHAR_UP;
-    }
-    
-    mvwprintw(main_window, character -> y, character -> x, "%c", character -> direction );
-    for (int i=0; i < map_width; i++) {
-      for (int j=0; j < map_height; j++) {
+      for (int j = 0; j < map_height; j++)
+      {
         mvwprintw(main_window, j, i, "%c", map[j][i]);
       }
     }
