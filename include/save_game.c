@@ -7,6 +7,7 @@
 #include "movement.h"
 #include "mapgen.h"
 
+/*XP é guardado do jogo anterior*/
 void save_game(int xp) 
 {
   FILE* file = fopen("savegame.txt", "w");

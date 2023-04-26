@@ -13,16 +13,22 @@ void init_character(Character *character)
   character -> y = 0;
   character -> direction = '^';
   character -> life = MAX_HEALTH;
-  character -> xp = 0;
+  /*XP defenido com base no XP do jogo anterior*/
 }
 
 int main () {
+
+
   WINDOW *main_window;
   char map[MAP_HEIGHT][MAP_WIDTH];
   Room rooms[MAX_ROOMS];
   int number_of_non_overlaping_rooms;
   srand(time(NULL));
+
   Character character;
+  /*call load_game at the start of the game to load the xp value*/
+  character.xp = load_game();
+
   int numRooms = rand() % (MAX_ROOMS - 35) + 10;
   int num_goblins = rand() % 10;
   int num_orcs = rand() % 10;
@@ -58,6 +64,9 @@ int main () {
   nodelay(main_window, TRUE);
   keypad(main_window, TRUE); /*enable the interpretation of special keys*/
   movement (&character, MAP_HEIGHT, MAP_WIDTH, map, main_window);
+
+  /*call save_game at the end of the game to save the xp value*/
+  save_game(character.xp);
 
   // cleanup and exit
   delwin(main_window);
