@@ -3,6 +3,7 @@
 #include "defines.h"
 #include "mapgen.h"
 #include "movement.h"
+#include "vision.h"
 #include <ncurses.h>
 #include <time.h>
 #include <stdlib.h>
@@ -31,10 +32,16 @@ int main () {
     fprintf(stderr, "Error initializing ncurses.\n");
     exit(EXIT_FAILURE);
   }
-  start_color();
+
   raw ();
   noecho ();
   curs_set(FALSE); /*Hides the cursor*/                                                                                                                                                  ////////////////
+  
+  start_color();
+  /*init_pair(index, foreground, background);*/
+  init_pair(WATER_PAIR, COLOR_CYAN, COLOR_BLUE);
+  init_pair(PLAYER_VISION, COLOR_BLUE ,COLOR_WHITE);
+  clear();
   
   /* Create main window */
   main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 2, 2);
@@ -46,7 +53,7 @@ int main () {
   generateCorridors (MAP_WIDTH, map, rooms, numRooms, number_of_non_overlaping_rooms);
   place_player (MAP_HEIGHT, MAP_WIDTH, map, &character);
   place_enemies (MAP_HEIGHT, MAP_WIDTH, map, num_goblins, num_skeletons, num_orcs);
-  display_map (main_window, MAP_HEIGHT, MAP_WIDTH, map);
+  display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
 
   wrefresh (main_window);
 

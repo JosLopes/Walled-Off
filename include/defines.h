@@ -8,15 +8,19 @@
 #define MAX_ROOM_HEIGHT 15
 #define MIN_ROOM_WIDTH 6
 #define MAX_ROOM_WIDTH 16
+#define WATER_PAIR 2
 #define WALL_CHAR '#'
-#define FLOOR_CHAR '.'
-#define FIRE_CHAR ' '
+#define FLOOR_CHAR ' '
+#define FIRE_CHAR '~'
+#define ENEMY_G 'g'
+#define ENEMY_S 's'
+#define ENEMY_O 'o'
+
 #define PLAYER_CHAR_LEFT '<'
 #define PLAYER_CHAR_RIGHT '>'
 #define PLAYER_CHAR_UP '^'
 #define PLAYER_CHAR_DOWN 'V'
-#define ENEMY_G 'g'
-#define ENEMY_S 's'
-#define ENEMY_O 'o'
+#define PLAYER_VISION 3
+#define PLAYER_VISION_COLOR 1
 
 #endif

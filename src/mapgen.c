@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <ncurses.h>
+#include <math.h>
 #include "datatypes.h"
 #include "mapgen.h"
 #include "defines.h"
@@ -18,7 +19,7 @@ void fillMap(int map_height, int map_width, char map[][map_width]) {
 
     for (i = 0; i < map_height; i++) {
         for (j = 0; j < map_width; j++) {
-                map[i][j] = FIRE_CHAR;
+          map[i][j] = FIRE_CHAR;
         }
     }
 
@@ -207,7 +208,7 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
 
     return local_window;
 }
-
+/*
 void display_map (WINDOW *main_window, int map_height, int map_width, char map[][map_width]) {
     int i, j;
     
@@ -217,4 +218,43 @@ void display_map (WINDOW *main_window, int map_height, int map_width, char map[]
       }
     }
     wrefresh (main_window);
+}*/
+void display_map (WINDOW *main_window, Character *character, int map_height, int map_width, char map[][map_width]) {
+  
+  int range = PLAYER_VISION;
+  int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, map_width - 1);
+  int y_min = fmax(character->y - range, 0), y_max = fmin(character->y + range, map_height - 1);
+  
+  /* Redraw map */
+  for (int i = 0; i < map_width; i++) {
+    for (int j = 0; j < map_height; j++) {
+      
+      /*character position*/
+      if(i == character->x && j == character->y)
+      {
+        mvwaddch(main_window, i, j, map[j][i]); /*print the character at the given position*/
+      }
+      /*character vision*/
+      else if(i > x_min && j > y_min && i < x_max && j < y_max)
+      {
+        /* set values within circle of radius range */
+          attron(COLOR_PAIR(WATER_PAIR)); // Turn on color pair 2
+        for (int x = x_min; x <= x_max; x++) 
+        {
+          for (int y = y_min; y <= y_max; y++) 
+          {
+            mvwaddch(main_window, y, x, map[y][x]); /*print the character at the given position*/
+          }
+        }
+            attroff(COLOR_PAIR(WATER_PAIR)); // Turn off color pair 2
+      }
+      else 
+      {
+        attron(COLOR_PAIR(PLAYER_VISION_COLOR)); // Turn on color pair 2
+        mvwaddch(main_window, j, i, map[j][i]); // print the character at the given position
+        attroff(COLOR_PAIR(PLAYER_VISION_COLOR)); // Turn off color pair 1
+      }
+    }
+  }
+    wrefresh(main_window); /*refresh the window to display changes*/
 }
