@@ -39,6 +39,9 @@ void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], i
       if ((character->xp > 25) && (character->xp - enemy->damage > 25)) {
         /*Enemy is within range, so decrement character's xp*/
         character->xp -= enemy->damage;
+
+        mvprintw(5, 5, "%d", character->life);
+        mvprintw(10, 10, "%d", character->xp);
       } else if ((character->xp > 25) && (character->xp - enemy->damage < 25)) {
         int take_from_xp = character->xp - 25;
         int remaining_damage = enemy->damage - take_from_xp;
@@ -46,9 +49,15 @@ void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], i
 
         character->xp -= take_from_xp;
         character->life -= take_from_life;
+
+        mvprintw(5, 5, "%d", character->life);
+        mvprintw(10, 10, "%d", character->xp);
       } else {
         /*Enemy is within range, so decrement character's life*/
         character->life -= enemy->damage;
+
+        mvprintw(5, 5, "%d", character->life);
+        mvprintw(10, 10, "%d", character->xp);
       }
 
       /*Check if character is dead*/
@@ -58,8 +67,4 @@ void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], i
       }
     }
   }
-}
-
-void display_in_screen() {
-
 }
