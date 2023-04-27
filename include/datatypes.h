@@ -48,6 +48,7 @@ typedef struct {
 typedef struct {
   char name[20];
   int impact;
+  int x, y;
 } Consumables;
 
 /* Caracter parameters */

@@ -10,13 +10,14 @@
 /*
 HEALTH is going to be affected by:
 -Attacks
--Potions
+-Potions/Food
 
 xP is going to be affected by:
 -Potions
 -Mobs until a certain %
 */
 
+/*This function is responsible for the enemies attacks and for crossing the fire*/
 /* function that takes in a map, a character, and an array of enemies, and 
 decrements the character's life if they are attacked by an enemy within range */
 void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], int num_enemies) 
@@ -66,5 +67,27 @@ void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], i
         exit(0);
       }
     }
+  }
+}
+
+/*This function is responsible for increasing/decreasing health based on ingestible food/potions*/
+void food_and_potions (char map[][MAP_WIDTH], Character* character, Consumables Foods[], Consumables Potions[]) 
+{
+  /*case character is crossing food*/
+  if (map [character -> y][character -> x] == FOOD_CHAR)
+  {
+    /*Remove health*/
+    character -> life = character -> life - Foods -> impact;
+    /*Delete the food and substitute it by a point*/
+    map [Foods -> y][Foods -> x] == '.';
+
+  }
+    /*case character is crossing potions*/
+  if (map [character -> y][character -> x] == POTION_CHAR)
+  {
+    /*Remove health*/
+    character -> life = character -> life - Potions -> impact;
+    /*Delete the potion and substitute it by a point*/
+    map [Potions -> y][Potions -> x] == '.';
   }
 }

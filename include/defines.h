@@ -20,5 +20,13 @@
 #define ENEMY_O 'o'
 #define MAX_HEALTH 100
 #define MIN_XP 25
-
+#define FOOD_CHAR "F"
+#define POTION_CHAR "P"
+/*
+#define APPLE_CHAR "A"
+#define AVOCADO_CHAR "V"
+#define CHICKEN_CHAR "C"
+#define POTION1_CHAR "D"
+#define POTION2_CHAR "G"
+*/
 #endif
