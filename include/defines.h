@@ -19,5 +19,6 @@
 #define ENEMY_S 's'
 #define ENEMY_O 'o'
 #define MAX_HEALTH 100
+#define MIN_XP 25
 
 #endif

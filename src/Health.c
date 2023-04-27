@@ -36,8 +36,16 @@ void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], i
     /*case character is on the range of attack of enemy*/
     if (distance <= enemy->tag.range) 
     {
-      if ((character->xp > 25)) {
+      if ((character->xp > 25) && (character->xp - enemy->damage > 25)) {
+        /*Enemy is within range, so decrement character's xp*/
         character->xp -= enemy->damage;
+      } else if ((character->xp > 25) && (character->xp - enemy->damage < 25)) {
+        int take_from_xp = character->xp - 25;
+        int remaining_damage = enemy->damage - take_from_xp;
+        int take_from_life = character->life - remaining_damage;
+
+        character->xp -= take_from_xp;
+        character->life -= take_from_life;
       } else {
         /*Enemy is within range, so decrement character's life*/
         character->life -= enemy->damage;
@@ -50,4 +58,8 @@ void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], i
       }
     }
   }
+}
+
+void display_in_screen() {
+
 }

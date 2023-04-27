@@ -13,7 +13,7 @@ void init_character(Character *character)
   character -> y = 0;
   character -> direction = '^';
   character -> life = MAX_HEALTH;
-  /*XP defenido com base no XP do jogo anterior*/
+  /*XP definido com base no XP do jogo anterior*/
 }
 
 int main () {
