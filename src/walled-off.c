@@ -44,11 +44,18 @@ int main () {
   /*init_pair(index, foreground, background);*/
   init_pair(WATER_COLOR, COLOR_CYAN, COLOR_BLUE); 
   init_pair(PLAYER_VISION_COLOR, COLOR_YELLOW ,COLOR_RED);
-  init_pair(FLOOR_COLOR, COLOR_BLACK, COLOR_WHITE);
+  init_pair(FLOOR_COLOR, COLOR_WHITE, COLOR_BLACK);
+
+      // Enable the use of colors
+  use_default_colors();
+  curs_set(0);
+  noecho();
   clear();
+  refresh ();
 
   /* Create main window */
   main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 2, 2);
+  wrefresh (main_window);
 
   /* Initialize character and map */
   init_character (&character);

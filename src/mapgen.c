@@ -243,7 +243,7 @@ void display_map (WINDOW *main_window, Character *character, int map_height, int
       /*print blue water*/
       if (map[j][i] == FIRE_CHAR){
         attron(COLOR_PAIR(WATER_COLOR)); 
-        mvwaddch(main_window, j, i, FIRE_CHAR);
+        mvwaddch(main_window, j, i, map[j][i]);
         attroff(COLOR_PAIR(WATER_COLOR)); 
       }
       /*print black rooms*/
@@ -255,5 +255,5 @@ void display_map (WINDOW *main_window, Character *character, int map_height, int
       }
     }
   }
-    wrefresh(main_window); /*refresh the window to display changes*/
+  wrefresh(main_window); /*refresh the window to display changes*/
 }
