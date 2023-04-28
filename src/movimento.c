@@ -59,9 +59,6 @@ void movement(Character *character, int map_height, int map_width, char map[][ma
       {
         character->direction = PLAYER_CHAR_LEFT;
         map[character->y][character->x] = PLAYER_CHAR_LEFT;
-        attron(COLOR_PAIR(WATER_PAIR));
-        mvwaddch(main_window, character->y, character->x, map[character->y][character->x]); /*print the character at the given position*/
-        attroff(COLOR_PAIR(WATER_PAIR));
       }
       else
       {
@@ -70,9 +67,6 @@ void movement(Character *character, int map_height, int map_width, char map[][ma
         previous_char = map[character->y][--character->x];
         map[character->y][character->x] = PLAYER_CHAR_LEFT;
         character->direction = PLAYER_CHAR_LEFT;
-        attron(COLOR_PAIR(WATER_PAIR));
-        mvwaddch(main_window, character->y, character->x, map[character->y][character->x]); /*print the character at the given position*/
-        attroff(COLOR_PAIR(WATER_PAIR));
       }
       break;
 
@@ -81,9 +75,6 @@ void movement(Character *character, int map_height, int map_width, char map[][ma
       {
         character->direction = PLAYER_CHAR_RIGHT;
         map[character->y][character->x] = PLAYER_CHAR_RIGHT;
-        attron(COLOR_PAIR(WATER_PAIR));
-        mvwaddch(main_window, character->y, character->x, map[character->y][character->x]); /*print the character at the given position*/
-        attroff(COLOR_PAIR(WATER_PAIR));
       }
       else
       {
@@ -91,9 +82,6 @@ void movement(Character *character, int map_height, int map_width, char map[][ma
         previous_char = map[character->y][++character->x];
         map[character->y][character->x] = PLAYER_CHAR_RIGHT;
         character->direction = PLAYER_CHAR_RIGHT;
-        attron(COLOR_PAIR(WATER_PAIR));
-        mvwaddch(main_window, character->y, character->x, map[character->y][character->x]); /*print the character at the given position*/
-        attroff(COLOR_PAIR(WATER_PAIR));
       }
       break;
     case KEY_UP:
@@ -101,9 +89,6 @@ void movement(Character *character, int map_height, int map_width, char map[][ma
       {
         character->direction = PLAYER_CHAR_UP;
         map[character->y][character->x] = PLAYER_CHAR_UP;
-        attron(COLOR_PAIR(WATER_PAIR));
-        mvwaddch(main_window, character->y, character->x, map[character->y][character->x]); /*print the character at the given position*/
-        attroff(COLOR_PAIR(WATER_PAIR));
       }
       else
       {
@@ -111,9 +96,6 @@ void movement(Character *character, int map_height, int map_width, char map[][ma
         previous_char = map[--character->y][character->x];
         map[character->y][character->x] = PLAYER_CHAR_UP;
         character->direction = PLAYER_CHAR_UP;
-        attron(COLOR_PAIR(WATER_PAIR));
-        mvwaddch(main_window, character->y, character->x, map[character->y][character->x]); /*print the character at the given position*/
-        attroff(COLOR_PAIR(WATER_PAIR));
       }
       break;
     case KEY_DOWN:
@@ -121,9 +103,6 @@ void movement(Character *character, int map_height, int map_width, char map[][ma
       {
         character->direction = PLAYER_CHAR_DOWN;
         map[character->y][character->x] = PLAYER_CHAR_DOWN;
-        attron(COLOR_PAIR(WATER_PAIR));
-        mvwaddch(main_window, character->y, character->x, map[character->y][character->x]); /*print the character at the given position*/
-        attroff(COLOR_PAIR(WATER_PAIR));
       }
       else
       {
@@ -131,9 +110,6 @@ void movement(Character *character, int map_height, int map_width, char map[][ma
         previous_char = map[++character->y][character->x];
         map[character->y][character->x] = PLAYER_CHAR_DOWN;
         character->direction = PLAYER_CHAR_DOWN;
-        attron(COLOR_PAIR(WATER_PAIR));
-        mvwaddch(main_window, character->y, character->x, map[character->y][character->x]); /*print the character at the given position*/
-        attroff(COLOR_PAIR(WATER_PAIR));
       }
       break;
     
@@ -185,7 +161,6 @@ void movement(Character *character, int map_height, int map_width, char map[][ma
     default:
       break;
     }
-    //vision(character, map_height, map_width, map, main_window);
-    display_map(main_window, character, MAP_HEIGHT, MAP_WIDTH, map);
+    display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
   }
 }

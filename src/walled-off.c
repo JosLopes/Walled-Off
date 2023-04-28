@@ -26,6 +26,12 @@ int main () {
   int num_orcs = rand() % 10;
   int num_skeletons = rand() % 10;
 
+  start_color();
+  /*init_pair(index, foreground, background);*/
+  init_pair(WATER_PAIR, COLOR_CYAN, COLOR_BLUE); 
+  init_pair(PLAYER_VISION_COLOR, COLOR_YELLOW ,COLOR_RED);
+  init_pair(FLOOR_COLOR, COLOR_BLACK, COLOR_WHITE);
+
   /*initializes the curses library and sets up terminal I/O*/
   if (initscr() == NULL)
   {
@@ -37,11 +43,6 @@ int main () {
   noecho ();
   curs_set(FALSE); /*Hides the cursor*/                                                                                                                                                  ////////////////
   
-  start_color();
-  /*init_pair(index, foreground, background);*/
-  init_pair(WATER_PAIR, COLOR_CYAN, COLOR_BLUE);
-  init_pair(PLAYER_VISION, COLOR_BLUE ,COLOR_WHITE);
-  clear();
   
   /* Create main window */
   main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 2, 2);

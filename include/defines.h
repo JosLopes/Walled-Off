@@ -8,7 +8,6 @@
 #define MAX_ROOM_HEIGHT 15
 #define MIN_ROOM_WIDTH 6
 #define MAX_ROOM_WIDTH 16
-#define WATER_PAIR 2
 #define WALL_CHAR '#'
 #define FLOOR_CHAR ' '
 #define FIRE_CHAR '~'
@@ -21,6 +20,9 @@
 #define PLAYER_CHAR_UP '^'
 #define PLAYER_CHAR_DOWN 'V'
 #define PLAYER_VISION 3
+
 #define PLAYER_VISION_COLOR 1
+#define WATER_PAIR 2
+#define FLOOR_COLOR 3
 
 #endif

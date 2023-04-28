@@ -229,30 +229,39 @@ void display_map (WINDOW *main_window, Character *character, int map_height, int
   for (int i = 0; i < map_width; i++) {
     for (int j = 0; j < map_height; j++) {
       
-      /*character position*/
-      if(i == character->x && j == character->y)
-      {
-        mvwaddch(main_window, i, j, map[j][i]); /*print the character at the given position*/
-      }
       /*character vision*/
-      else if(i > x_min && j > y_min && i < x_max && j < y_max)
-      {
-        /* set values within circle of radius range */
-          attron(COLOR_PAIR(WATER_PAIR)); // Turn on color pair 2
-        for (int x = x_min; x <= x_max; x++) 
+      if(i > x_min && j > y_min && i < x_max && j < y_max){
+        /*character position*/
+        if(i == character->x && j == character->y)
         {
-          for (int y = y_min; y <= y_max; y++) 
-          {
-            mvwaddch(main_window, y, x, map[y][x]); /*print the character at the given position*/
-          }
+          mvwaddch(main_window, i, j, map[j][i]); /*print the character at the given position*/
         }
-            attroff(COLOR_PAIR(WATER_PAIR)); // Turn off color pair 2
+        else 
+        {
+          /* set values within circle of radius range */
+          attron(COLOR_PAIR(PLAYER_VISION_COLOR)); 
+          for (int x = x_min; x <= x_max; x++) 
+          {
+            for (int y = y_min; y <= y_max; y++) 
+            {
+              mvwaddch(main_window, y, x, map[y][x]); 
+            }
+          }
+          attroff(COLOR_PAIR(PLAYER_VISION_COLOR));
+        }
       }
+      /*print blue water*/
+      if (map[j][i] == FIRE_CHAR){
+        attron(COLOR_PAIR(WATER_PAIR)); 
+        mvwaddch(main_window, j, i, map[j][i]);
+        attroff(COLOR_PAIR(WATER_PAIR)); 
+      }
+      /*print black rooms*/
       else 
       {
-        attron(COLOR_PAIR(PLAYER_VISION_COLOR)); // Turn on color pair 2
-        mvwaddch(main_window, j, i, map[j][i]); // print the character at the given position
-        attroff(COLOR_PAIR(PLAYER_VISION_COLOR)); // Turn off color pair 1
+        attron(COLOR_PAIR(FLOOR_COLOR)); 
+        mvwaddch(main_window, j, i, map[j][i]); 
+        attroff(COLOR_PAIR(FLOOR_COLOR));
       }
     }
   }
