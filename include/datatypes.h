@@ -15,8 +15,8 @@ typedef struct
 
 typedef struct
 {
-  int startingX, startingY;
-  int pathX, pathY;
+  int startingX;
+  int startingY;
 } Vector;
 
 /* Weapon parameters*/
@@ -47,7 +47,7 @@ typedef struct {
 } Tag;
 
 typedef struct {
-  Tag tag;  /* dumb, smart or genius (evaluates the enemys inteligence) */
+  Tag *tag;  /* dumb, smart or genius (evaluates the enemys inteligence) */
   char display;
   char name[20];
   int x, y;  /* Position on the map */

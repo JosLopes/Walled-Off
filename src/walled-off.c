@@ -1,11 +1,17 @@
 #include "mapgen.h"
 #include "datatypes.h"
 #include "defines.h"
-#include "mapgen.h"
 #include "movement.h"
+#include "MOBs.h"
 #include <ncurses.h>
 #include <time.h>
 #include <stdlib.h>
+
+void init_character(Character *character)
+{
+  character -> x = 0;
+  character -> y = 0;
+}
 
 int main () {
   WINDOW *main_window;
@@ -17,9 +23,9 @@ int main () {
   Character character;
   int numRooms = rand() % (MAX_ROOMS - 35) + 10;
 
-  int enemies_size = sizeof (Enemy) * number_of_non_overlaping_rooms * 3;
-  int new_enemies_size;
-  Enemy *enemies = malloc (enemies_size);
+  Variable_stats *dumb_variables;
+  Variable_stats *smart_variables;
+  Variable_stats *genius_variables;
 
   /*initializes the curses library and sets up terminal I/O*/
   if (initscr() == NULL)
@@ -40,14 +46,22 @@ int main () {
   fillMap (MAP_HEIGHT, MAP_WIDTH, map);
   number_of_non_overlaping_rooms = generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms);
 
+  int enemies_size = sizeof (Enemy) * number_of_non_overlaping_rooms * 3;
+  int new_enemies_size;
+  Enemy *enemies = malloc (enemies_size);
+
   Non_overlaping_rooms not_overlpg[number_of_non_overlaping_rooms];
   /* Initializes a struct array that stores all non overlaping rooms */
-  init_non_overlaping_rooms (rooms, numRooms, no_overlpg, number_of_non_overlaping_rooms);
+  init_non_overlaping_rooms (rooms, numRooms, not_overlpg, number_of_non_overlaping_rooms);
+
   /* Initializes the placement for all enemies, returning how many where placed in the map */
-  new_enemies_size = locate_positions (MAP_HEIGHT, MAP_WIDTH, map, enemies_size, enemies, number_of_non_overlaping_rooms, Non_overlaping_rooms no_overlpg);
-  
-  Tag tag[new_size];
-  
+  new_enemies_size = locate_positions (MAP_HEIGHT, MAP_WIDTH, map, enemies_size, enemies, number_of_non_overlaping_rooms, not_overlpg);
+  Tag *tag = malloc (sizeof (Tag) * new_enemies_size);
+  dumb_variables = d_enemies_variable_stats ();
+  smart_variables = s_enemies_variable_stats ();
+  genius_variables = g_enemies_variable_stats ();
+  init_enemies (enemies_size, enemies, tag, dumb_variables, smart_variables, genius_variables);
+
   generateCorridors (MAP_WIDTH, map, not_overlpg, number_of_non_overlaping_rooms);
   place_player (MAP_HEIGHT, MAP_WIDTH, map, &character);
   display_map (main_window, MAP_HEIGHT, MAP_WIDTH, map);

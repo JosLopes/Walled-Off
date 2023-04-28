@@ -15,8 +15,5 @@
 #define PLAYER_CHAR_RIGHT '>'
 #define PLAYER_CHAR_UP '^'
 #define PLAYER_CHAR_DOWN 'V'
-#define ENEMY_G 'g'
-#define ENEMY_S 's'
-#define ENEMY_O 'o'
 
 #endif

@@ -103,57 +103,57 @@ void generateCorridors(int map_width, char map[][map_width], Non_overlaping_room
   int bridge_ind = 0, temp;
   Vector vector;
   
-  for (; bridge_ind + 1 < nore_size; bridge_ind++)
+  for (; bridge_ind + 1 < nor_size; bridge_ind++)
   {
-    vector.midX = no_overlpg[bridge_ind].midX;
+    vector.startingX = no_overlpg[bridge_ind].midX;
     int endingX = no_overlpg[bridge_ind+1].midX;
-    vector.midY = no_overlpg[bridge_ind].midY;
+    vector.startingY = no_overlpg[bridge_ind].midY;
     int endingY = no_overlpg[bridge_ind+1].midY;
     
     // calcula a direção do corredor
-    int directionX = endingX - vector.midX;
-    int directionY = endingY - vector.midY;
+    int directionX = endingX - vector.startingX;
+    int directionY = endingY - vector.startingY;
     
     // se o corredor estiver na direção negativa em X, inverte os pontos inicial e final
     if (directionX < 0 && directionY < 0) {
-      temp = vector.midX;
-      vector.midX = endingX;
+      temp = vector.startingX;
+      vector.startingX = endingX;
       endingX = temp;
 
-      temp = vector.midY;
-      vector.midY = endingY;
+      temp = vector.startingY;
+      vector.startingY = endingY;
       endingY = temp;
     }
 
     if ((directionX > 0 && directionY > 0) || (directionX < 0 && directionY < 0))
     {
       // percorre o corredor, desenhando o chão (FLOOR_CHAR) em cada posição
-      for (; vector.midX <= endingX; vector.midX++) {
-        map[vector.midY][vector.midX] = FLOOR_CHAR;
+      for (; vector.startingX <= endingX; vector.startingX++) {
+        map[vector.startingY][vector.startingX] = FLOOR_CHAR;
       }
     
-      for (; vector.midY <= endingY; vector.midY++) {
-        map[vector.midY][vector.midX] = FLOOR_CHAR;
+      for (; vector.startingY <= endingY; vector.startingY++) {
+        map[vector.startingY][vector.startingX] = FLOOR_CHAR;
       }
     } 
     else if (directionX < 0 && directionY > 0) 
     {
-      for (; vector.midX > endingX; vector.midX--) {
-        map[vector.midY][vector.midX] = FLOOR_CHAR;
+      for (; vector.startingX > endingX; vector.startingX--) {
+        map[vector.startingY][vector.startingX] = FLOOR_CHAR;
       }
     
-      for (; vector.midY <= endingY; vector.midY++) {
-        map[vector.midY][vector.midX] = FLOOR_CHAR;
+      for (; vector.startingY <= endingY; vector.startingY++) {
+        map[vector.startingY][vector.startingX] = FLOOR_CHAR;
       }
     }
     else if (directionX > 0 && directionY < 0) 
     {
-      for (; vector.midX <= endingX; vector.midX++) {
-        map[vector.midY][vector.midX] = FLOOR_CHAR;
+      for (; vector.startingX <= endingX; vector.startingX++) {
+        map[vector.startingY][vector.startingX] = FLOOR_CHAR;
       }
     
-      for (; vector.midY > endingY; vector.midY--) {
-        map[vector.midY][vector.midX] = FLOOR_CHAR;
+      for (; vector.startingY > endingY; vector.startingY--) {
+        map[vector.startingY][vector.startingX] = FLOOR_CHAR;
       }
     }
   }
