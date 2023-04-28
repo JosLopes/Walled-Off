@@ -22,7 +22,7 @@
 #define PLAYER_VISION 3
 
 #define PLAYER_VISION_COLOR 1
-#define WATER_PAIR 2
+#define WATER_COLOR 2
 #define FLOOR_COLOR 3
 
 #endif

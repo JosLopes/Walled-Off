@@ -15,6 +15,8 @@ void init_character(Character *character)
 }
 
 int main () {
+
+
   WINDOW *main_window;
   char map[MAP_HEIGHT][MAP_WIDTH];
   Room rooms[MAX_ROOMS];
@@ -26,24 +28,25 @@ int main () {
   int num_orcs = rand() % 10;
   int num_skeletons = rand() % 10;
 
-  start_color();
-  /*init_pair(index, foreground, background);*/
-  init_pair(WATER_PAIR, COLOR_CYAN, COLOR_BLUE); 
-  init_pair(PLAYER_VISION_COLOR, COLOR_YELLOW ,COLOR_RED);
-  init_pair(FLOOR_COLOR, COLOR_BLACK, COLOR_WHITE);
 
   /*initializes the curses library and sets up terminal I/O*/
-  if (initscr() == NULL)
-  {
-    fprintf(stderr, "Error initializing ncurses.\n");
-    exit(EXIT_FAILURE);
-  }
-
+  initscr();
   raw ();
   noecho ();
   curs_set(FALSE); /*Hides the cursor*/                                                                                                                                                  ////////////////
   
-  
+  if (has_colors() == FALSE) {
+        endwin();
+        printf("Your terminal does not support color\n");
+        exit(1);
+  }
+  start_color();
+  /*init_pair(index, foreground, background);*/
+  init_pair(WATER_COLOR, COLOR_CYAN, COLOR_BLUE); 
+  init_pair(PLAYER_VISION_COLOR, COLOR_YELLOW ,COLOR_RED);
+  init_pair(FLOOR_COLOR, COLOR_BLACK, COLOR_WHITE);
+  clear();
+
   /* Create main window */
   main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 2, 2);
 
@@ -59,7 +62,6 @@ int main () {
   wrefresh (main_window);
 
   /* Enable keyboard input and non-blocking input mode */
-  /*  wrefresh(main_window);*/
   nodelay(main_window, TRUE);
   keypad(main_window, TRUE); /*enable the interpretation of special keys*/
   movement (&character, MAP_HEIGHT, MAP_WIDTH, map, main_window);

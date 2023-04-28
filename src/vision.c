@@ -31,9 +31,9 @@ void vision (Character *character, int map_height, int map_width, char map[][map
         {
           for (int y = y_min; y <= y_max; y++) 
           {
-            attron(COLOR_PAIR(WATER_PAIR)); // Turn on color pair 2
+            attron(COLOR_PAIR(WATER_COLOR)); // Turn on color pair 2
             mvwaddch(main_window, y, x, map[y][x]); /*print the character at the given position*/
-            attroff(COLOR_PAIR(WATER_PAIR)); // Turn off color pair 2
+            attroff(COLOR_PAIR(WATER_COLOR)); // Turn off color pair 2
           }
         }
       }
