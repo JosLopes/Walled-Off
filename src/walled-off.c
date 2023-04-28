@@ -46,9 +46,9 @@ int main () {
   fillMap (MAP_HEIGHT, MAP_WIDTH, map);
   number_of_non_overlaping_rooms = generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms);
 
-  int enemies_size = sizeof (Enemy) * number_of_non_overlaping_rooms * 3;
+  int enemies_size = number_of_non_overlaping_rooms * 3;
   int new_enemies_size;
-  Enemy *enemies = malloc (enemies_size);
+  Enemy *enemies = malloc (sizeof (Enemy) * enemies_size);
 
   Non_overlaping_rooms not_overlpg[number_of_non_overlaping_rooms];
   /* Initializes a struct array that stores all non overlaping rooms */

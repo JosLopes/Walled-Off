@@ -10,27 +10,27 @@ void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d
 
 /* Defines only used for this module porpouse */
 #define D_CHAR 'D'
-#define D_MAX_XP 0
-#define D_MIN_XP 0
-#define D_SCREAM_RANGE 0
-#define D_POISON 0
-#define D_GROUP_DESIRE 0
+#define D_MAX_XP 10
+#define D_MIN_XP 1
+#define D_SCREAM_RANGE 1
+#define D_POISON 1
+#define D_GROUP_DESIRE 1
 #define D_ENEMIES 2  /* Number of distint enteties */
 
 #define S_CHAR 'S'
-#define S_MAX_XP 0
-#define S_MIN_XP 0
-#define S_SCREAM_RANGE 0
-#define S_POISON 0
-#define S_GROUP_DESIRE 0
+#define S_MAX_XP 10
+#define S_MIN_XP 1
+#define S_SCREAM_RANGE 1
+#define S_POISON 1
+#define S_GROUP_DESIRE 1
 #define S_ENEMIES 2  /* Number of distint enteties */ 
 
 #define G_CHAR 'S'
-#define G_MAX_XP 0
-#define G_MIN_XP 0
-#define G_SCREAM_RANGE 0
-#define G_POISON 0
-#define G_GROUP_DESIRE 0
+#define G_MAX_XP 10
+#define G_MIN_XP 1
+#define G_SCREAM_RANGE 1
+#define G_POISON 1
+#define G_GROUP_DESIRE 1
 #define G_ENEMIES 2  /* Number of distint enteties */ 
 
 #endif

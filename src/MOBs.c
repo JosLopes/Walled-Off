@@ -108,21 +108,18 @@ void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d
   for (; current_enemy < dumb_enemies; current_enemy ++)
   {
     init_tag ((tag + current_enemy), D_CHAR, D_MAX_XP, D_MIN_XP, D_SCREAM_RANGE, D_POISON, D_GROUP_DESIRE);
-    init_enemy_stats (&enemies[current_enemy], &tag[current_enemy], &d_variables[rand() % D_ENEMIES]);
+    init_enemy_stats ((enemies + current_enemy), (tag + current_enemy), (d_variables + (rand() % D_ENEMIES)));
   }
-  free (d_variables);
 
   for (; current_enemy < dumb_plus_smart; current_enemy ++)
   {
     init_tag ((tag + current_enemy), S_CHAR, S_MAX_XP, S_MIN_XP, S_SCREAM_RANGE, S_POISON, S_GROUP_DESIRE);
-    init_enemy_stats (&enemies[current_enemy], &tag[current_enemy], &s_variables[rand() % S_ENEMIES]);
+    init_enemy_stats ((enemies + current_enemy), (tag + current_enemy), (d_variables + (rand() % D_ENEMIES)));
   }
-  free (s_variables);
 
   for (; current_enemy < enemies_size ; current_enemy ++)
   {
-    init_tag ((tag + (current_enemy)), G_CHAR, G_MAX_XP, G_MIN_XP, G_SCREAM_RANGE, G_POISON, G_GROUP_DESIRE);
-    init_enemy_stats (&enemies[current_enemy], &tag[current_enemy], &g_variables[rand() % G_ENEMIES]);
+    init_tag ((tag + current_enemy), G_CHAR, G_MAX_XP, G_MIN_XP, G_SCREAM_RANGE, G_POISON, G_GROUP_DESIRE);
+    init_enemy_stats ((enemies + current_enemy), (tag + current_enemy), (d_variables + (rand() % D_ENEMIES)));
   }
-  free (g_variables);
 }
