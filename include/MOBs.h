@@ -6,7 +6,7 @@ int locate_positions (int map_heigth, int map_width, char map[][map_width], int 
 Variable_stats *d_enemies_variable_stats ();
 Variable_stats *s_enemies_variable_stats ();
 Variable_stats *g_enemies_variable_stats ();
-void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d_variables, Variable_stats *s_variables, Variable_stats *g_variables);
+void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d_variables, Variable_stats *s_variables, Variable_stats *g_variables, int map_height, int map_width, char map[][map_width]);
 
 /* Defines only used for this module porpouse */
 #define D_CHAR 'D'

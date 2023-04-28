@@ -47,7 +47,6 @@ int main () {
   number_of_non_overlaping_rooms = generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms);
 
   int enemies_size = number_of_non_overlaping_rooms * 3;
-  int new_enemies_size;
   Enemy *enemies = malloc (sizeof (Enemy) * enemies_size);
 
   Non_overlaping_rooms not_overlpg[number_of_non_overlaping_rooms];
@@ -55,12 +54,13 @@ int main () {
   init_non_overlaping_rooms (rooms, numRooms, not_overlpg, number_of_non_overlaping_rooms);
 
   /* Initializes the placement for all enemies, returning how many where placed in the map */
+  int new_enemies_size;
   new_enemies_size = locate_positions (MAP_HEIGHT, MAP_WIDTH, map, enemies_size, enemies, number_of_non_overlaping_rooms, not_overlpg);
   Tag *tag = malloc (sizeof (Tag) * new_enemies_size);
   dumb_variables = d_enemies_variable_stats ();
   smart_variables = s_enemies_variable_stats ();
   genius_variables = g_enemies_variable_stats ();
-  init_enemies (enemies_size, enemies, tag, dumb_variables, smart_variables, genius_variables);
+  init_enemies (new_enemies_size, enemies, tag, dumb_variables, smart_variables, genius_variables, MAP_HEIGHT, MAP_WIDTH, map);
 
   generateCorridors (MAP_WIDTH, map, not_overlpg, number_of_non_overlaping_rooms);
   place_player (MAP_HEIGHT, MAP_WIDTH, map, &character);
@@ -69,12 +69,14 @@ int main () {
   wrefresh (main_window);
 
   /* Enable keyboard input and non-blocking input mode */
-  /*  wrefresh(main_window);*/
+  /* Wrefresh(main_window) */
   keypad(main_window, TRUE); /*enable the interpretation of special keys*/
   movement (&character, MAP_HEIGHT, MAP_WIDTH, map, main_window);
 
   // cleanup and exit
-  delwin(main_window);
+  free (enemies);
+  enemies = NULL;
+  delwin (main_window);
   endwin ();
     
   return 0;

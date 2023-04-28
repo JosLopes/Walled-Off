@@ -99,7 +99,17 @@ void init_enemy_stats (Enemy *enemy, Tag *tag, Variable_stats *variables)
   enemy -> damage = variables -> damage;
 }
 
-void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d_variables, Variable_stats *s_variables, Variable_stats *g_variables)
+void place_enemies (int enemies_size, Enemy *enemies, int map_height, int map_width, char map[][map_width])
+{
+  int current_enemy;
+
+  for (current_enemy = 0; current_enemy < enemies_size; current_enemy ++)
+  {
+    map[enemies[current_enemy].y][enemies[current_enemy].x] = enemies -> display;
+  }
+}
+
+void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d_variables, Variable_stats *s_variables, Variable_stats *g_variables, int map_height, int map_width, char map[][map_width])
 {
   int current_enemy = 0;
   int dumb_enemies = enemies_size * 0.6;
@@ -110,16 +120,24 @@ void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d
     init_tag ((tag + current_enemy), D_CHAR, D_MAX_XP, D_MIN_XP, D_SCREAM_RANGE, D_POISON, D_GROUP_DESIRE);
     init_enemy_stats ((enemies + current_enemy), (tag + current_enemy), (d_variables + (rand() % D_ENEMIES)));
   }
+  free (d_variables);
+  d_variables = NULL;
 
   for (; current_enemy < dumb_plus_smart; current_enemy ++)
   {
     init_tag ((tag + current_enemy), S_CHAR, S_MAX_XP, S_MIN_XP, S_SCREAM_RANGE, S_POISON, S_GROUP_DESIRE);
-    init_enemy_stats ((enemies + current_enemy), (tag + current_enemy), (d_variables + (rand() % D_ENEMIES)));
+    init_enemy_stats ((enemies + current_enemy), (tag + current_enemy), (s_variables + (rand() % S_ENEMIES)));
   }
+  free (s_variables);
+  s_variables = NULL;
 
   for (; current_enemy < enemies_size ; current_enemy ++)
   {
     init_tag ((tag + current_enemy), G_CHAR, G_MAX_XP, G_MIN_XP, G_SCREAM_RANGE, G_POISON, G_GROUP_DESIRE);
-    init_enemy_stats ((enemies + current_enemy), (tag + current_enemy), (d_variables + (rand() % D_ENEMIES)));
+    init_enemy_stats ((enemies + current_enemy), (tag + current_enemy), (g_variables + (rand() % G_ENEMIES)));
   }
+  free (g_variables);
+  g_variables = NULL;
+
+  place_enemies (enemies_size, enemies, map_height, map_width, map);
 }
