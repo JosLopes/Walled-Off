@@ -3,9 +3,11 @@
 #include <stdlib.h>
 #include <time.h>
 #include <ncurses.h>
+#include <math.h>
 #include "datatypes.h"
 #include "mapgen.h"
 #include "defines.h"
+#include "vision.h"
 
 /*  é responsável por preencher o mapa com o caractere do chão (FLOOR_CHAR). 
 Ela percorre todas as posições do mapa e verifica se o caractere atual não é o caractere da parede (WALL_CHAR) 
@@ -18,7 +20,7 @@ void fillMap(int map_height, int map_width, char map[][map_width]) {
 
     for (i = 0; i < map_height; i++) {
         for (j = 0; j < map_width; j++) {
-                map[i][j] = FIRE_CHAR;
+          map[i][j] = FIRE_CHAR;
         }
     }
 
@@ -167,25 +169,81 @@ void place_player(int map_height, int map_width, char map[][map_width], Characte
     map[character -> y][character -> x] = PLAYER_CHAR_UP;
 }
 
-WINDOW *create_window (int height, int width, int midX, int midY) {
-    WINDOW *local_window;
+
+WINDOW *create_window (int height, int width, int startingX, int startingY) {
+  WINDOW *local_window;
     
-    local_window = newwin (height, width, midY, midX);
-    wborder (local_window, '|', '|', '-', '-', '*', '*', '*', '*');
+  local_window = newwin (height, width, startingY, startingX);
+  wborder (local_window, '|', '|', '-', '-', '*', '*', '*', '*');
+  if(has_colors() == TRUE) {
+    start_color();
 
-    refresh ();
-    wrefresh (local_window);
+    /*create colors*/
+    init_color(55, 125, 0, 250); /*roxo escuro*/
 
-    return local_window;
+    init_color(56, 514, 296, 799); /*roxo PLAYER_VISION_COLOR1    +perto*/
+    init_color(57, 413, 202, 694); /*PLAYER_VISION_COLOR2*/
+    init_color(58, 276, 132, 464); /*PLAYER_VISION_COLOR3*/
+    init_color(59, 183, 89, 308); /*PLAYER_VISION_COLOR4*/
+
+    init_color(5, 500, 700, 1000); /*azul claro*/
+    init_color(6, 0, 100, 1000); /*azul escuro*/
+    /*Define color pairs*/
+    init_pair(WATER_COLOR, 6, 5);
+    init_pair(PLAYER_VISION_COLOR1, COLOR_YELLOW, 56);
+    init_pair(PLAYER_VISION_COLOR2, COLOR_YELLOW, 57);
+    init_pair(PLAYER_VISION_COLOR3, COLOR_YELLOW, 58);
+    init_pair(PLAYER_VISION_COLOR4, COLOR_YELLOW, 59);
+    init_pair(FLOOR_COLOR, COLOR_WHITE, 55);
+    init_pair(ENEMY_COLOR, COLOR_GREEN, 55);
+    init_pair(WALL_COLOR, 56, 55);
+
+    }
+
+  refresh ();
+  wrefresh (local_window);
+
+  return local_window;
 }
 
-void display_map (WINDOW *main_window, int map_height, int map_width, char map[][map_width]) {
-    int i, j;
-    
-    for (i=0; i < map_width; i++) {
-      for (j=0; j < map_height; j++) {
-        mvwprintw(main_window, j, i, "%c", map[j][i]);
+void display_map (WINDOW *main_window, Character *character, int map_height, int map_width, char map[][map_width]) {
+
+  int range = sets_range(character->life);
+  int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, map_width - 1);
+  int y_min = fmax(character->y - range, 0), y_max = fmin(character->y + range, map_height - 1);
+  
+  /* Redraw map */
+  for (int i = 0; i < map_width; i++) {
+    for (int j = 0; j < map_height; j++) {
+      
+      if (i >= x_min && j >= y_min && i <= x_max && j <= y_max)
+      {
+        vision(main_window, character, map_height, map_width, map);
+      }
+      if (map[j][i] == ENEMY_G || map[j][i] == ENEMY_S || map[j][i] == ENEMY_O ){
+          wattron(main_window,COLOR_PAIR(ENEMY_COLOR)); 
+          mvwaddch(main_window, j, i, map[j][i]); 
+          wattroff(main_window,COLOR_PAIR(ENEMY_COLOR));
+      }
+      /*print blue water*/
+      else if (map[j][i] == FIRE_CHAR){
+        wattron(main_window,COLOR_PAIR(WATER_COLOR)); 
+        mvwaddch(main_window, j, i, map[j][i]); 
+        wattroff(main_window,COLOR_PAIR(WATER_COLOR)); 
+      }
+      else if (map[j][i] == WALL_CHAR){
+        wattron(main_window,COLOR_PAIR(WALL_COLOR)); 
+        mvwaddch(main_window, j, i, map[j][i]); 
+        wattroff(main_window,COLOR_PAIR(WALL_COLOR));
+      }
+      /*print black rooms*/
+      else 
+      {
+        wattron(main_window,COLOR_PAIR(FLOOR_COLOR)); 
+        mvwaddch(main_window, j, i, map[j][i]); 
+        wattroff(main_window,COLOR_PAIR(FLOOR_COLOR));
       }
     }
-    wrefresh (main_window);
+  }
+  wrefresh(main_window); /*refresh the window to display changes*/
 }

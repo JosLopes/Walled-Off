@@ -5,6 +5,7 @@
 #include "defines.h"
 #include "movement.h"
 #include "mapgen.h"
+#include "vision.h"
 
 /*movement restriction*/
 int movement_restrictions(int x, int y, char map[][MAP_WIDTH])
@@ -152,27 +153,7 @@ void movement(Character *character, int map_height, int map_width, char map[][ma
     default:
       break;
     }
-
-
-    /*Redraw map*/
-    for (int i = 0; i < map_width; i++)
-    {
-      for (int j = 0; j < map_height; j++)
-      {
-        mvwprintw(main_window, j, i, "%c", map[j][i]);
-      }
-    }
-    wrefresh(main_window);
+    vision(main_window, character, map_height, map_width, map);
+    display_map (main_window, character, map_height, map_width, map);
   }
 }
-
-/*
-void damage (Character *character, WINDOW *main_window){
-  if (map [character -> y][character -> x] == FIRE_CHAR)
-  {
-    character -> life = character -> life - 20;
-  }
-}
-void potion (Character *character, WINDOW *main_window)
-void food (Character *character, WINDOW *main_window)
-*/
