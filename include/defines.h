@@ -24,5 +24,6 @@
 #define PLAYER_VISION_COLOR 1
 #define WATER_COLOR 2
 #define FLOOR_COLOR 3
+#define ENEMY_COLOR 4
 
 #endif

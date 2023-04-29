@@ -48,9 +48,12 @@ void vision (WINDOW *main_window, Character *character, int map_height, int map_
       else if (pow(x - character->x, 2) + pow(y - character->y, 2) <= pow(range, 2)) {
         if (map[y][x] == ENEMY_G ||
             map[y][x] == ENEMY_S ||
-            map[y][x] == ENEMY_O ||
-            map[y][x] == WALL_CHAR){
-
+            map[y][x] == ENEMY_O ){
+          wattron(main_window,COLOR_PAIR(ENEMY_COLOR)); 
+          mvwaddch(main_window, y, x, map[y][x]); 
+          wattroff(main_window,COLOR_PAIR(ENEMY_COLOR));
+            }
+        else if (map[y][x] == WALL_CHAR){
           wattron(main_window,COLOR_PAIR(FLOOR_COLOR)); 
           mvwaddch(main_window, y, x, map[y][x]); 
           wattroff(main_window,COLOR_PAIR(FLOOR_COLOR));

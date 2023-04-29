@@ -215,6 +215,7 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
     init_pair(WATER_COLOR, 6, 5);
     init_pair(PLAYER_VISION_COLOR, COLOR_YELLOW, 56);
     init_pair(FLOOR_COLOR, COLOR_WHITE, 55);
+    init_pair(ENEMY_COLOR, COLOR_GREEN, 55);
 
     }
 
@@ -238,8 +239,13 @@ void display_map (WINDOW *main_window, Character *character, int map_height, int
       {
         vision(main_window, character, map_height, map_width, map);
       }
+      if (map[j][i] == ENEMY_G || map[j][i] == ENEMY_S || map[j][i] == ENEMY_O ){
+          wattron(main_window,COLOR_PAIR(ENEMY_COLOR)); 
+          mvwaddch(main_window, j, i, map[j][i]); 
+          wattroff(main_window,COLOR_PAIR(ENEMY_COLOR));
+      }
       /*print blue water*/
-      if (map[j][i] == FIRE_CHAR){
+      else if (map[j][i] == FIRE_CHAR){
         wattron(main_window,COLOR_PAIR(WATER_COLOR)); 
         mvwaddch(main_window, j, i, map[j][i]); 
         wattroff(main_window,COLOR_PAIR(WATER_COLOR)); 
