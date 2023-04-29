@@ -45,6 +45,7 @@ typedef struct {
   float range;
 } Weapon;
 
+/* Consumables parameters */
 typedef struct {
   char name[20];
   int impact;
