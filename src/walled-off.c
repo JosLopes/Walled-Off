@@ -41,71 +41,95 @@ void init_ncurses() {
 
 }
 
-int main () {
-
-
+int main ()
+{
+  /* WINDOWS to be used */
   WINDOW *main_window;
+
+  /* Guarantees a new sequence of "random" numbers */
   srand(time(NULL));
 
-  char map[MAP_HEIGHT][MAP_WIDTH];
-  Room rooms[MAX_ROOMS];
-  int number_of_non_overlaping_rooms;
-  Character character;
+  /* Map related initializations */
+  char map[MAP_HEIGHT][MAP_WIDTH];  /* Playable map */
+
   int numRooms = rand() % (MAX_ROOMS - 35) + 10;
+  Room rooms[numRooms];
+  int number_of_non_overlaping_rooms;
 
-  Variable_stats *dumb_variables;
-  Variable_stats *smart_variables;
-  Variable_stats *genius_variables;
+  /* Main Character related initializations */
+  Character character;
 
-
-  init_ncurses();
+  init_ncurses(); /* Initializes ncurses and its functionalities */
   clear();
   refresh();
 
-
-  /* Create main window */
+  /* Creates main window (playable window) from mapgen.c */
   main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 2, 2);
-  refresh();
-  wrefresh (main_window);
 
-  /* Initialize character and map */
-  init_character (&character);
   fillMap (MAP_HEIGHT, MAP_WIDTH, map);
   number_of_non_overlaping_rooms = generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms);
-
-  int enemies_size = number_of_non_overlaping_rooms * 3;
-  Enemy *enemies = malloc (sizeof (Enemy) * enemies_size);
-
   Non_overlaping_rooms not_overlpg[number_of_non_overlaping_rooms];
+
+  /* Mob's (enemies) related initializations */
+  int max_number_of_enemies = number_of_non_overlaping_rooms * 3; /* Max number of enemies */
+
   /* Initializes a struct array that stores all non overlaping rooms */
   init_non_overlaping_rooms (rooms, numRooms, not_overlpg, number_of_non_overlaping_rooms);
+  
+  Enemy *enemies = malloc (sizeof (Enemy) * max_number_of_enemies); /* Storage for every enemy */
+  Tag *tag = malloc (sizeof (Tag) * max_number_of_enemies);
 
-  /* Initializes the placement for all enemies, returning how many where placed in the map */
-  int new_enemies_size;
-  new_enemies_size = locate_positions (MAP_HEIGHT, MAP_WIDTH, map, enemies_size, enemies, number_of_non_overlaping_rooms, not_overlpg);
-  Tag *tag = malloc (sizeof (Tag) * new_enemies_size);
-  dumb_variables = d_enemies_variable_stats ();
-  smart_variables = s_enemies_variable_stats ();
-  genius_variables = g_enemies_variable_stats ();
-  init_enemies (new_enemies_size, enemies, tag, dumb_variables, smart_variables, genius_variables, MAP_HEIGHT, MAP_WIDTH, map);
+    /* Initializes the placement for all enemies, returning how many where placed in the map from the max value "number_of_enemies" */
+  int number_of_enemies = locate_positions (MAP_HEIGHT, MAP_WIDTH, map, max_number_of_enemies, enemies, number_of_non_overlaping_rooms, not_overlpg);
+  
+  /* Initializes variable stats for each type of enemmy */
+  Variable_stats *dumb_variables = d_enemies_variable_stats ();
+  Variable_stats *smart_variables = s_enemies_variable_stats ();
+  Variable_stats *genius_variables = g_enemies_variable_stats ();
+  /* Initializes all the enemies stats, including pre-defined */
+  init_enemies (number_of_enemies, enemies, tag, dumb_variables, smart_variables, genius_variables, MAP_WIDTH, map);
 
+  /* Finishes the building of the map */
   generateCorridors (MAP_WIDTH, map, not_overlpg, number_of_non_overlaping_rooms);
-  place_player (MAP_HEIGHT, MAP_WIDTH, map, &character);
-  display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
 
-  wrefresh (main_window);
+  /* Initializes main character, placing it in the map */
+  init_character (&character);
+  place_player (MAP_HEIGHT, MAP_WIDTH, map, &character);
+
+  /* Display the map on the main_window */
+  display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
+  wrefresh (main_window); /* Refresh main_window */
+
+  /* I dont know hahahahha */
   attron(COLOR_PAIR(WATER_COLOR));
   mvwaddch(main_window, 0, 0, 'w');
   attroff(COLOR_PAIR(WATER_COLOR));
 
-  /* Enable keyboard input and non-blocking input mode */
-  /* Wrefresh(main_window) */
-  keypad(main_window, TRUE); /*enable the interpretation of special keys*/
-  movement (&character, MAP_HEIGHT, MAP_WIDTH, map, main_window);
+  /* Enable keyboard input for special keys */
+  keypad(main_window, TRUE);
 
-  // cleanup and exit
-  free (enemies);
+  /*=================================== End of initialization ===================================*/
+  
+  /* GAME LOOP */
+  /* Input character read as an integer */
+  int ch;
+
+  while ((ch = wgetch(main_window)) != 'q')
+  {
+    /* Basic movement */
+    movement (&character, MAP_WIDTH, map, main_window, ch);
+
+    /* Introducing vision */
+    vision(main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
+
+    /* At the end of every loop, refresh main_window */
+    display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
+  }
+
+  /* cleanup and exit */
+  free (enemies); /* fazer uma função void free */
   enemies = NULL;
+
   delwin (main_window);
   endwin ();
     

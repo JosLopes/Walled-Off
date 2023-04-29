@@ -59,11 +59,11 @@ for (int x = x_min; x <= x_max; x++) {
         wattron(main_window, COLOR_PAIR(PLAYER_VISION_COLOR1)); 
         mvwaddch(main_window, y, x, map[y][x]); 
         wattroff(main_window, COLOR_PAIR(PLAYER_VISION_COLOR1));
-
       }
     }
   }
 }
+
 void vision (WINDOW *main_window, Character *character, int map_height, int map_width, char map[][map_width])
 {
   int range = sets_range(character->life);

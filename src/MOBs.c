@@ -99,7 +99,7 @@ void init_enemy_stats (Enemy *enemy, Tag *tag, Variable_stats *variables)
   enemy -> damage = variables -> damage;
 }
 
-void place_enemies (int enemies_size, Enemy *enemies, int map_height, int map_width, char map[][map_width])
+void place_enemies (int enemies_size, Enemy *enemies, int map_width, char map[][map_width])
 {
   int current_enemy;
 
@@ -109,7 +109,7 @@ void place_enemies (int enemies_size, Enemy *enemies, int map_height, int map_wi
   }
 }
 
-void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d_variables, Variable_stats *s_variables, Variable_stats *g_variables, int map_height, int map_width, char map[][map_width])
+void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d_variables, Variable_stats *s_variables, Variable_stats *g_variables, int map_width, char map[][map_width])
 {
   int current_enemy = 0;
   int dumb_enemies = enemies_size * 0.6;
@@ -139,5 +139,5 @@ void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d
   free (g_variables);
   g_variables = NULL;
 
-  place_enemies (enemies_size, enemies, map_height, map_width, map);
+  place_enemies (enemies_size, enemies, map_width, map);
 }
