@@ -58,7 +58,7 @@ int main ()
   }
 
   int numRooms = rand() % (MAX_ROOMS - 35) + 10;
-  Room rooms[numRooms];
+  Room *rooms = malloc (sizeof (Room) * numRooms); // Free this memory later !!!
   int number_of_non_overlaping_rooms;
 
   /* Main Character related initializations */
@@ -73,7 +73,7 @@ int main ()
 
   fillMap (MAP_HEIGHT, MAP_WIDTH, map);
   number_of_non_overlaping_rooms = generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms);
-  Non_overlaping_rooms not_overlpg[number_of_non_overlaping_rooms];
+  Non_overlaping_rooms *not_overlpg = malloc (sizeof (Non_overlaping_rooms) * number_of_non_overlaping_rooms); // Free this memory later !!!
 
   /* Mob's (enemies) related initializations */
   int max_number_of_enemies = number_of_non_overlaping_rooms * 3; /* Max number of enemies */
