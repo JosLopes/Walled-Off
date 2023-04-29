@@ -50,7 +50,12 @@ int main ()
   srand(time(NULL));
 
   /* Map related initializations */
-  char map[MAP_HEIGHT][MAP_WIDTH];  /* Playable map */
+  int current_line;
+  char **map = malloc (sizeof (char *) * MAP_HEIGHT);
+  for (current_line = 0; current_line < MAP_HEIGHT; current_line ++)
+  {
+    map[current_line] = malloc (sizeof (char) * MAP_WIDTH);
+  }
 
   int numRooms = rand() % (MAX_ROOMS - 35) + 10;
   Room rooms[numRooms];
@@ -79,7 +84,8 @@ int main ()
   Enemy *enemies = malloc (sizeof (Enemy) * max_number_of_enemies); /* Storage for every enemy */
   Tag *tag = malloc (sizeof (Tag) * max_number_of_enemies);
 
-    /* Initializes the placement for all enemies, returning how many where placed in the map from the max value "number_of_enemies" */
+    /* Initializes the placement for all enemies, returning how many where placed in the map */
+    /* from the max value "number_of_enemies"                                                */
   int number_of_enemies = locate_positions (MAP_HEIGHT, MAP_WIDTH, map, max_number_of_enemies, enemies, number_of_non_overlaping_rooms, not_overlpg);
   
   /* Initializes variable stats for each type of enemmy */
@@ -87,10 +93,10 @@ int main ()
   Variable_stats *smart_variables = s_enemies_variable_stats ();
   Variable_stats *genius_variables = g_enemies_variable_stats ();
   /* Initializes all the enemies stats, including pre-defined */
-  init_enemies (number_of_enemies, enemies, tag, dumb_variables, smart_variables, genius_variables, MAP_WIDTH, map);
+  init_enemies (number_of_enemies, enemies, tag, dumb_variables, smart_variables, genius_variables, map);
 
   /* Finishes the building of the map */
-  generateCorridors (MAP_WIDTH, map, not_overlpg, number_of_non_overlaping_rooms);
+  generateCorridors (map, not_overlpg, number_of_non_overlaping_rooms);
 
   /* Initializes main character, placing it in the map */
   init_character (&character);
@@ -108,16 +114,16 @@ int main ()
   /* Enable keyboard input for special keys */
   keypad(main_window, TRUE);
 
-  /*=================================== End of initialization ===================================*/
+  /*=================================== End of Initialization ===================================*/
   
   /* GAME LOOP */
-  /* Input character read as an integer */
-  int ch;
+  int ch;  /* Input character read as an integer */
+  char previous_char = FLOOR_CHAR;  /* Char before the character got placed in the map */
 
   while ((ch = wgetch(main_window)) != 'q')
   {
     /* Basic movement */
-    movement (&character, MAP_WIDTH, map, main_window, ch);
+    movement (&character, map, ch, &previous_char);
 
     /* Introducing vision */
     vision(main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
@@ -129,6 +135,12 @@ int main ()
   /* cleanup and exit */
   free (enemies); /* fazer uma função void free */
   enemies = NULL;
+
+  for (current_line = 0; current_line < MAP_HEIGHT; current_line ++)
+  {
+    free (map[current_line]);
+  }
+  free (map);
 
   delwin (main_window);
   endwin ();

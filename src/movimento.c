@@ -8,7 +8,7 @@
 #include "vision.h"
 
 /*movement restriction*/
-int movement_restrictions(int x, int y, char map[][MAP_WIDTH])
+int movement_restrictions(int x, int y, char **map)
 {
   /*in case he is trying to move into a wall it stays in the same place*/
   if (map[y][x] == WALL_CHAR)
@@ -30,13 +30,8 @@ int movement_restrictions(int x, int y, char map[][MAP_WIDTH])
  *         3 = up            *
  *     q -> quit comand      *
  ****************************/
-void movement(Character *character, int map_width, char map[][map_width], WINDOW *main_window, int ch)
+void movement(Character *character, char **map, int ch, char *previous_char)
 {
-  char previous_char = FLOOR_CHAR;
-
-  /*Clear previous character position*/
-  mvwprintw(main_window, character->y, character->x, " ");
-
   /*Update character position based on input*/
   switch (ch)
   {
@@ -52,8 +47,8 @@ void movement(Character *character, int map_width, char map[][map_width], WINDOW
     else
     {
       /*restores the previous character in the map*/
-      map[character->y][character->x] = previous_char;
-      previous_char = map[character->y][--character->x];
+      map[character->y][character->x] = *previous_char;
+      *previous_char = map[character->y][--character->x];
       map[character->y][character->x] = PLAYER_CHAR_LEFT;
       character->direction = PLAYER_CHAR_LEFT;
     }
@@ -67,8 +62,8 @@ void movement(Character *character, int map_width, char map[][map_width], WINDOW
     }
     else
     {
-      map[character->y][character->x] = previous_char;
-      previous_char = map[character->y][++character->x];
+      map[character->y][character->x] = *previous_char;
+      *previous_char = map[character->y][++character->x];
       map[character->y][character->x] = PLAYER_CHAR_RIGHT;
       character->direction = PLAYER_CHAR_RIGHT;
     }
@@ -81,8 +76,8 @@ void movement(Character *character, int map_width, char map[][map_width], WINDOW
     }
     else
     {
-      map[character->y][character->x] = previous_char;
-      previous_char = map[--character->y][character->x];
+      map[character->y][character->x] = *previous_char;
+      *previous_char = map[--character->y][character->x];
       map[character->y][character->x] = PLAYER_CHAR_UP;
       character->direction = PLAYER_CHAR_UP;
     }
@@ -95,8 +90,8 @@ void movement(Character *character, int map_width, char map[][map_width], WINDOW
     }
     else
     {
-      map[character->y][character->x] = previous_char;
-      previous_char = map[++character->y][character->x];
+      map[character->y][character->x] = *previous_char;
+      *previous_char = map[++character->y][character->x];
       map[character->y][character->x] = PLAYER_CHAR_DOWN;
       character->direction = PLAYER_CHAR_DOWN;
     }

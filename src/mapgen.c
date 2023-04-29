@@ -15,7 +15,7 @@ ou o caractere do chão (FLOOR_CHAR). Caso não seja nenhum desses, ela preenche
 indicando que aquele espaço ainda não foi preenchido. */
 
               
-void fillMap(int map_height, int map_width, char map[][map_width]) {
+void fillMap(int map_height, int map_width, char **map) {
     int i, j;
 
     for (i = 0; i < map_height; i++) {
@@ -38,7 +38,7 @@ void fillMap(int map_height, int map_width, char map[][map_width]) {
 
 /*A função generateRooms recebe como parâmetros o mapa do jogo e uma variável numRooms,
 que indica quantas salas devem ser geradas no mapa.*/
-int generateRooms(int map_height, int map_width, char map[][map_width], Room rooms[], int numRooms) {
+int generateRooms(int map_height, int map_width, char **map, Room rooms[], int numRooms) {
     int i, j, k, number_of_non_overlaping_rooms = 0;
 
     /*O ciclo for cria as salas aleatoriamente. A cada iteração, uma nova sala é gerada. 
@@ -100,7 +100,7 @@ void init_non_overlaping_rooms (Room rooms[], int numRooms, Non_overlaping_rooms
   }
 }
 
-void generateCorridors(int map_width, char map[][map_width], Non_overlaping_rooms no_overlpg[], int nor_size) 
+void generateCorridors(char **map, Non_overlaping_rooms no_overlpg[], int nor_size) 
 {
   int bridge_ind = 0, temp;
   Vector vector;
@@ -161,10 +161,10 @@ void generateCorridors(int map_width, char map[][map_width], Non_overlaping_room
   }
 }
 
-void place_player(int map_height, int map_width, char map[][map_width], Character *character) {
+void place_player(int map_height, int map_width, char **map, Character *character) {
     do {
-        character -> x = rand() % (map_height-1) +1;
-        character -> y = rand() % (map_width-1) +1;
+        character -> x = rand() % (map_width-1) +1;
+        character -> y = rand() % (map_height-1) +1;
     } while (map[character -> y][character -> x] != FLOOR_CHAR);
     map[character -> y][character -> x] = PLAYER_CHAR_UP;
 }
@@ -206,7 +206,7 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
   return local_window;
 }
 
-void display_map (WINDOW *main_window, Character *character, int map_height, int map_width, char map[][map_width]) {
+void display_map (WINDOW *main_window, Character *character, int map_height, int map_width, char **map) {
 
   int range = sets_range(character->life);
   int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, map_width - 1);
@@ -221,9 +221,9 @@ void display_map (WINDOW *main_window, Character *character, int map_height, int
         vision(main_window, character, map_height, map_width, map);
       }
       if (map[j][i] == ENEMY_G || map[j][i] == ENEMY_S || map[j][i] == ENEMY_O ){
-          wattron(main_window,COLOR_PAIR(ENEMY_COLOR)); 
-          mvwaddch(main_window, j, i, map[j][i]); 
-          wattroff(main_window,COLOR_PAIR(ENEMY_COLOR));
+        wattron(main_window,COLOR_PAIR(ENEMY_COLOR)); 
+        mvwaddch(main_window, j, i, map[j][i]); 
+        wattroff(main_window,COLOR_PAIR(ENEMY_COLOR));
       }
       /*print blue water*/
       else if (map[j][i] == FIRE_CHAR){

@@ -2,11 +2,11 @@
 #ifndef MOBS_H
 #define MOBS_H
 
-int locate_positions (int map_heigth, int map_width, char map[][map_width], int enemies_size, Enemy enemies[], int nor_size, Non_overlaping_rooms no_overlpg[]);
+int locate_positions (int map_heigth, int map_width, char **map, int enemies_size, Enemy enemies[], int nor_size, Non_overlaping_rooms no_overlpg[]);
 Variable_stats *d_enemies_variable_stats ();
 Variable_stats *s_enemies_variable_stats ();
 Variable_stats *g_enemies_variable_stats ();
-void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d_variables, Variable_stats *s_variables, Variable_stats *g_variables, int map_width, char map[][map_width]);
+void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d_variables, Variable_stats *s_variables, Variable_stats *g_variables, char **map);
 
 /* Defines only used for this module porpouse */
 #define D_CHAR 'D'

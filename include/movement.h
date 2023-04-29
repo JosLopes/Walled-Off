@@ -3,6 +3,6 @@
 #ifndef MOVEMENT_H
 #define MOVEMENT_H
 
-void movement (Character *character, int map_width, char map[][map_width], WINDOW *main_window, int ch);
+void movement (Character *character, char **map, int ch, char *previous_char);
 
 #endif

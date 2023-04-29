@@ -31,7 +31,7 @@ int sets_range (int life){
   return range;
 }
 
-void vision_color (WINDOW *main_window, Character *character, int map_height, int map_width, char map[][map_width], int range){
+void vision_color (WINDOW *main_window, Character *character, int map_height, int map_width, char **map, int range){
   int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, map_width - 1);
   int y_min = fmax(character->y - range+1, 0), y_max = fmin(character->y + range-1, map_height - 1);
 
@@ -64,7 +64,7 @@ for (int x = x_min; x <= x_max; x++) {
   }
 }
 
-void vision (WINDOW *main_window, Character *character, int map_height, int map_width, char map[][map_width])
+void vision (WINDOW *main_window, Character *character, int map_height, int map_width, char **map)
 {
   int range = sets_range(character->life);
   int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, map_width - 1);
