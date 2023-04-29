@@ -85,28 +85,32 @@ int generateRooms(int map_height, int map_width, char map[][map_width], Room roo
     return number_of_non_overlaping_rooms;
 }
 
-void generateCorridors(int map_width, char map[][map_width], Room rooms[], int numRooms, int number_of_non_overlaping_rooms) 
+void init_non_overlaping_rooms (Room rooms[], int numRooms, Non_overlaping_rooms no_overlpg[], int nor_size)
 {
-  int room_number = 0, bridges_placed = 0, bridge_ind = 0, temp;
-  Bridge bridges[number_of_non_overlaping_rooms];
-  Vector vector;
+  int room_number = 0, overlaping_list = 0;
 
-  for (; room_number < numRooms && bridges_placed < number_of_non_overlaping_rooms; room_number++)
+  for (; room_number < numRooms && overlaping_list < nor_size; room_number++)
   {
     if (rooms[room_number].is_overlaping == 0)
     {
-      bridges[bridges_placed].startingX = (rooms[room_number].width >> 1) + rooms[room_number].x;
-      bridges[bridges_placed].startingY = (rooms[room_number].height >> 1) + rooms[room_number].y;
-      bridges_placed++;
+      no_overlpg[overlaping_list].midX = (rooms[room_number].width >> 1) + rooms[room_number].x;
+      no_overlpg[overlaping_list].midY = (rooms[room_number].height >> 1) + rooms[room_number].y;
+      overlaping_list ++;
     }
   }
+}
+
+void generateCorridors(int map_width, char map[][map_width], Non_overlaping_rooms no_overlpg[], int nor_size) 
+{
+  int bridge_ind = 0, temp;
+  Vector vector;
   
-  for (; bridge_ind < bridges_placed && bridge_ind + 1 < bridges_placed; bridge_ind++)
+  for (; bridge_ind + 1 < nor_size; bridge_ind++)
   {
-    vector.startingX = bridges[bridge_ind].startingX;
-    int endingX      = bridges[bridge_ind+1].startingX;
-    vector.startingY = bridges[bridge_ind].startingY;
-    int endingY      = bridges[bridge_ind+1].startingY;
+    vector.startingX = no_overlpg[bridge_ind].midX;
+    int endingX = no_overlpg[bridge_ind+1].midX;
+    vector.startingY = no_overlpg[bridge_ind].midY;
+    int endingY = no_overlpg[bridge_ind+1].midY;
     
     // calcula a direção do corredor
     int directionX = endingX - vector.startingX;
@@ -165,38 +169,6 @@ void place_player(int map_height, int map_width, char map[][map_width], Characte
     map[character -> y][character -> x] = PLAYER_CHAR_UP;
 }
 
-void place_enemies(int map_height, int map_width, char map[][map_width], int num_goblins, int num_skeletons, int num_orcs) {
-    int i, x, y;
-    char symbols[] = {'g', 's', 'o'}; // símbolos para representar os diferentes tipos de inimigos
-    srand(time(NULL)); // inicializa a semente do gerador de números aleatórios
-    // coloca os goblins
-    for (i = 0; i < num_goblins; i++) {
-        do {
-            x = rand() % map_width;
-            y = rand() % map_height;
-        } while (map[y][x] != FLOOR_CHAR);
-        Enemy goblin = {x, y, symbols[0]};
-        map[y][x] = goblin.symbol;
-    }
-    // coloca os esqueletos
-    for (i = 0; i < num_skeletons; i++) {
-        do {
-            x = rand() % map_width;
-            y = rand() % map_height;
-        } while (map[y][x] != FLOOR_CHAR);
-        Enemy skeleton = {x, y, symbols[1]};
-        map[y][x] = skeleton.symbol;
-    }
-    // coloca os orcs
-    for (i = 0; i < num_orcs; i++) {
-        do {
-            x = rand() % map_width;
-            y = rand() % map_height;
-        } while (map[y][x] != FLOOR_CHAR);
-        Enemy orc = {x, y, symbols[2]};
-        map[y][x] = orc.symbol;
-    }
-}
 
 WINDOW *create_window (int height, int width, int startingX, int startingY) {
   WINDOW *local_window;

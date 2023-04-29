@@ -16,19 +16,11 @@ int movement_restrictions(int x, int y, char map[][MAP_WIDTH])
     return 1; /*true -> can't move*/
   }
   /*in case he is trying to move into a enemy it stays in the same place*/
-  else if (map[y][x] == ENEMY_O || map[y][x] == ENEMY_G || map[y][x] == ENEMY_S)
+  else if (map[y][x] == FLOOR_CHAR)
   {
-    return 1;
+    return 0;
   }
-  /*in case the position is outside the map limits*/
-  else if (y >= MAP_HEIGHT || x >= MAP_WIDTH || x < 0 || y < 0)
-  {
-    return 1;
-  }
-  else
-  {
-    return 0; /*false -> there are no movement restrictions so it can move*/
-  }
+  return 0;
 }
 /****************************
  *     Directions:           *
