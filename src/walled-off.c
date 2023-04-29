@@ -33,11 +33,6 @@ void init_ncurses() {
   noecho();
   curs_set(FALSE);
 
-  /*Define color pairs*/
-  init_pair(WATER_COLOR, COLOR_CYAN, COLOR_BLUE);
-  init_pair(PLAYER_VISION_COLOR, COLOR_YELLOW, COLOR_RED);
-  init_pair(FLOOR_COLOR, COLOR_WHITE, COLOR_BLACK);
-
   /*Enable the use of colors*/
   use_default_colors();
   curs_set(0);

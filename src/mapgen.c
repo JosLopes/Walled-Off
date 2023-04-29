@@ -205,10 +205,17 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
   wborder (local_window, '|', '|', '-', '-', '*', '*', '*', '*');
   if(has_colors() == TRUE) {
     start_color();
+
+    /*create colors*/
+    init_color(55, 125, 0, 250); /*roxo*/
+    init_color(56, 550, 0, 1000); /*roxo claro*/
+    init_color(5, 500, 700, 1000); /*azul claro*/
+    init_color(6, 0, 100, 1000); /*azul escuro*/
     /*Define color pairs*/
-    init_pair(WATER_COLOR, COLOR_CYAN, COLOR_BLUE);
-    init_pair(PLAYER_VISION_COLOR, COLOR_YELLOW, COLOR_RED);
-    init_pair(FLOOR_COLOR, COLOR_WHITE, COLOR_BLACK);
+    init_pair(WATER_COLOR, 6, 5);
+    init_pair(PLAYER_VISION_COLOR, COLOR_YELLOW, 56);
+    init_pair(FLOOR_COLOR, COLOR_WHITE, 55);
+
     }
 
   refresh ();
