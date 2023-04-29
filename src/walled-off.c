@@ -14,6 +14,37 @@ void init_character(Character *character)
   character -> y = 0;
 }
 
+void init_ncurses() {
+
+  initscr();
+  /*initialize ncurses*/
+  start_color();
+  cbreak();
+  noecho();
+  keypad(stdscr, TRUE);
+
+  // Check if the terminal supports color
+  if (has_colors() == FALSE) {
+      endwin();
+      printf("Your terminal does not support color\n");
+      exit(1);
+  }
+  raw();
+  noecho();
+  curs_set(FALSE);
+
+  /*Define color pairs*/
+  init_pair(WATER_COLOR, COLOR_CYAN, COLOR_BLUE);
+  init_pair(PLAYER_VISION_COLOR, COLOR_YELLOW, COLOR_RED);
+  init_pair(FLOOR_COLOR, COLOR_WHITE, COLOR_BLACK);
+
+  /*Enable the use of colors*/
+  use_default_colors();
+  curs_set(0);
+  noecho();
+
+}
+
 int main () {
 
 
@@ -29,32 +60,14 @@ int main () {
   int num_skeletons = rand() % 10;
 
 
-  /*initializes the curses library and sets up terminal I/O*/
-  initscr();
-  raw ();
-  noecho ();
-  curs_set(FALSE); /*Hides the cursor*/                                                                                                                                                  ////////////////
-  
-  if (has_colors() == FALSE) {
-        endwin();
-        printf("Your terminal does not support color\n");
-        exit(1);
-  }
-  start_color();
-  /*init_pair(index, foreground, background);*/
-  init_pair(WATER_COLOR, COLOR_CYAN, COLOR_BLUE); 
-  init_pair(PLAYER_VISION_COLOR, COLOR_YELLOW ,COLOR_RED);
-  init_pair(FLOOR_COLOR, COLOR_WHITE, COLOR_BLACK);
-
-      // Enable the use of colors
-  use_default_colors();
-  curs_set(0);
-  noecho();
+  init_ncurses();
   clear();
-  refresh ();
+  refresh();
+
 
   /* Create main window */
   main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 2, 2);
+  refresh();
   wrefresh (main_window);
 
   /* Initialize character and map */
@@ -67,6 +80,9 @@ int main () {
   display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
 
   wrefresh (main_window);
+  attron(COLOR_PAIR(WATER_COLOR));
+  mvwaddch(main_window, 0, 0, 'w');
+  attroff(COLOR_PAIR(WATER_COLOR));
 
   /* Enable keyboard input and non-blocking input mode */
   nodelay(main_window, TRUE);

@@ -161,7 +161,7 @@ void movement(Character *character, int map_height, int map_width, char map[][ma
     default:
       break;
     }
-    vision(character, map_height, map_width, map);
+    vision(main_window, character, map_height, map_width, map);
     display_map (main_window, character, map_height, map_width, map);
   }
 }

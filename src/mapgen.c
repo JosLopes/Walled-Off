@@ -7,6 +7,7 @@
 #include "datatypes.h"
 #include "mapgen.h"
 #include "defines.h"
+#include "vision.h"
 
 /*  é responsável por preencher o mapa com o caractere do chão (FLOOR_CHAR). 
 Ela percorre todas as posições do mapa e verifica se o caractere atual não é o caractere da parede (WALL_CHAR) 
@@ -198,20 +199,27 @@ void place_enemies(int map_height, int map_width, char map[][map_width], int num
 }
 
 WINDOW *create_window (int height, int width, int startingX, int startingY) {
-    WINDOW *local_window;
+  WINDOW *local_window;
     
-    local_window = newwin (height, width, startingY, startingX);
-    wborder (local_window, '|', '|', '-', '-', '*', '*', '*', '*');
+  local_window = newwin (height, width, startingY, startingX);
+  wborder (local_window, '|', '|', '-', '-', '*', '*', '*', '*');
+  if(has_colors() == TRUE) {
+    start_color();
+    /*Define color pairs*/
+    init_pair(WATER_COLOR, COLOR_CYAN, COLOR_BLUE);
+    init_pair(PLAYER_VISION_COLOR, COLOR_YELLOW, COLOR_RED);
+    init_pair(FLOOR_COLOR, COLOR_WHITE, COLOR_BLACK);
+    }
 
-    refresh ();
-    wrefresh (local_window);
+  refresh ();
+  wrefresh (local_window);
 
-    return local_window;
+  return local_window;
 }
 
 void display_map (WINDOW *main_window, Character *character, int map_height, int map_width, char map[][map_width]) {
 
-  int range = PLAYER_VISION;
+  int range = sets_range(character->life);
   int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, map_width - 1);
   int y_min = fmax(character->y - range, 0), y_max = fmin(character->y + range, map_height - 1);
   
@@ -219,39 +227,22 @@ void display_map (WINDOW *main_window, Character *character, int map_height, int
   for (int i = 0; i < map_width; i++) {
     for (int j = 0; j < map_height; j++) {
       
-      /*character vision*/
-      if(i > x_min && j > y_min && i < x_max && j < y_max){
-        attron(COLOR_PAIR(PLAYER_VISION_COLOR)); 
-        /*character position*/
-        if(i == character->x && j == character->y)
-        {
-          mvwaddch(main_window, j, i, map[j][i]); /*print the character at the given position*/
-        }
-        else 
-        {
-          /* set values within circle of radius range */
-          for (int x = x_min; x <= x_max; x++) 
-          {
-            for (int y = y_min; y <= y_max; y++) 
-            {
-              mvwaddch(main_window, y, x, map[y][x]); 
-            }
-          }
-        }
-        attroff(COLOR_PAIR(PLAYER_VISION_COLOR));
+      if (i >= x_min && j >= y_min && i <= x_max && j <= y_max)
+      {
+        vision(main_window, character, map_height, map_width, map);
       }
       /*print blue water*/
       if (map[j][i] == FIRE_CHAR){
-        attron(COLOR_PAIR(WATER_COLOR)); 
-        mvwaddch(main_window, j, i, map[j][i]);
-        attroff(COLOR_PAIR(WATER_COLOR)); 
+        wattron(main_window,COLOR_PAIR(WATER_COLOR)); 
+        mvwaddch(main_window, j, i, map[j][i]); 
+        wattroff(main_window,COLOR_PAIR(WATER_COLOR)); 
       }
       /*print black rooms*/
       else 
       {
-        attron(COLOR_PAIR(FLOOR_COLOR)); 
+        wattron(main_window,COLOR_PAIR(FLOOR_COLOR)); 
         mvwaddch(main_window, j, i, map[j][i]); 
-        attroff(COLOR_PAIR(FLOOR_COLOR));
+        wattroff(main_window,COLOR_PAIR(FLOOR_COLOR));
       }
     }
   }

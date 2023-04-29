@@ -30,9 +30,8 @@ int sets_range (int life){
   }
   return range;
 }
-void vision (Character *character, int map_height, int map_width, char map[][map_width])
+void vision (WINDOW *main_window, Character *character, int map_height, int map_width, char map[][map_width])
 {
-  //int life = character->life;
   int range = sets_range(character->life);
   int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, map_width - 1);
   int y_min = fmax(character->y - range+1, 0), y_max = fmin(character->y + range-1, map_height - 1);
@@ -42,15 +41,24 @@ void vision (Character *character, int map_height, int map_width, char map[][map
     for (int y = y_min; y <= y_max; y++) {
       /*case character position*/
       if (x == character->x && y == character->y){
-
+        wattron(main_window, COLOR_PAIR(PLAYER_VISION_COLOR)); 
+        mvwaddch(main_window, y, x, map[y][x]); 
+        wattroff(main_window, COLOR_PAIR(PLAYER_VISION_COLOR));
       }
       else if (pow(x - character->x, 2) + pow(y - character->y, 2) <= pow(range, 2)) {
         if (map[y][x] == ENEMY_G ||
             map[y][x] == ENEMY_S ||
             map[y][x] == ENEMY_O ||
-            map[y][x] == WALL_CHAR){}
+            map[y][x] == WALL_CHAR){
+
+          wattron(main_window,COLOR_PAIR(FLOOR_COLOR)); 
+          mvwaddch(main_window, y, x, map[y][x]); 
+          wattroff(main_window,COLOR_PAIR(FLOOR_COLOR));
+            }
         else{
-          map[y][x] = '+';
+          wattron(main_window, COLOR_PAIR(PLAYER_VISION_COLOR)); 
+          mvwaddch(main_window, y, x, map[y][x]); 
+          wattroff(main_window, COLOR_PAIR(PLAYER_VISION_COLOR));
         }
       }
     }
