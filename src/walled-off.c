@@ -12,6 +12,7 @@ void init_character(Character *character)
 {
   character -> x = 0;
   character -> y = 0;
+  character -> life = 100;
 }
 
 void init_ncurses() {

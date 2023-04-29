@@ -207,15 +207,24 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
     start_color();
 
     /*create colors*/
-    init_color(55, 125, 0, 250); /*roxo*/
-    init_color(56, 550, 0, 1000); /*roxo claro*/
+    init_color(55, 125, 0, 250); /*roxo escuro*/
+
+    init_color(56, 514, 296, 799); /*roxo PLAYER_VISION_COLOR1    +perto*/
+    init_color(57, 413, 202, 694); /*PLAYER_VISION_COLOR2*/
+    init_color(58, 276, 132, 464); /*PLAYER_VISION_COLOR3*/
+    init_color(59, 183, 89, 308); /*PLAYER_VISION_COLOR4*/
+
     init_color(5, 500, 700, 1000); /*azul claro*/
     init_color(6, 0, 100, 1000); /*azul escuro*/
     /*Define color pairs*/
     init_pair(WATER_COLOR, 6, 5);
-    init_pair(PLAYER_VISION_COLOR, COLOR_YELLOW, 56);
+    init_pair(PLAYER_VISION_COLOR1, COLOR_YELLOW, 56);
+    init_pair(PLAYER_VISION_COLOR2, COLOR_YELLOW, 57);
+    init_pair(PLAYER_VISION_COLOR3, COLOR_YELLOW, 58);
+    init_pair(PLAYER_VISION_COLOR4, COLOR_YELLOW, 59);
     init_pair(FLOOR_COLOR, COLOR_WHITE, 55);
     init_pair(ENEMY_COLOR, COLOR_GREEN, 55);
+    init_pair(WALL_COLOR, 56, 55);
 
     }
 
@@ -249,6 +258,11 @@ void display_map (WINDOW *main_window, Character *character, int map_height, int
         wattron(main_window,COLOR_PAIR(WATER_COLOR)); 
         mvwaddch(main_window, j, i, map[j][i]); 
         wattroff(main_window,COLOR_PAIR(WATER_COLOR)); 
+      }
+      else if (map[j][i] == WALL_CHAR){
+        wattron(main_window,COLOR_PAIR(WALL_COLOR)); 
+        mvwaddch(main_window, j, i, map[j][i]); 
+        wattroff(main_window,COLOR_PAIR(WALL_COLOR));
       }
       /*print black rooms*/
       else 
