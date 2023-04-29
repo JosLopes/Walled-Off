@@ -8,27 +8,29 @@
 #include "mapgen.h"
 
 /* Add x, y coordinates */
-/* Initialized with (0,0) coordinates*/
+/* Initialized with (0,0) coordinates */
 
 /* Different foods */
-Consumables Foods[3] = {
-  {"Apple", +10, 0, 0},
-  {"Avocado", +20, 0, 0},
-  {"Chicken", +30, 0, 0},
-  /*{"Arroz", +40},
-  {"Espinafre", +50},
-  {"Ananás", +60},
-  {"Perú", +70},
-  {"Manga", +80},
-  {"IsoDrink", +90},
-  {"Smoothie", +100}*/
-};
+Consumables *Foods = NULL;
+int numFoods = 3;
 
 /* Different potions */
-Consumables Potions[2] = {
-  {"Dreamweaver Elixir", +20, 0, 0},
-  {"Dragonfire Brew", +40, 0, 0},
-  /*{"Shadowmist Tonic", +60},
-  {"Enchanted Essence", -30},
-  {"Phoenix Tears Potion", -60},*/
-};
+Consumables *Potions = NULL;
+int numPotions = 2;
+
+void ConsumablesHeap() {
+  Foods = (Consumables*)malloc(numFoods*sizeof(Consumables));
+  Foods[0] = (Consumables){"Apple", +10, 0, 0};
+  Foods[1] = (Consumables){"Avocado", +20, 0, 0};
+  Foods[2] = (Consumables){"Chicken", +30, 0, 0};
+
+  Potions = (Consumables*)malloc(numPotions*sizeof(Consumables));
+  Potions[0] = (Consumables){"Dreamweaver Elixir", +20, 0, 0};
+  Potions[1] = (Consumables){"Dragonfire Brew", +40, 0, 0};
+
+  free(Foods);
+  free(Potions);
+
+}
+
+
