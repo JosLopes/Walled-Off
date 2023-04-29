@@ -106,11 +106,6 @@ int main ()
   display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
   wrefresh (main_window); /* Refresh main_window */
 
-  /* I dont know hahahahha */
-  attron(COLOR_PAIR(WATER_COLOR));
-  mvwaddch(main_window, 0, 0, 'w');
-  attroff(COLOR_PAIR(WATER_COLOR));
-
   /* Enable keyboard input for special keys */
   keypad(main_window, TRUE);
 
