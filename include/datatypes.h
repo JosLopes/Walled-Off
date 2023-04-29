@@ -9,6 +9,12 @@ typedef struct {
 
 typedef struct
 {
+  int midX;
+  int midY;
+} Non_overlaping_rooms;
+
+typedef struct
+{
   int startingX;
   int startingY;
 } Bridge;

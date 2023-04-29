@@ -7,11 +7,14 @@
 #include "movement.h"
 #include "mapgen.h"
 
-//Different foods
+/* Add x, y coordinates */
+/* Initialized with (0,0) coordinates*/
+
+/* Different foods */
 Consumables Foods[3] = {
-  {"Apple", +10},
-  {"Avocado", +20},
-  {"Chicken", +30},
+  {"Apple", +10, 0, 0},
+  {"Avocado", +20, 0, 0},
+  {"Chicken", +30, 0, 0},
   /*{"Arroz", +40},
   {"Espinafre", +50},
   {"Ananás", +60},
@@ -21,10 +24,10 @@ Consumables Foods[3] = {
   {"Smoothie", +100}*/
 };
 
-//Different potions
+/* Different potions */
 Consumables Potions[2] = {
-  {"Dreamweaver Elixir", +20},
-  {"Dragonfire Brew", +40},
+  {"Dreamweaver Elixir", +20, 0, 0},
+  {"Dragonfire Brew", +40, 0, 0},
   /*{"Shadowmist Tonic", +60},
   {"Enchanted Essence", -30},
   {"Phoenix Tears Potion", -60},*/
