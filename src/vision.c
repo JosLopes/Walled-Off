@@ -9,38 +9,50 @@
 
 /************************************************
  * NOTAS:
- * -> decrementar range conforme a perda de vida 
+ * -> se não conseguir com as cores posso tentar
+ * meter a dar print do mapa só por onde o 
+ * personagem passar
  * -> mudar cor do fundo
- * ->  
 *************************************************/
-void vision (Character *character, int map_height, int map_width, char map[][map_width], WINDOW *main_window)
-{
-  int range = PLAYER_VISION;
-  int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, map_width - 1);
-  int y_min = fmax(character->y - range, 0), y_max = fmin(character->y + range, map_height - 1);
+/*sets the range according to the character life*/
+int sets_range (int life){
 
-  /* Redraw map */
-  for (int i = 0; i < map_width; i++) {
-    for (int j = 0; j < map_height; j++) {
-      
-      /*character and vision*/
-      if(i == x_min && j == y_min)
-      {
-        /* set values within circle of radius range */
-        for (int x = x_min; x <= x_max; x++) 
-        {
-          for (int y = y_min; y <= y_max; y++) 
-          {
-            attron(COLOR_PAIR(WATER_COLOR)); // Turn on color pair 2
-            mvwaddch(main_window, y, x, map[y][x]); /*print the character at the given position*/
-            attroff(COLOR_PAIR(WATER_COLOR)); // Turn off color pair 2
-          }
+  int range;
+
+  if(life>50){
+    range = 4;
+  }
+  else if(life>30 && life<50){
+    range = 3;
+  }
+  else {
+    range = 2;
+  }
+  return range;
+}
+void vision (Character *character, int map_height, int map_width, char map[][map_width])
+{
+  //int life = character->life;
+  int range = sets_range(character->life);
+  int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, map_width - 1);
+  int y_min = fmax(character->y - range+1, 0), y_max = fmin(character->y + range-1, map_height - 1);
+
+  /* set values within circle of radius range */
+  for (int x = x_min; x <= x_max; x++) {
+    for (int y = y_min; y <= y_max; y++) {
+      /*case character position*/
+      if (x == character->x && y == character->y){
+
+      }
+      else if (pow(x - character->x, 2) + pow(y - character->y, 2) <= pow(range, 2)) {
+        if (map[y][x] == ENEMY_G ||
+            map[y][x] == ENEMY_S ||
+            map[y][x] == ENEMY_O ||
+            map[y][x] == WALL_CHAR){}
+        else{
+          map[y][x] = '+';
         }
       }
-      attron(COLOR_PAIR(PLAYER_VISION_COLOR)); // Turn on color pair 2
-      mvwaddch(main_window, j, i, map[j][i]); // print the character at the given position
-      attroff(COLOR_PAIR(PLAYER_VISION_COLOR)); // Turn off color pair 1
     }
   }
-    wrefresh(main_window); /*refresh the window to display changes*/
 }
