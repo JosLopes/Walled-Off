@@ -23,7 +23,9 @@ void ConsumablesHeap() {
   Potions[1] = (Consumables){"Dragonfire Brew", +40, 0, 0};
 
   free(Foods);
+  Foods = NULL;
   free(Potions);
+  Potions = NULL;
 
 }
 
