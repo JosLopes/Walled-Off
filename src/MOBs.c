@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-int locate_positions (int map_heigth, int map_width, char **map, int enemies_size, Enemy *enemies, int nor_size, Non_overlaping_rooms no_overlpg[])
+int locate_positions (int map_heigth, int map_width, char **map, int number_of_enemies, Enemy *enemies, int nor_size, Non_overlaping_rooms no_overlpg[])
 {
   srand(time(NULL)); /* initializes the seed for random numbers */
   int enemies_ind = 0, rooms_ind = 0;
@@ -19,7 +19,7 @@ int locate_positions (int map_heigth, int map_width, char **map, int enemies_siz
   for (; rooms_ind < nor_size; rooms_ind ++)
   {
     offset = 1;
-    while (enemies_ind < enemies_size && impossible_location == 0)
+    while (enemies_ind < number_of_enemies && impossible_location == 0)
     {
       int possible_x = no_overlpg[rooms_ind].midX + (rand () % offset - rand () % offset);
       int possible_y = no_overlpg[rooms_ind].midY + (rand () % offset - rand () % offset);
@@ -99,21 +99,22 @@ void init_enemy_stats (Enemy *enemy, Tag *tag, Variable_stats *variables)
   enemy -> damage = variables -> damage;
 }
 
-void place_enemies (int enemies_size, Enemy *enemies, char **map)
+void place_enemies (int number_of_enemies, Enemy *enemies, char **map)
 {
   int current_enemy;
 
-  for (current_enemy = 0; current_enemy < enemies_size; current_enemy ++)
+  for (current_enemy = 0; current_enemy < number_of_enemies; current_enemy ++)
   {
     map[enemies[current_enemy].y][enemies[current_enemy].x] = enemies -> display;
   }
 }
 
-void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d_variables, Variable_stats *s_variables, Variable_stats *g_variables, char **map)
+void init_enemies (int number_of_enemies, Enemy *enemies, Variable_stats *d_variables, Variable_stats *s_variables, Variable_stats *g_variables, char **map)
 {
+  Tag *tag = malloc (sizeof (Tag) * number_of_enemies);
   int current_enemy = 0;
-  int dumb_enemies = enemies_size * 0.6;
-  int dumb_plus_smart = dumb_enemies + (enemies_size * 0.3); 
+  int dumb_enemies = number_of_enemies * 0.6;
+  int dumb_plus_smart = dumb_enemies + (number_of_enemies * 0.3); 
 
   for (; current_enemy < dumb_enemies; current_enemy ++)
   {
@@ -131,7 +132,7 @@ void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d
   free (s_variables);
   s_variables = NULL;
 
-  for (; current_enemy < enemies_size ; current_enemy ++)
+  for (; current_enemy < number_of_enemies ; current_enemy ++)
   {
     init_tag ((tag + current_enemy), G_CHAR, G_MAX_XP, G_MIN_XP, G_SCREAM_RANGE, G_POISON, G_GROUP_DESIRE);
     init_enemy_stats ((enemies + current_enemy), (tag + current_enemy), (g_variables + (rand() % G_ENEMIES)));
@@ -139,5 +140,9 @@ void init_enemies (int enemies_size, Enemy *enemies, Tag *tag, Variable_stats *d
   free (g_variables);
   g_variables = NULL;
 
-  place_enemies (enemies_size, enemies, map);
+  /* Free the tag */
+  free (tag);
+  tag = NULL;
+
+  place_enemies (number_of_enemies, enemies, map);
 }

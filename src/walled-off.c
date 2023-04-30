@@ -82,10 +82,9 @@ int main ()
   init_non_overlaping_rooms (rooms, numRooms, not_overlpg, number_of_non_overlaping_rooms);
   
   Enemy *enemies = malloc (sizeof (Enemy) * max_number_of_enemies); /* Storage for every enemy */
-  Tag *tag = malloc (sizeof (Tag) * max_number_of_enemies);
 
-    /* Initializes the placement for all enemies, returning how many where placed in the map */
-    /* from the max value "number_of_enemies"                                                */
+  /* Initializes the placement for all enemies, returning how many where placed in the map */
+  /* from the max value "number_of_enemies"                                                */
   int number_of_enemies = locate_positions (MAP_HEIGHT, MAP_WIDTH, map, max_number_of_enemies, enemies, number_of_non_overlaping_rooms, not_overlpg);
   
   /* Initializes variable stats for each type of enemmy */
@@ -93,7 +92,7 @@ int main ()
   Variable_stats *smart_variables = s_enemies_variable_stats ();
   Variable_stats *genius_variables = g_enemies_variable_stats ();
   /* Initializes all the enemies stats, including pre-defined */
-  init_enemies (number_of_enemies, enemies, tag, dumb_variables, smart_variables, genius_variables, map);
+  init_enemies (number_of_enemies, enemies, dumb_variables, smart_variables, genius_variables, map);
 
   /* Finishes the building of the map */
   generateCorridors (map, not_overlpg, number_of_non_overlaping_rooms);
@@ -134,8 +133,17 @@ int main ()
   for (current_line = 0; current_line < MAP_HEIGHT; current_line ++)
   {
     free (map[current_line]);
+    map[current_line] = NULL;
   }
   free (map);
+  map = NULL;
+
+  /* Free not_overlpg */
+  free (not_overlpg);
+  not_overlpg = NULL;
+
+  free (rooms);
+  rooms = NULL;
 
   delwin (main_window);
   endwin ();
