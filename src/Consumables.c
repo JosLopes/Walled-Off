@@ -22,11 +22,12 @@ void ConsumablesHeap() {
   Potions[0] = (Consumables){"Dreamweaver Elixir", +20, 0, 0};
   Potions[1] = (Consumables){"Dragonfire Brew", +40, 0, 0};
 
-  free(Foods);
-  Foods = NULL;
-  free(Potions);
-  Potions = NULL;
+  /*free(Foods);*/
+  /*Foods = NULL;*/
+  /*free(Potions);*/
+  /*Potions = NULL;*/
 
 }
+
 
 
