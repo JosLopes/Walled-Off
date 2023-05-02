@@ -7,8 +7,7 @@
 
 int locate_positions (int map_heigth, int map_width, char **map, int number_of_enemies, Enemy *enemies, int nor_size, Non_overlaping_rooms no_overlpg[])
 {
-  srand(time(NULL)); /* initializes the seed for random numbers */
-  int enemies_ind = 0, rooms_ind = 0;
+  int enemies_ind = 0, rooms_ind = 0, max_per_room = 0;
   int offset, impossible_location = 0;  /* Max offset from the center of a room */
 
   if (enemies == NULL) {
@@ -18,18 +17,21 @@ int locate_positions (int map_heigth, int map_width, char **map, int number_of_e
 
   for (; rooms_ind < nor_size; rooms_ind ++)
   {
-    offset = 1;
-    while (enemies_ind < number_of_enemies && impossible_location == 0)
+    offset = 4;
+    impossible_location = 0;
+    max_per_room = 0;
+    while (enemies_ind < number_of_enemies && impossible_location == 0 && max_per_room < 3)
     {
       int possible_x = no_overlpg[rooms_ind].midX + (rand () % offset - rand () % offset);
       int possible_y = no_overlpg[rooms_ind].midY + (rand () % offset - rand () % offset);
 
-      if (possible_x < map_width && possible_y < map_heigth && map[possible_y][possible_x] == FLOOR_CHAR)
+      if (possible_x < map_width && possible_x > 0 && possible_y < map_heigth && possible_y > 0 && map[possible_y][possible_x] == FLOOR_CHAR)
       {
         enemies[enemies_ind].x = possible_x;
         enemies[enemies_ind].y = possible_y;
+        max_per_room ++;
         enemies_ind ++;
-        offset ++;
+        offset += 2;
       }
       else
       {
@@ -105,7 +107,7 @@ void place_enemies (int number_of_enemies, Enemy *enemies, char **map)
 
   for (current_enemy = 0; current_enemy < number_of_enemies; current_enemy ++)
   {
-    map[enemies[current_enemy].y][enemies[current_enemy].x] = enemies -> display;
+    map[enemies[current_enemy].y][enemies[current_enemy].x] = enemies[current_enemy].display;
   }
 }
 

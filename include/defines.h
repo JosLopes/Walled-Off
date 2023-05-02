@@ -9,7 +9,7 @@
 #define MIN_ROOM_WIDTH 6
 #define MAX_ROOM_WIDTH 16
 #define WALL_CHAR '#'
-#define FLOOR_CHAR ' '
+#define FLOOR_CHAR '.'
 #define FIRE_CHAR '~'
 #define ENEMY_G 'g'
 #define ENEMY_S 's'
