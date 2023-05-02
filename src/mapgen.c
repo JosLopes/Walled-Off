@@ -35,6 +35,25 @@ void fillMap(int map_height, int map_width, char map[][map_width]) {
         map[i][map_width - 1] = WALL_CHAR;
     }
 }
+void fillTraveledPath(int map_height, int map_width, char traveled_path[][map_width]) {
+    int i, j;
+
+    for (i = 0; i < map_height; i++) {
+        for (j = 0; j < map_width; j++) {
+          traveled_path[i][j] = FLOOR_CHAR;
+        }
+    }
+    /*Preenche as bordas do mapa com paredes*/
+    for (i = 0; i < map_width; i++) {
+        traveled_path[0][i] = WALL_CHAR;
+        traveled_path[map_height - 1][i] = WALL_CHAR;
+    }
+
+    for (i = 0; i < map_height; i++) {
+        traveled_path[i][0] = WALL_CHAR;
+        traveled_path[i][map_width - 1] = WALL_CHAR;
+    }
+}
 
 /*A função generateRooms recebe como parâmetros o mapa do jogo e uma variável numRooms,
 que indica quantas salas devem ser geradas no mapa.*/
@@ -206,7 +225,7 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
   return local_window;
 }
 
-void display_map (WINDOW *main_window, Character *character, int map_height, int map_width, char map[][map_width]) {
+void display_map (WINDOW *main_window, Character *character, int map_height, int map_width, char map[][map_width], char traveled_path[][map_width]) {
 
   int range = sets_range(character->life);
   int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, map_width - 1);
@@ -218,30 +237,33 @@ void display_map (WINDOW *main_window, Character *character, int map_height, int
       
       if (i >= x_min && j >= y_min && i <= x_max && j <= y_max)
       {
-        vision(main_window, character, map_height, map_width, map);
+        vision(main_window, character, map_height, map_width, map, traveled_path);
       }
-      if (map[j][i] == ENEMY_G || map[j][i] == ENEMY_S || map[j][i] == ENEMY_O ){
-          wattron(main_window,COLOR_PAIR(ENEMY_COLOR)); 
-          mvwaddch(main_window, j, i, map[j][i]); 
-          wattroff(main_window,COLOR_PAIR(ENEMY_COLOR));
-      }
-      /*print blue water*/
-      else if (map[j][i] == FIRE_CHAR){
-        wattron(main_window,COLOR_PAIR(WATER_COLOR)); 
-        mvwaddch(main_window, j, i, map[j][i]); 
-        wattroff(main_window,COLOR_PAIR(WATER_COLOR)); 
-      }
-      else if (map[j][i] == WALL_CHAR){
-        wattron(main_window,COLOR_PAIR(WALL_COLOR)); 
-        mvwaddch(main_window, j, i, map[j][i]); 
-        wattroff(main_window,COLOR_PAIR(WALL_COLOR));
-      }
-      /*print black rooms*/
-      else 
+      switch (traveled_path[j][i])
       {
-        wattron(main_window,COLOR_PAIR(FLOOR_COLOR)); 
+      case ENEMY_G || ENEMY_S || ENEMY_O:
+        wattron(main_window,COLOR_PAIR(ENEMY_COLOR)); 
         mvwaddch(main_window, j, i, map[j][i]); 
+        wattroff(main_window,COLOR_PAIR(ENEMY_COLOR));
+        break;
+      /*print blue water*/
+      case FIRE_CHAR:
+        wattron(main_window,COLOR_PAIR(WATER_COLOR)); 
+        mvwaddch(main_window, j, i, traveled_path[j][i]); 
+        wattroff(main_window,COLOR_PAIR(WATER_COLOR)); 
+        break;
+      case WALL_CHAR:      
+        wattron(main_window,COLOR_PAIR(WALL_COLOR)); 
+        mvwaddch(main_window, j, i, traveled_path[j][i]); 
+        wattroff(main_window,COLOR_PAIR(WALL_COLOR));
+        break;
+      case FLOOR_CHAR:
+        wattron(main_window,COLOR_PAIR(FLOOR_COLOR)); 
+        mvwaddch(main_window, j, i, traveled_path[j][i]); 
         wattroff(main_window,COLOR_PAIR(FLOOR_COLOR));
+        break;
+      default:
+        break;
       }
     }
   }

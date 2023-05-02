@@ -48,6 +48,7 @@ int main () {
   srand(time(NULL));
 
   char map[MAP_HEIGHT][MAP_WIDTH];
+  char traveled_path[MAP_HEIGHT][MAP_WIDTH];
   Room rooms[MAX_ROOMS];
   int number_of_non_overlaping_rooms;
   Character character;
@@ -71,6 +72,7 @@ int main () {
   /* Initialize character and map */
   init_character (&character);
   fillMap (MAP_HEIGHT, MAP_WIDTH, map);
+  fillTraveledPath (MAP_HEIGHT, MAP_WIDTH, traveled_path);
   number_of_non_overlaping_rooms = generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms);
 
   int enemies_size = number_of_non_overlaping_rooms * 3;
@@ -91,7 +93,7 @@ int main () {
 
   generateCorridors (MAP_WIDTH, map, not_overlpg, number_of_non_overlaping_rooms);
   place_player (MAP_HEIGHT, MAP_WIDTH, map, &character);
-  display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
+  display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map, traveled_path);
 
   wrefresh (main_window);
   attron(COLOR_PAIR(WATER_COLOR));
@@ -101,7 +103,7 @@ int main () {
   /* Enable keyboard input and non-blocking input mode */
   /* Wrefresh(main_window) */
   keypad(main_window, TRUE); /*enable the interpretation of special keys*/
-  movement (&character, MAP_HEIGHT, MAP_WIDTH, map, main_window);
+  movement (&character, MAP_HEIGHT, MAP_WIDTH, map, traveled_path, main_window);
 
   // cleanup and exit
   free (enemies);

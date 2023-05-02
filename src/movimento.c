@@ -30,7 +30,7 @@ int movement_restrictions(int x, int y, char map[][MAP_WIDTH])
  *         3 = up            *
  *     q -> quit comand      *
  ****************************/
-void movement(Character *character, int map_height, int map_width, char map[][map_width], WINDOW *main_window)
+void movement(Character *character, int map_height, int map_width, char map[][map_width], char traveled_path[][map_width], WINDOW *main_window)
 {
   char previous_char = FLOOR_CHAR;
   int ch;
@@ -153,7 +153,7 @@ void movement(Character *character, int map_height, int map_width, char map[][ma
     default:
       break;
     }
-    vision(main_window, character, map_height, map_width, map);
-    display_map (main_window, character, map_height, map_width, map);
+    vision(main_window, character, map_height, map_width, map, traveled_path);
+    display_map (main_window, character, map_height, map_width, map, traveled_path);
   }
 }
