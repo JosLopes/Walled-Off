@@ -75,14 +75,35 @@ void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], i
 /* Create union */
 
 void place_foods_and_potions (int map_heigth, int map_width, char map[][map_width], int enemies_size, Enemy *enemies, int nor_size, Room *rooms, Consumables *foods, Consumables *potions) {
+  int random_number;
   /* initializes the seed for random numbers */
   srand(time(NULL));
-
-
-  if (enemies == NULL) {
-    printf ("Not able to alloc memory.");
-    return 1;
+  /* Generate a random number between 0 and 99 */
+  random_number = rand() % 100;
+  /* If the random number is less than 50, then spawn a food */
+  if (random_number < 50) {
+    /* Generate a random number between 0 and the number of rooms */
+    random_number = rand() % nor_size;
+    /* Place the food in the room */
+    map[rooms[random_number].y + 1][rooms[random_number].x + 1] = FOOD_CHAR;
+    /* Set the food's coordinates */
+    foods -> x = rooms[random_number].x + 1;
+    foods -> y = rooms[random_number].y + 1;
   }
+  /* If the random number is greater than 50, then spawn a potion */
+  else {
+    /* Generate a random number between 0 and the number of rooms */
+    random_number = rand() % nor_size;
+    /* Place the potion in the room */
+    map[rooms[random_number].y + 1][rooms[random_number].x + 1] = POTION_CHAR;
+    /* Set the potion's coordinates */
+    potions -> x = rooms[random_number].x + 1;
+    potions -> y = rooms[random_number].y + 1;
+  }
+
+
+  
+
 }
 
 
