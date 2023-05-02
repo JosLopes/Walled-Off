@@ -72,10 +72,12 @@ void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], i
 
 /* Function to do the spawn of foods and potions */
 /* Incomplete */
-void place_foods_and_potions (int map_heigth, int map_width, char map[][map_width], int enemies_size, Enemy *enemies, int nor_size, Non_overlaping_rooms no_overlpg[]) {
-  srand(time(NULL)); /* initializes the seed for random numbers */
-  int enemies_ind = 0, rooms_ind = 0;
-  int offset, impossible_location = 0;  /* Max offset from the center of a room */
+/* Create union */
+
+void place_foods_and_potions (int map_heigth, int map_width, char map[][map_width], int enemies_size, Enemy *enemies, int nor_size, Room *rooms, Consumables *foods, Consumables *potions) {
+  /* initializes the seed for random numbers */
+  srand(time(NULL));
+
 
   if (enemies == NULL) {
     printf ("Not able to alloc memory.");
