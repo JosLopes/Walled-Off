@@ -29,5 +29,6 @@
 #define FLOOR_COLOR 6
 #define ENEMY_COLOR 7
 #define WALL_COLOR 8
+#define OBSCURE_COLOR 9
 
 #endif

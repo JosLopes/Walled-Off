@@ -40,7 +40,7 @@ void fillTraveledPath(int map_height, int map_width, char traveled_path[][map_wi
 
     for (i = 0; i < map_height; i++) {
         for (j = 0; j < map_width; j++) {
-          traveled_path[i][j] = FLOOR_CHAR;
+          traveled_path[i][j] = '+';
         }
     }
     /*Preenche as bordas do mapa com paredes*/
@@ -205,6 +205,8 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
     init_color(58, 276, 132, 464); /*PLAYER_VISION_COLOR3*/
     init_color(59, 183, 89, 308); /*PLAYER_VISION_COLOR4*/
 
+    init_color(60, 0, 0, 312); /*OBSCURE_COLOR*/
+
     init_color(5, 500, 700, 1000); /*azul claro*/
     init_color(6, 0, 100, 1000); /*azul escuro*/
     /*Define color pairs*/
@@ -216,6 +218,7 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
     init_pair(FLOOR_COLOR, COLOR_WHITE, 55);
     init_pair(ENEMY_COLOR, COLOR_GREEN, 55);
     init_pair(WALL_COLOR, 56, 55);
+    init_pair(OBSCURE_COLOR, 60, 60);
 
     }
 
@@ -235,35 +238,48 @@ void display_map (WINDOW *main_window, Character *character, int map_height, int
   for (int i = 0; i < map_width; i++) {
     for (int j = 0; j < map_height; j++) {
       
-      if (i >= x_min && j >= y_min && i <= x_max && j <= y_max)
+      /*for the range of vision of the character*/
+      if (i >= x_min && j > y_min && i <= x_max && j < y_max)
       {
         vision(main_window, character, map_height, map_width, map, traveled_path);
       }
-      switch (traveled_path[j][i])
+      else 
       {
-      case ENEMY_G || ENEMY_S || ENEMY_O:
-        wattron(main_window,COLOR_PAIR(ENEMY_COLOR)); 
-        mvwaddch(main_window, j, i, map[j][i]); 
-        wattroff(main_window,COLOR_PAIR(ENEMY_COLOR));
-        break;
-      /*print blue water*/
-      case FIRE_CHAR:
-        wattron(main_window,COLOR_PAIR(WATER_COLOR)); 
-        mvwaddch(main_window, j, i, traveled_path[j][i]); 
-        wattroff(main_window,COLOR_PAIR(WATER_COLOR)); 
-        break;
-      case WALL_CHAR:      
-        wattron(main_window,COLOR_PAIR(WALL_COLOR)); 
-        mvwaddch(main_window, j, i, traveled_path[j][i]); 
-        wattroff(main_window,COLOR_PAIR(WALL_COLOR));
-        break;
-      case FLOOR_CHAR:
-        wattron(main_window,COLOR_PAIR(FLOOR_COLOR)); 
-        mvwaddch(main_window, j, i, traveled_path[j][i]); 
-        wattroff(main_window,COLOR_PAIR(FLOOR_COLOR));
-        break;
-      default:
-        break;
+        switch (traveled_path[j][i])
+        {
+        case '+':
+          wattron(main_window,COLOR_PAIR(OBSCURE_COLOR)); 
+          mvwaddch(main_window, j, i, traveled_path[j][i]); 
+          wattroff(main_window,COLOR_PAIR(OBSCURE_COLOR));
+          break;
+        case ENEMY_G || ENEMY_S || ENEMY_O:
+          wattron(main_window,COLOR_PAIR(ENEMY_COLOR)); 
+          mvwaddch(main_window, j, i, traveled_path[j][i]); 
+          wattroff(main_window,COLOR_PAIR(ENEMY_COLOR));
+          break;
+        /*print blue water*/
+        case FIRE_CHAR:
+          wattron(main_window,COLOR_PAIR(WATER_COLOR)); 
+          mvwaddch(main_window, j, i, traveled_path[j][i]); 
+          wattroff(main_window,COLOR_PAIR(WATER_COLOR)); 
+          break;
+        case WALL_CHAR:      
+          wattron(main_window,COLOR_PAIR(WALL_COLOR)); 
+          mvwaddch(main_window, j, i, traveled_path[j][i]); 
+          wattroff(main_window,COLOR_PAIR(WALL_COLOR));
+          break;
+        case FLOOR_CHAR:
+          wattron(main_window,COLOR_PAIR(FLOOR_COLOR)); 
+          mvwaddch(main_window, j, i, traveled_path[j][i]); 
+          wattroff(main_window,COLOR_PAIR(FLOOR_COLOR));
+          break;
+        default:
+        /*DEFENIR INIMIGOS*/
+          wattron(main_window,COLOR_PAIR(ENEMY_COLOR)); 
+          mvwaddch(main_window, j, i, traveled_path[j][i]); 
+          wattroff(main_window,COLOR_PAIR(ENEMY_COLOR));
+          break;
+        }
       }
     }
   }
