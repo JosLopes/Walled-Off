@@ -74,7 +74,7 @@ void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], i
 /* Incomplete */
 /* Create union */
 
-void place_foods_and_potions (int map_heigth, int map_width, char map[][map_width], int enemies_size, Enemy *enemies, int nor_size, Room *rooms, Consumables *foods, Consumables *potions) {
+void place_foods_and_potions (int map_heigth, int map_width, char map[][map_width], int nor_size, Room *rooms, Consumables *foods, Consumables *potions) {
   int random_number;
   /* initializes the seed for random numbers */
   srand(time(NULL));
@@ -90,6 +90,7 @@ void place_foods_and_potions (int map_heigth, int map_width, char map[][map_widt
     foods -> x = rooms[random_number].x + 1;
     foods -> y = rooms[random_number].y + 1;
   }
+
   /* If the random number is greater than 50, then spawn a potion */
   else {
     /* Generate a random number between 0 and the number of rooms */
@@ -100,10 +101,6 @@ void place_foods_and_potions (int map_heigth, int map_width, char map[][map_widt
     potions -> x = rooms[random_number].x + 1;
     potions -> y = rooms[random_number].y + 1;
   }
-
-
-  
-
 }
 
 
