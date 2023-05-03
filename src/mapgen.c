@@ -162,11 +162,9 @@ void generateCorridors(char **map, Non_overlaping_rooms *no_overlpg, int nor_siz
   }
 }
 
-void place_player(int map_height, int map_width, char **map, Character *character) {
-    do {
-        character -> x = rand() % (map_width-1) +1;
-        character -> y = rand() % (map_height-1) +1;
-    } while (map[character -> y][character -> x] != FLOOR_CHAR);
+void place_player(Non_overlaping_rooms room, char **map, Character *character) {
+    character -> x = room.midX;
+    character -> y = room.midY;
     map[character -> y][character -> x] = PLAYER_CHAR_UP;
 }
 

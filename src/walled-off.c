@@ -99,7 +99,7 @@ int main ()
 
   /* Initializes main character, placing it in the map */
   init_character (&character);
-  place_player (MAP_HEIGHT, MAP_WIDTH, map, &character);
+  place_player (*not_overlpg, map, &character);
 
   /* Display the map on the main_window */
   display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
