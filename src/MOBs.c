@@ -143,8 +143,6 @@ void init_enemies (int number_of_enemies, Enemy *enemies, Variable_stats *d_vari
   g_variables = NULL;
 
   /* Free the tag */
-  free (tag);
-  tag = NULL;
 
   place_enemies (number_of_enemies, enemies, map);
 }
