@@ -100,7 +100,7 @@ void init_non_overlaping_rooms (Room rooms[], int numRooms, Non_overlaping_rooms
   }
 }
 
-void generateCorridors(char **map, Non_overlaping_rooms no_overlpg[], int nor_size) 
+void generateCorridors(char **map, Non_overlaping_rooms *no_overlpg, int nor_size) 
 {
   int bridge_ind = 0, temp;
   Vector vector;
@@ -115,9 +115,10 @@ void generateCorridors(char **map, Non_overlaping_rooms no_overlpg[], int nor_si
     // calcula a direção do corredor
     int directionX = endingX - vector.startingX;
     int directionY = endingY - vector.startingY;
-    
-    // se o corredor estiver na direção negativa em X, inverte os pontos inicial e final
-    if (directionX < 0 && directionY < 0) {
+
+    /*se o corredor estiver na direção negativa em X, inverte os pontos inicial e final*/
+    if (directionX < 0 && directionY < 0) 
+    {
       temp = vector.startingX;
       vector.startingX = endingX;
       endingX = temp;
@@ -138,7 +139,7 @@ void generateCorridors(char **map, Non_overlaping_rooms no_overlpg[], int nor_si
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
       }
     } 
-    else if (directionX < 0 && directionY > 0) 
+    else if ((directionX < 0 || directionX == 0) && (directionY > 0 || directionY == 0)) 
     {
       for (; vector.startingX > endingX; vector.startingX--) {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
@@ -148,7 +149,7 @@ void generateCorridors(char **map, Non_overlaping_rooms no_overlpg[], int nor_si
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
       }
     }
-    else if (directionX > 0 && directionY < 0) 
+    else if ((directionX > 0 || directionX == 0) && (directionY < 0 || directionY == 0))
     {
       for (; vector.startingX <= endingX; vector.startingX++) {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
