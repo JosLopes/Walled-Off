@@ -13,7 +13,7 @@
   enemies */
 int locate_positions (int map_heigth, int map_width, char **map, int number_of_enemies, Enemy *enemies, int nor_size, Non_overlaping_rooms no_overlpg[])
 {
-  int enemies_ind = 0, rooms_ind = 0, max_per_room = 0;
+  int enemies_ind = 0, rooms_ind = 1, max_per_room = 0;
   int offset, impossible_location = 0;  /* Max offset from the center of a room */
 
   if (enemies == NULL) {
