@@ -5,6 +5,12 @@
 #include <stdlib.h>
 #include <time.h>
 
+/* 
+  locate_positions locates eveery possible position for an enemy to spawn, 
+  in a set number of rooms called non_overlaping_rooms (array '*no_overlpg').
+  This set of rooms as described before has the property of, when built, not
+  overlaping with any other room, aloying for a good candidate for placing
+  enemies */
 int locate_positions (int map_heigth, int map_width, char **map, int number_of_enemies, Enemy *enemies, int nor_size, Non_overlaping_rooms no_overlpg[])
 {
   int enemies_ind = 0, rooms_ind = 0, max_per_room = 0;
@@ -42,6 +48,12 @@ int locate_positions (int map_heigth, int map_width, char **map, int number_of_e
   return enemies_ind;
 }
 
+/* 
+  The function 'Variable_stats *d_enemies_variable_stats' initalizes every dumb enemy
+  that is created manually by the programmer, its a special feature that allows
+  to add new enemies to the game without much trouble, add the enemy to the 'd_variables'
+  array and add +1 do D_ENMIES */
+
 Variable_stats *d_enemies_variable_stats ()
 {
   Variable_stats *d_variables = malloc (sizeof (Variable_stats) * D_ENEMIES);
@@ -51,6 +63,12 @@ Variable_stats *d_enemies_variable_stats ()
 
   return d_variables; 
 }
+
+/* 
+  The function 'Variable_stats *s_enemies_variable_stats' initalizes every smart enemy
+  that is created manually by the programmer, its a special feature that allows
+  to add new enemies to the game without much trouble: add the enemy to the 's_variables'
+  array and add +1 do S_ENMIES */
 
 Variable_stats *s_enemies_variable_stats ()
 {
@@ -62,6 +80,12 @@ Variable_stats *s_enemies_variable_stats ()
   return s_variables; 
 }
 
+/* 
+  The function 'Variable_stats *g_enemies_variable_stats' initalizes every genius enemy
+  that is created manually by the programmer, its a special feature that allows
+  to add new enemies to the game without much trouble: add the enemy to the 'g_variables'
+  array and add +1 do G_ENMIES */
+
 Variable_stats *g_enemies_variable_stats ()
 {
   Variable_stats *g_variables = malloc (sizeof (Variable_stats) * G_ENEMIES);
@@ -71,6 +95,10 @@ Variable_stats *g_enemies_variable_stats ()
 
   return g_variables; 
 }
+
+/* 
+  Initializes the tag to be used in the different enemies (depends only in the inteligence level)
+  with pre-made stats that are common to that set type of enemy and can be changed in 'defines.h' */
 
 void init_tag (Tag *tag, char intel, int max_xp, int min_xp, int scream_range, int poison, int group_desire)
 {
@@ -82,6 +110,9 @@ void init_tag (Tag *tag, char intel, int max_xp, int min_xp, int scream_range, i
                                  /* The poison and stop taking damage                             */
   tag -> group_desire = group_desire;
 }
+
+/*
+  Initializes the stats that are unique to each diferent enemy */
 
 void init_enemy_stats (Enemy *enemy, Tag *tag, Variable_stats *variables)
 {
@@ -101,6 +132,9 @@ void init_enemy_stats (Enemy *enemy, Tag *tag, Variable_stats *variables)
   enemy -> damage = variables -> damage;
 }
 
+/* 
+  Places every enemy somewhere on the map, if the terrain is apropried, i.e. a FLOOR_CHAR */
+
 void place_enemies (int number_of_enemies, Enemy *enemies, char **map)
 {
   int current_enemy;
@@ -110,6 +144,11 @@ void place_enemies (int number_of_enemies, Enemy *enemies, char **map)
     map[enemies[current_enemy].y][enemies[current_enemy].x] = enemies[current_enemy].display;
   }
 }
+
+/*
+  This is the "main function" of this module, it creates the tags that are attached to each
+  enemy and combines both the tags and the unique characteristcs of an indivual enemy and places
+  everyone on the map in the spots calculated before in the 'locate_positions' function */
 
 void init_enemies (int number_of_enemies, Enemy *enemies, Variable_stats *d_variables, Variable_stats *s_variables, Variable_stats *g_variables, char **map)
 {
