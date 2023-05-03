@@ -185,3 +185,5 @@ void init_enemies (int number_of_enemies, Enemy *enemies, Variable_stats *d_vari
 
   place_enemies (number_of_enemies, enemies, map);
 }
+
+/*======================================== MOBs intel ===========================================*/

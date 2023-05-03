@@ -67,20 +67,33 @@ int generateRooms(int map_height, int map_width, char **map, Room rooms[], int n
         if (overlap == 0){ 
           rooms[i].is_overlaping = 0;
           number_of_non_overlaping_rooms ++;
+
+          /*Se não houver sobreposição, adiciona a sala ao mapa*/
+          for (j = roomY; j < roomY + room_Height; j++) {
+              for (k = roomX; k < roomX + room_Width; k++) {
+                  map[j][k] = FLOOR_CHAR;
+                  map[roomY][k] = WALL_CHAR;
+                  map[roomY + room_Height][k] = WALL_CHAR;
+              }
+          map[j][roomX] = WALL_CHAR;
+          map[j][roomX + room_Width] = WALL_CHAR;
+          }
+        } else {
+        /*Se não houver sobreposição, adiciona a sala ao mapa*/
+          for (j = roomY; j < roomY + room_Height; j++) {
+            for (k = roomX; k < roomX + room_Width; k++) {
+              map[j][k] = FLOOR_CHAR;
+            }
+          }
         }
 
-        /*Se não houver sobreposição, adiciona a sala ao mapa*/
-            for (j = roomY; j < roomY + room_Height; j++) {
-                for (k = roomX; k < roomX + room_Width; k++) {
-                    map[j][k] = FLOOR_CHAR;
-                }
-            }
+        /* Atualiza colocando aleatóriamente walls */
 
-            /*Adiciona a sala à lista de salas */
-            rooms[i].x = roomX;
-            rooms[i].y = roomY;
-            rooms[i].width = room_Width;
-            rooms[i].height = room_Height; 
+        /*Adiciona a sala à lista de salas */
+        rooms[i].x = roomX;
+        rooms[i].y = roomY;
+        rooms[i].width = room_Width;
+        rooms[i].height = room_Height; 
     }
     return number_of_non_overlaping_rooms;
 }
@@ -100,7 +113,19 @@ void init_non_overlaping_rooms (Room rooms[], int numRooms, Non_overlaping_rooms
   }
 }
 
-void generateCorridors(char **map, Non_overlaping_rooms *no_overlpg, int nor_size) 
+/* Using 
+void generate_walls (char **map, int nor_size)
+{
+  int current_wall = 0, number_of_walls = nor_size * (MIN_ROOM_HEIGHT + MIN_ROOM_WIDTH);
+
+  while (current_wall < number_of_walls)
+  {
+
+  }
+}
+*/
+
+void generateCorridors (char **map, Non_overlaping_rooms *no_overlpg, int nor_size) 
 {
   int bridge_ind = 0, temp;
   Vector vector;
