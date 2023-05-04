@@ -6,6 +6,8 @@
 #include "defines.h"
 #include "movement.h"
 #include "mapgen.h"
+#include <time.h>
+#include "Consumables.h"
 
 /*
 HEALTH is going to be affected by:
@@ -22,6 +24,7 @@ xP is going to be affected by:
 decrements the character's life if they are attacked by an enemy within range */
 void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], int num_enemies) 
 {
+
   /*case character is crossing the fire*/
   if (map [character -> y][character -> x] == FIRE_CHAR)
   {
@@ -70,42 +73,50 @@ void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], i
   }
 }
 
-/* Function to do the spawn of foods and potions */
-/* Incomplete */
-/* Create union */
-
+/* 
+* Function to do the spawn of foods and potions 
+*/
 void place_foods_and_potions (int map_heigth, int map_width, char map[][map_width], int nor_size, Room *rooms, Consumables *foods, Consumables *potions) {
+  
+  /* Use this random number to determine the number of foods/potions in the map */
   int random_number;
-  /* initializes the seed for random numbers */
-  srand(time(NULL));
-  /* Generate a random number between 0 and 99 */
-  random_number = rand() % 100;
-  /* If the random number is less than 50, then spawn a food */
-  if (random_number < 50) {
-    /* Generate a random number between 0 and the number of rooms */
-    random_number = rand() % nor_size;
-    /* Place the food in the room */
-    map[rooms[random_number].y + 1][rooms[random_number].x + 1] = FOOD_CHAR;
-    /* Set the food's coordinates */
-    foods -> x = rooms[random_number].x + 1;
-    foods -> y = rooms[random_number].y + 1;
-  }
+  srand(time(0)); // Seed the random number generator with the current time
+  random_number = rand() % 10; //Number between 0 and 9
 
-  /* If the random number is greater than 50, then spawn a potion */
-  else {
-    /* Generate a random number between 0 and the number of rooms */
-    random_number = rand() % nor_size;
-    /* Place the potion in the room */
-    map[rooms[random_number].y + 1][rooms[random_number].x + 1] = POTION_CHAR;
-    /* Set the potion's coordinates */
-    potions -> x = rooms[random_number].x + 1;
-    potions -> y = rooms[random_number].y + 1;
+  for (int i=0; i<random_number; i++)    
+  {
+    /* Use this random number to determine which food/potion we should put in the map */
+    int random_number;
+    srand(time(0)); // Seed the random number generator with the current time
+    random_number = rand() % 5; //Number between 0 and 4
+
+    /* If the random number is less than 3, then spawn a food */
+    if (random_number < 3) {
+      /* Generate a random number between 0 and the number of rooms */
+      random_number = rand() % nor_size;
+      /* Place the food in the room */
+      map[rooms[random_number].y + 1][rooms[random_number].x + 1] = FOOD_CHAR;
+      /* Set the food's coordinates */
+      foods -> x = rooms[random_number].x + 1;
+      foods -> y = rooms[random_number].y + 1;
+    }
+
+    /* If the random number is greater than 3, then spawn a potion */
+    else {
+      /* Generate a random number between 0 and the number of rooms */
+      random_number = rand() % nor_size;
+      /* Place the potion in the room */
+      map[rooms[random_number].y + 1][rooms[random_number].x + 1] = POTION_CHAR;
+      /* Set the potion's coordinates */
+      potions -> x = rooms[random_number].x + 1;
+      potions -> y = rooms[random_number].y + 1;
+    }
   }
 }
 
-
-
-/*This function is responsible for increasing/decreasing health based on ingestible food/potions*/
+/*
+* This function is responsible for increasing/decreasing health based on ingestible food/potions
+*/
 void food_and_potions (char map[][MAP_WIDTH], Character* character, Consumables Foods[], Consumables Potions[]) 
 {
   /*case character is crossing food*/

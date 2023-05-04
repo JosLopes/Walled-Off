@@ -22,8 +22,8 @@
 #define MIN_XP 25
 #define FOOD_CHAR "F"
 #define POTION_CHAR "P"
-#define numFoods 3
-#define numPotions 2
+#define NUM_FOODS 3
+#define NUM_POTIONS 2
 /*
 #define APPLE_CHAR "A"
 #define AVOCADO_CHAR "V"

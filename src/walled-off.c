@@ -6,6 +6,8 @@
 #include <ncurses.h>
 #include <time.h>
 #include <stdlib.h>
+#include "Health.h"
+#include "Consumables.h"
 
 void init_character(Character *character)
 {
@@ -27,7 +29,7 @@ int main () {
 
   Character character;
   /*call load_game at the start of the game to load the xp value*/
-  character.xp = load_game();
+  //character.xp = load_game();
 
   int numRooms = rand() % (MAX_ROOMS - 35) + 10;
   int num_goblins = rand() % 10;
@@ -55,6 +57,12 @@ int main () {
   generateCorridors (MAP_WIDTH, map, rooms, numRooms, number_of_non_overlaping_rooms);
   place_player (MAP_HEIGHT, MAP_WIDTH, map, &character);
   place_enemies (MAP_HEIGHT, MAP_WIDTH, map, num_goblins, num_skeletons, num_orcs);
+  //Testing calling these 3 functions here
+  ConsumablesHeap();
+  
+  //place_foods_and_potions (MAP_HEIGHT, MAP_WIDTH, map, numRooms, rooms, foods, potions);
+  //take_damage(map, &character, enemies, num_enemies);
+  //food_and_potions(map, &character, foods, potions);
   display_map (main_window, MAP_HEIGHT, MAP_WIDTH, map);
 
   wrefresh (main_window);
@@ -66,7 +74,7 @@ int main () {
   movement (&character, MAP_HEIGHT, MAP_WIDTH, map, main_window);
 
   /*call save_game at the end of the game to save the xp value*/
-  save_game(character.xp);
+  //save_game(character.xp);
 
   // cleanup and exit
   delwin(main_window);

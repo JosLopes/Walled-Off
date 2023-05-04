@@ -174,7 +174,7 @@ void place_enemies(int map_height, int map_width, char map[][map_width], int num
             y = rand() % map_height;
         } while (map[y][x] != FLOOR_CHAR);
         Enemy goblin = {x, y, symbols[0]};
-        map[y][x] = goblin.symbol;
+        //map[y][x] = goblin.symbol;
     }
     // coloca os esqueletos
     for (i = 0; i < num_skeletons; i++) {
@@ -183,7 +183,7 @@ void place_enemies(int map_height, int map_width, char map[][map_width], int num
             y = rand() % map_height;
         } while (map[y][x] != FLOOR_CHAR);
         Enemy skeleton = {x, y, symbols[1]};
-        map[y][x] = skeleton.symbol;
+        //map[y][x] = skeleton.symbol;
     }
     // coloca os orcs
     for (i = 0; i < num_orcs; i++) {
@@ -192,7 +192,7 @@ void place_enemies(int map_height, int map_width, char map[][map_width], int num
             y = rand() % map_height;
         } while (map[y][x] != FLOOR_CHAR);
         Enemy orc = {x, y, symbols[2]};
-        map[y][x] = orc.symbol;
+        //map[y][x] = orc.symbol;
     }
 }
 
@@ -201,6 +201,9 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
     
     local_window = newwin (height, width, startingY, startingX);
     wborder (local_window, '|', '|', '-', '-', '*', '*', '*', '*');
+
+    //Calling the place_foods_and_potions function (put it instead in walled-off.c)
+    //place_foods_and_potions (local_window, height, width);
 
     refresh ();
     wrefresh (local_window);
