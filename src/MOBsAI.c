@@ -1,3 +1,7 @@
+#include "MOBsAI.h"
+#include "defines.h"
+#include <stdlib.h>
+#include <math.h>
 
 /* Node's structure */
 typedef struct Path_finder_node {
@@ -6,7 +10,7 @@ typedef struct Path_finder_node {
                   for g cost (distance from the origin) and f-cost,
                   the total distance (h cost + g cost)*/
   int explored; /* True or false */
-  Path_finder_node prev*;  /* Pointer to the prev of this node */
+  struct Path_finder_node *prev;  /* Pointer to the prev of this node */
 } Path_finder_node;
 
 /* A queue to store every possible path unexplored */
@@ -18,8 +22,7 @@ typedef struct Path_queue {
 
 void init_queue (Path_queue *path)
 {
-  int index;
-  path -> *nodes = malloc (sizeof (Path_queue) * (MAP_HEIGHT * MAP_WIDTH));
+  path -> nodes = malloc (sizeof (Path_queue) * (MAP_HEIGHT * MAP_WIDTH));
   path -> head = 0;
   path -> tail = -1; /* When the queue is empty there is no tail */
   path -> number_of_nodes = 0;
@@ -55,7 +58,7 @@ int dequeue (Path_queue *path)
   {
     path -> head ++;
     path -> number_of_nodes --;
-    return number_of_nodes; /* Sucess, the head has been dequeued */
+    return path -> number_of_nodes; /* Sucess, the head has been dequeued */
   }
   else /* When the function is called uppon an empty queue (head == tail) */
   {
@@ -89,8 +92,8 @@ Path_finder_node init_new_node (int new_row, int new_col, Character *character, 
   new_node -> prev = &prev; /* Origin (previous node before new_node) */
 
   /* Calculate g, h and f costs, described in the struct Path_finder_node */
-  new_node -> g = (10 * sqrt (pow (prev -> row - new_row) + pow (prev -> col - new_col))) + prev -> g;
-  new_node -> h = (10 * sqrt (pow (character -> y - new_row) + pow (charachter -> x - new_col)));
+  new_node -> g = (10 * sqrt (pow (prev.row - new_row, 2) + pow (prev.col - new_col, 2))) + prev.g;
+  new_node -> h = (10 * sqrt (pow (character -> y - new_row, 2) + pow (character -> x - new_col, 2)));
   new_node -> f = new_node -> g + new_node -> h;
 
   new_node -> explored = 1;
@@ -99,7 +102,7 @@ Path_finder_node init_new_node (int new_row, int new_col, Character *character, 
 
 /* Insert the nodes surrounding the origin in the queue,
    in the first iteraction it inserts only the origin */
-Path_finder_node *find_path (Enemy *enemy, Character *character, char map**)
+Path_finder_node *find_path (Enemy *enemy, Character *character, char **map)
 {
   int index;
 
@@ -117,39 +120,41 @@ Path_finder_node *find_path (Enemy *enemy, Character *character, char map**)
 
   Path_finder_node *current_node = malloc (sizeof (Path_finder_node));  /* Current origin */
 
-  /* Place holder to occupie the array of nodes */
+  /* Place holder to occupie the array of nodes and temporary node */
   Path_finder_node *place_holder = malloc (sizeof (Path_finder_node));
+  Path_finder_node temp;
   init_place_holder_node (place_holder);
 
   Path_finder_node **node_array = malloc (sizeof (Path_finder_node *) * MAP_HEIGHT);
   for (index = 0; index < MAP_WIDTH; index ++)
   {
-    node_array[i] = malloc (sizeof (Path_finder_node) * MAP_WIDTH);
-    node_array[i] = *place_holder;
+    node_array[index] = malloc (sizeof (Path_finder_node) * MAP_WIDTH);
+    node_array[index] = place_holder;
   }
 
   // Construir os nodos à volta da origin e colocar na *priority* queue;
   do
   {
-    *current_node = path -> nodes[head];
+    *current_node = path -> nodes[path -> head];
     /* Use the node with the less f cost */
     node_array[current_node -> row][current_node -> col] = *current_node;
     current_node -> explored = 0; /* Begins exploring the current_node */
-    unqueue (path);
+    dequeue (path);
 
     current_row = current_node -> row;
     current_col = current_node -> col;
 
-    /* 
+    int current_row_plus = current_row + 1;
+
+    /*
       If the node in the map array is valid to walk by enemies and
       the node in the same position was not yet explored, create a
       new node and verify another condition */
     if (map[current_row_plus][current_col] == FLOOR_CHAR &&
-        node_array[current_row_plus][current_col].explored == 1) /* Test the above node */
+        node_array[current_row_plus][current_col].explored == 1)
     {
       /* Temporary above node */
-      int current_row_plus = current_row + 1;
-      Path_finder_node temp = init_new_node (current_row_plus, current_col, character, *current_node);
+      temp = init_new_node (current_row_plus, current_col, character, *current_node);
 
       /* Test the node above */
       if (temp.f < node_array[current_row_plus][current_col].f) 
@@ -157,12 +162,15 @@ Path_finder_node *find_path (Enemy *enemy, Character *character, char map**)
         node_array[current_row_plus][current_col] = temp;
         insert_queue (path, node_array[current_row_plus][current_col]);
       }
-      free (temp);
-      temp = NULL;
+    }
 
+    int current_row_less = current_row - 1;
+
+    if (map[current_row_less][current_col] == FLOOR_CHAR &&
+        node_array[current_row_less][current_col].explored == 1)
+    {
       /* Temporary bellow node */
-      int current_row_less = current_row - 1;
-      Path_finder_node temp = init_new_node (current_row_less, current_col, character, *current_node);
+      temp = init_new_node (current_row_less, current_col, character, *current_node);
 
       /* Test the node bellow */
       if (temp.f < node_array[current_row_less][current_col].f)
@@ -170,25 +178,31 @@ Path_finder_node *find_path (Enemy *enemy, Character *character, char map**)
         node_array[current_row_less][current_col] = temp;
         insert_queue (path, node_array[current_row_less][current_col]);
       }
-      free (temp);
-      temp = NULL;
+    }
 
+    int current_col_plus = current_col + 1;
+
+    if (map[current_row][current_col_plus] == FLOOR_CHAR &&
+        node_array[current_row][current_col_plus].explored == 1)
+    {
       /* Temporary right node */
-      int current_col_plus = current_col + 1;
-      Path_finder_node temp = init_new_node (current_row, current_col_plus, character, *current_node);
+      temp = init_new_node (current_row, current_col_plus, character, *current_node);
 
       /* Test the node to the right */
-      if (temp.f < node_array[current_rom][current_col_plus].f)
+      if (temp.f < node_array[current_row][current_col_plus].f)
       {
         node_array[current_row][current_col_plus] = temp;
         insert_queue (path, node_array[current_row][current_col_plus]);
       }
-      free (temp);
-      temp = NULL;
+    }
 
+    int current_col_less = current_col -1;
+
+    if (map[current_row][current_col_less] == FLOOR_CHAR &&
+        node_array[current_row][current_col_less].explored == 1)
+    {
       /* temporary left node */
-      int current_col_less = current_col -1;
-      Path_finder_node temp = init_new_node (current_row, current_col_less, charachter, *current_node);
+      temp = init_new_node (current_row, current_col_less, character, *current_node);
 
       /* Test the node to the left */
       if (temp.f < node_array[current_row][current_col_less].f)
@@ -196,23 +210,22 @@ Path_finder_node *find_path (Enemy *enemy, Character *character, char map**)
         node_array[current_row][current_col_less] = temp;
         insert_queue (path, node_array[current_row][current_col_less]);
       }
-      free (temp);
-      temp = NULL;
     }
   } while (path -> number_of_nodes != 0 && current_node -> h == 10);
 
   return current_node;
 }
 
-void build_path (Path_finder_node *current_node, Enemy *enemy, char **map)
+void build_path (Enemy *enemy, Character *charachter, char **map)
 {
   int row, col;
+  Path_finder_node *node = find_path (enemy, charachter, map);
 
-  while (current_node -> prev != NULL)
+  while (node -> prev != NULL)
   {
-    row = current_node -> row;
-    col = current_node -> col;
-    mapa[current_row][current_col] = '=';
-    current_node = current_node -> prev;
+    row = node -> row;
+    col = node -> col;
+    map[row][col] = '=';
+    node = node -> prev;
   }
 }
