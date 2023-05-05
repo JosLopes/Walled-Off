@@ -7,7 +7,6 @@
 #include "movement.h"
 #include "mapgen.h"
 
-
 /*
 * Function that sets the range according to the character life
 */
