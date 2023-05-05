@@ -4,6 +4,7 @@
 #include "movement.h"
 #include "vision.h"
 #include "MOBs.h"
+#include "MOBsAI.h"
 #include <ncurses.h>
 #include <time.h>
 #include <stdlib.h>
@@ -121,6 +122,8 @@ int main ()
 
     /* Introducing vision */
     vision(main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
+
+    build_path (enemies, &character, map);
 
     /* At the end of every loop, refresh main_window */
     display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
