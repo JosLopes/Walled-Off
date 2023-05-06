@@ -153,7 +153,7 @@ void movement(Character *character, int map_height, int map_width, char map[][ma
     default:
       break;
     }
-    vision(main_window, character, map_height, map_width, map, traveled_path);
+    vision_color(main_window, character, map_height, map_width, map, traveled_path);
     display_map (main_window, character, map_height, map_width, map, traveled_path);
   }
 }

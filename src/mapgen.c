@@ -207,6 +207,8 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
 
     init_color(60, 0, 0, 312); /*OBSCURE_COLOR*/
 
+    init_color(61, 0, 1000, 0); /*ENEMY_COLOR*/
+
     init_color(5, 500, 700, 1000); /*azul claro*/
     init_color(6, 0, 100, 1000); /*azul escuro*/
     /*Define color pairs*/
@@ -216,7 +218,7 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
     init_pair(PLAYER_VISION_COLOR3, COLOR_YELLOW, 58);
     init_pair(PLAYER_VISION_COLOR4, COLOR_YELLOW, 59);
     init_pair(FLOOR_COLOR, COLOR_WHITE, 55);
-    init_pair(ENEMY_COLOR, COLOR_GREEN, 55);
+    init_pair(ENEMY_COLOR, 61, 55);
     init_pair(WALL_COLOR, 56, 55);
     init_pair(OBSCURE_COLOR, 60, 60);
 
@@ -227,7 +229,49 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
 
   return local_window;
 }
-
+/****************************************************************
+*   Function that defines the colors according to the different
+* character that is displaying on the screen.
+****************************************************************/
+void map_colors (WINDOW *main_window, int map_width, int j, int i, char traveled_path[][map_width]){
+  switch (traveled_path[j][i])
+  {
+  case '+':
+    wattron(main_window,COLOR_PAIR(OBSCURE_COLOR)); 
+    mvwaddch(main_window, j, i, traveled_path[j][i]); 
+    wattroff(main_window,COLOR_PAIR(OBSCURE_COLOR));
+    break;
+  case ENEMY_G || ENEMY_S || ENEMY_O:
+    wattron(main_window,COLOR_PAIR(ENEMY_COLOR)); 
+    mvwaddch(main_window, j, i, traveled_path[j][i]); 
+    wattroff(main_window,COLOR_PAIR(ENEMY_COLOR));
+    break;
+  case FIRE_CHAR:
+    wattron(main_window,COLOR_PAIR(WATER_COLOR)); 
+    mvwaddch(main_window, j, i, traveled_path[j][i]); 
+    wattroff(main_window,COLOR_PAIR(WATER_COLOR)); 
+    break;
+  case WALL_CHAR:      
+    wattron(main_window,COLOR_PAIR(WALL_COLOR)); 
+    mvwaddch(main_window, j, i, traveled_path[j][i]); 
+    wattroff(main_window,COLOR_PAIR(WALL_COLOR));
+    break;
+  case FLOOR_CHAR:
+    wattron(main_window,COLOR_PAIR(FLOOR_COLOR)); 
+    mvwaddch(main_window, j, i, traveled_path[j][i]); 
+    wattroff(main_window,COLOR_PAIR(FLOOR_COLOR));
+    break;
+  default:
+  /*DEFENIR INIMIGOS*/
+    wattron(main_window,COLOR_PAIR(ENEMY_COLOR)); 
+    mvwaddch(main_window, j, i, traveled_path[j][i]); 
+    wattroff(main_window,COLOR_PAIR(ENEMY_COLOR));
+    break;
+  }
+}
+/*****************************************************
+*   Function that displays the map on the screen
+******************************************************/
 void display_map (WINDOW *main_window, Character *character, int map_height, int map_width, char map[][map_width], char traveled_path[][map_width]) {
 
   int range = sets_range(character->life);
@@ -241,45 +285,11 @@ void display_map (WINDOW *main_window, Character *character, int map_height, int
       /*for the range of vision of the character*/
       if (i >= x_min && j > y_min && i <= x_max && j < y_max)
       {
-        vision(main_window, character, map_height, map_width, map, traveled_path);
+        vision_color(main_window, character, map_height, map_width, map, traveled_path);
       }
       else 
       {
-        switch (traveled_path[j][i])
-        {
-        case '+':
-          wattron(main_window,COLOR_PAIR(OBSCURE_COLOR)); 
-          mvwaddch(main_window, j, i, traveled_path[j][i]); 
-          wattroff(main_window,COLOR_PAIR(OBSCURE_COLOR));
-          break;
-        case ENEMY_G || ENEMY_S || ENEMY_O:
-          wattron(main_window,COLOR_PAIR(ENEMY_COLOR)); 
-          mvwaddch(main_window, j, i, traveled_path[j][i]); 
-          wattroff(main_window,COLOR_PAIR(ENEMY_COLOR));
-          break;
-        /*print blue water*/
-        case FIRE_CHAR:
-          wattron(main_window,COLOR_PAIR(WATER_COLOR)); 
-          mvwaddch(main_window, j, i, traveled_path[j][i]); 
-          wattroff(main_window,COLOR_PAIR(WATER_COLOR)); 
-          break;
-        case WALL_CHAR:      
-          wattron(main_window,COLOR_PAIR(WALL_COLOR)); 
-          mvwaddch(main_window, j, i, traveled_path[j][i]); 
-          wattroff(main_window,COLOR_PAIR(WALL_COLOR));
-          break;
-        case FLOOR_CHAR:
-          wattron(main_window,COLOR_PAIR(FLOOR_COLOR)); 
-          mvwaddch(main_window, j, i, traveled_path[j][i]); 
-          wattroff(main_window,COLOR_PAIR(FLOOR_COLOR));
-          break;
-        default:
-        /*DEFENIR INIMIGOS*/
-          wattron(main_window,COLOR_PAIR(ENEMY_COLOR)); 
-          mvwaddch(main_window, j, i, traveled_path[j][i]); 
-          wattroff(main_window,COLOR_PAIR(ENEMY_COLOR));
-          break;
-        }
+        map_colors(main_window, map_width, j, i, traveled_path);
       }
     }
   }
