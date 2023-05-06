@@ -65,4 +65,22 @@ typedef struct {
   int damage;
 } Variable_stats;
 
+/*========================================= AI-DATATYPES ========================================*/
+/* Node's structure */
+typedef struct Path_finder_node {
+  int row, col;  /* Position on the map */
+  int h, g, f;  /* Integer values for h cost (distance from the goal),
+                  for g cost (distance from the origin) and f-cost,
+                  the total distance (h cost + g cost)*/
+  int explored; /* True or false */
+  struct Path_finder_node *prev;  /* Pointer to the prev of this node */
+} Node;
+
+/* A queue to store every possible path unexplored */
+typedef struct Path_queue {
+  Node *nodes;
+  int head, tail;  /* Head and tail of the above array */
+  int number_of_nodes;
+} Path_queue;
+
 #endif
