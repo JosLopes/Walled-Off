@@ -1,24 +1,8 @@
 #include "MOBsAI.h"
 #include "defines.h"
+#include "datatypes.h"
 #include <stdlib.h>
 #include <math.h>
-
-/* Node's structure */
-typedef struct Path_finder_node {
-  int row, col;  /* Position on the map */
-  int h, g, f;  /* Integer values for h cost (distance from the goal),
-                  for g cost (distance from the origin) and f-cost,
-                  the total distance (h cost + g cost)*/
-  int explored; /* True or false */
-  struct Path_finder_node *prev;  /* Pointer to the prev of this node */
-} Path_finder_node;
-
-/* A queue to store every possible path unexplored */
-typedef struct Path_queue {
-  Path_finder_node *nodes;
-  int head, tail;  /* Head and tail of the above array */
-  int number_of_nodes;
-} Path_queue;
 
 void init_queue (Path_queue *path)
 {
@@ -28,13 +12,13 @@ void init_queue (Path_queue *path)
   path -> number_of_nodes = 0;
 }
 
-void init_origin_node (Path_finder_node *origin, Enemy *enemy)
+void init_origin_node (Node *origin, Enemy *enemy)
 {
   origin -> row = enemy -> y;
   origin -> col = enemy -> x;
 
-  /* As this is the starting point, the costs are irrelevant, so they are defaulted to 0 */
-  origin -> h = 0;
+  /* As this is the starting point, the costs are irrelevant */
+  origin -> h = 11; /* Needs to be superior to 10 so it doesnt stop the main loop */
   origin -> g = 0;
   origin -> f = 0;
 
@@ -46,7 +30,7 @@ void init_origin_node (Path_finder_node *origin, Enemy *enemy)
   Initialize a place holder wich the only purpose is to wait for another
   node to take its place. Every other node created will have a f cost lower
   than the place_holder node */
-void init_place_holder_node (Path_finder_node *place_holder)
+void init_place_holder_node (Node *place_holder)
 {
   place_holder -> f = MAP_HEIGHT * MAP_WIDTH; /* Bigher than the bigher possible f */
   place_holder -> explored = 1; /* False, never explored given the nature of the algorithm */
@@ -54,9 +38,9 @@ void init_place_holder_node (Path_finder_node *place_holder)
 
 int dequeue (Path_queue *path)
 {
-  if (path -> head < path -> tail)
+  if (path -> number_of_nodes != 0)
   {
-    path -> head ++;
+    path -> head ++; /* When the head surpasses the tail */
     path -> number_of_nodes --;
     return path -> number_of_nodes; /* Sucess, the head has been dequeued */
   }
@@ -67,7 +51,7 @@ int dequeue (Path_queue *path)
 }
 
 /* Insert sort's a new node in the queue to make sure it stays a priority queue */
-void insert_queue (Path_queue *path, Path_finder_node node)
+void insert_queue (Path_queue *path, Node node)
 {
   int index;
   /* There is no need for verifying if the queue is full since the size 
@@ -75,74 +59,62 @@ void insert_queue (Path_queue *path, Path_finder_node node)
      ence its impossible to reach the end of the queue */
 
   path -> tail ++;
-  for (index = path -> tail; path -> nodes[index].f > node.f && index > path -> head; index --)
+  for (index = path -> tail; index > path -> head && path -> nodes[index-1].f > node.f; index --)
   {
-    path -> nodes[index + 1] = path -> nodes[index];
+    path -> nodes[index] = path -> nodes[index - 1];
   }
   path -> nodes[index] = node; //talvez precise do pointer para a node ao inves, but idk;
   path -> number_of_nodes ++;
 }
 
 /* Create a new node to insert in the queue */
-Path_finder_node init_new_node (int new_row, int new_col, Character *character, Path_finder_node prev)
+Node init_new_node (int new_row, int new_col, Character *character, Node prev)
 {
-  Path_finder_node *new_node = malloc (sizeof (Path_finder_node));
-  new_node -> row = new_row;
-  new_node -> col = new_col;
-  new_node -> prev = &prev; /* Origin (previous node before new_node) */
+  Node new_node;
+  new_node.row = new_row;
+  new_node.col = new_col;
+  new_node.prev = &prev; /* Origin (previous node before new_node) */
 
-  /* Calculate g, h and f costs, described in the struct Path_finder_node */
-  new_node -> g = (10 * sqrt (pow (prev.row - new_row, 2) + pow (prev.col - new_col, 2))) + prev.g;
-  new_node -> h = (10 * sqrt (pow (character -> y - new_row, 2) + pow (character -> x - new_col, 2)));
-  new_node -> f = new_node -> g + new_node -> h;
+  /* Calculate g, h and f costs, described in the struct Node */
+  new_node.g = (10 * sqrt (pow (prev.row - new_row, 2) + pow (prev.col - new_col, 2))) + prev.g;
+  new_node.h = (10 * sqrt (pow (character -> y - new_row, 2) + pow (character -> x - new_col, 2)));
+  new_node.f = new_node.g + new_node.h;
 
-  new_node -> explored = 1;
-  return *new_node;
+  new_node.explored = 1;
+  return new_node;
 }
 
 /* Insert the nodes surrounding the origin in the queue,
    in the first iteraction it inserts only the origin */
-Path_finder_node *find_path (Enemy *enemy, Character *character, char **map)
+Node find_path (Character *character, char **map, Node **node_array, Node *place_holder, Path_queue *path)
 {
-  int index;
-
   /* To be used in verifying paths in the loop */
   int current_row;
   int current_col;
 
-  Path_queue *path = malloc (sizeof (Path_queue));
-  init_queue (path); /* Initializes the queue */
+  Node current_node;  /* Current origin */
+  Node temp;  /* Temporary node */
 
-  /* Starting the single first node */
-  Path_finder_node *origin_node = malloc (sizeof (Path_finder_node));
-  init_origin_node (origin_node, enemy);
-  insert_queue (path, *origin_node);  /* Inserts first node in the queue */
-
-  Path_finder_node *current_node = malloc (sizeof (Path_finder_node));  /* Current origin */
-
-  /* Place holder to occupie the array of nodes and temporary node */
-  Path_finder_node *place_holder = malloc (sizeof (Path_finder_node));
-  Path_finder_node temp;
-  init_place_holder_node (place_holder);
-
-  Path_finder_node **node_array = malloc (sizeof (Path_finder_node *) * MAP_HEIGHT);
-  for (index = 0; index < MAP_WIDTH; index ++)
+  /* Initializes the array of nodes with place_holders */
+  for (current_row = 0; current_row < MAP_HEIGHT; current_row ++)
   {
-    node_array[index] = malloc (sizeof (Path_finder_node) * MAP_WIDTH);
-    node_array[index] = place_holder;
+    for (current_col = 0; current_col < MAP_WIDTH; current_col ++)
+    {
+      node_array[current_row][current_col] = *place_holder;
+    }
   }
 
   // Construir os nodos à volta da origin e colocar na *priority* queue;
   do
   {
-    *current_node = path -> nodes[path -> head];
+    current_node = path -> nodes[path -> head];
     /* Use the node with the less f cost */
-    node_array[current_node -> row][current_node -> col] = *current_node;
-    current_node -> explored = 0; /* Begins exploring the current_node */
+    node_array[current_node.row][current_node.col] = current_node;
+    current_node.explored = 0; /* Begins exploring the current_node */
     dequeue (path);
 
-    current_row = current_node -> row;
-    current_col = current_node -> col;
+    current_row = current_node.row;
+    current_col = current_node.col;
 
     int current_row_plus = current_row + 1;
 
@@ -154,7 +126,7 @@ Path_finder_node *find_path (Enemy *enemy, Character *character, char **map)
         node_array[current_row_plus][current_col].explored == 1)
     {
       /* Temporary above node */
-      temp = init_new_node (current_row_plus, current_col, character, *current_node);
+      temp = init_new_node (current_row_plus, current_col, character, current_node);
 
       /* Test the node above */
       if (temp.f < node_array[current_row_plus][current_col].f) 
@@ -170,7 +142,7 @@ Path_finder_node *find_path (Enemy *enemy, Character *character, char **map)
         node_array[current_row_less][current_col].explored == 1)
     {
       /* Temporary bellow node */
-      temp = init_new_node (current_row_less, current_col, character, *current_node);
+      temp = init_new_node (current_row_less, current_col, character, current_node);
 
       /* Test the node bellow */
       if (temp.f < node_array[current_row_less][current_col].f)
@@ -186,7 +158,7 @@ Path_finder_node *find_path (Enemy *enemy, Character *character, char **map)
         node_array[current_row][current_col_plus].explored == 1)
     {
       /* Temporary right node */
-      temp = init_new_node (current_row, current_col_plus, character, *current_node);
+      temp = init_new_node (current_row, current_col_plus, character, current_node);
 
       /* Test the node to the right */
       if (temp.f < node_array[current_row][current_col_plus].f)
@@ -202,7 +174,7 @@ Path_finder_node *find_path (Enemy *enemy, Character *character, char **map)
         node_array[current_row][current_col_less].explored == 1)
     {
       /* temporary left node */
-      temp = init_new_node (current_row, current_col_less, character, *current_node);
+      temp = init_new_node (current_row, current_col_less, character, current_node);
 
       /* Test the node to the left */
       if (temp.f < node_array[current_row][current_col_less].f)
@@ -211,21 +183,27 @@ Path_finder_node *find_path (Enemy *enemy, Character *character, char **map)
         insert_queue (path, node_array[current_row][current_col_less]);
       }
     }
-  } while (path -> number_of_nodes != 0 && current_node -> h == 10);
+  } while (path -> number_of_nodes != 0 && current_node.h > 10);
 
   return current_node;
 }
 
-void build_path (Enemy *enemy, Character *charachter, char **map)
+void build_path (Enemy *enemy, Character *charachter, char **map, Node **node_array, Path_queue *path, Node *place_holder)
 {
-  int row, col;
-  Path_finder_node *node = find_path (enemy, charachter, map);
+  /* Starting the single first node */
+  Node *origin_node = malloc (sizeof (Node));
+  init_origin_node (origin_node, enemy);
+  init_queue (path);
+  insert_queue (path, *origin_node);  /* Inserts first node in the queue */
 
-  while (node -> prev != NULL)
+  Node node = find_path (charachter, map, node_array, place_holder, path);
+
+  while (node.prev != NULL)
   {
-    row = node -> row;
-    col = node -> col;
-    map[row][col] = '=';
-    node = node -> prev;
+    map[node.row][node.col] = '=';
+    node = *(node.prev);
   }
+
+  free (origin_node);
+  origin_node = NULL;
 }
