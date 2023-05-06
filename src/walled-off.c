@@ -1,11 +1,12 @@
-#include "mapgen.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <ncurses.h>
+#include <math.h>
+#include <time.h>
 #include "datatypes.h"
 #include "defines.h"
 #include "mapgen.h"
 #include "movement.h"
-#include <ncurses.h>
-#include <time.h>
-#include <stdlib.h>
 #include "Health.h"
 #include "Consumables.h"
 
@@ -57,12 +58,18 @@ int main () {
   generateCorridors (MAP_WIDTH, map, rooms, numRooms, number_of_non_overlaping_rooms);
   place_player (MAP_HEIGHT, MAP_WIDTH, map, &character);
   place_enemies (MAP_HEIGHT, MAP_WIDTH, map, num_goblins, num_skeletons, num_orcs);
-  //Testing calling these 3 functions here
+  //Testing calling these 4 functions here
   ConsumablesHeap();
-  
-  //place_foods_and_potions (MAP_HEIGHT, MAP_WIDTH, map, numRooms, rooms, foods, potions);
   //take_damage(map, &character, enemies, num_enemies);
-  //food_and_potions(map, &character, foods, potions);
+
+  int nor_size = 5;
+  //Room rooms[nor_size];
+  Consumables *Foods[nor_size] = ConsumablesHeap();
+  Consumables *Potions[nor_size] = ConsumablesHeap();
+  
+  place_foods_and_potions (MAP_HEIGHT, MAP_WIDTH, map, nor_size, &rooms, Foods, Potions);
+  food_and_potions (map, &character, &Foods, &Potions);
+  
   display_map (main_window, MAP_HEIGHT, MAP_WIDTH, map);
 
   wrefresh (main_window);

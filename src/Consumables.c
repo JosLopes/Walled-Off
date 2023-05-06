@@ -10,6 +10,10 @@
 
 /* Add x, y coordinates */
 /* Initialized with (0,0) coordinates */
+
+//Eliminate the distinction between foods and potions. Just have consumables!
+
+
 void ConsumablesHeap() {
   /* Different foods */
   Consumables *Foods = malloc(NUM_FOODS*sizeof(Consumables));
@@ -26,8 +30,8 @@ void ConsumablesHeap() {
   Consumables Dreamweaver_Elixir = {"Dreamweaver Elixir", +20, 0, 0};
   Consumables Dragonfire_Brew = {"Dragonfire Brew", +40, 0, 0};
 
-  Potions[0] = Dreamweaver_Elixir;
-  Potions[1] = Dragonfire_Brew;
+  Potions[3] = Dreamweaver_Elixir;
+  Potions[4] = Dragonfire_Brew;
 
   /* Have to free the memory that I allocate here somewhere in the program. Do this later.*/
 }

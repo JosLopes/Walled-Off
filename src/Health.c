@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include <math.h>
+#include <time.h>
 #include "datatypes.h"
 #include "defines.h"
 #include "movement.h"
 #include "mapgen.h"
-#include <time.h>
 #include "Consumables.h"
 
 /*
@@ -24,7 +24,6 @@ xP is going to be affected by:
 decrements the character's life if they are attacked by an enemy within range */
 void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], int num_enemies) 
 {
-
   /*case character is crossing the fire*/
   if (map [character -> y][character -> x] == FIRE_CHAR)
   {
@@ -76,8 +75,8 @@ void take_damage(char map[][MAP_WIDTH], Character* character, Enemy enemies[], i
 /* 
 * Function to do the spawn of foods and potions 
 */
-void place_foods_and_potions (int map_heigth, int map_width, char map[][map_width], int nor_size, Room *rooms, Consumables *foods, Consumables *potions) {
-  
+void place_foods_and_potions (int map_heigth, int map_width, char map[][map_width], int nor_size, Room *rooms, Consumables *Foods[], Consumables *Potions[]) 
+{
   /* Use this random number to determine the number of foods/potions in the map */
   int random_number;
   srand(time(0)); // Seed the random number generator with the current time
@@ -97,19 +96,19 @@ void place_foods_and_potions (int map_heigth, int map_width, char map[][map_widt
       /* Place the food in the room */
       map[rooms[random_number].y + 1][rooms[random_number].x + 1] = FOOD_CHAR;
       /* Set the food's coordinates */
-      foods -> x = rooms[random_number].x + 1;
-      foods -> y = rooms[random_number].y + 1;
+      Foods[random_number] -> x = rooms[random_number].x + 1;
+      Foods[random_number] -> y = rooms[random_number].y + 1;
     }
 
-    /* If the random number is greater than 3, then spawn a potion */
+    /* If the random number is greater (or equal) than 3, then spawn a potion */
     else {
       /* Generate a random number between 0 and the number of rooms */
       random_number = rand() % nor_size;
       /* Place the potion in the room */
       map[rooms[random_number].y + 1][rooms[random_number].x + 1] = POTION_CHAR;
       /* Set the potion's coordinates */
-      potions -> x = rooms[random_number].x + 1;
-      potions -> y = rooms[random_number].y + 1;
+      Potions[random_number] -> x = rooms[random_number].x + 1;
+      Potions[random_number] -> y = rooms[random_number].y + 1;
     }
   }
 }
