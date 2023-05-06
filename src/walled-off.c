@@ -53,9 +53,12 @@ int main ()
   /* Map related initializations */
   int current_line;
   char **map = malloc (sizeof (char *) * MAP_HEIGHT);
+  /* Map to be used to find paths */
+  Node **node_array = malloc (sizeof (Node *) * MAP_HEIGHT);
   for (current_line = 0; current_line < MAP_HEIGHT; current_line ++)
   {
     map[current_line] = malloc (sizeof (char) * MAP_WIDTH);
+    node_array[current_line] = malloc (sizeof (Node) * MAP_WIDTH);
   }
 
   int numRooms = rand() % (MAX_ROOMS - 35) + 10;
@@ -64,6 +67,12 @@ int main ()
 
   /* Main Character related initializations */
   Character character;
+
+  /* AI initialization */
+  Path_queue *path = malloc (sizeof (Path_queue)); /* Path builder */
+  /* Place holder to occupie the array of nodes as a temporary node */
+  Node *place_holder = malloc (sizeof (Node));
+  init_place_holder_node (place_holder);
 
   init_ncurses(); /* Initializes ncurses and its functionalities */
   clear();
@@ -123,7 +132,7 @@ int main ()
     /* Introducing vision */
     vision(main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
 
-    build_path (enemies, &character, map);
+    build_path (enemies, &character, map, node_array, path, place_holder);
 
     /* At the end of every loop, refresh main_window */
     display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
