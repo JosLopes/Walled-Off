@@ -150,7 +150,7 @@ void place_enemies (int number_of_enemies, Enemy *enemies, char **map)
   enemy and combines both the tags and the unique characteristcs of an indivual enemy and places
   everyone on the map in the spots calculated before in the 'locate_positions' function */
 
-void init_enemies (int number_of_enemies, Enemy *enemies, Variable_stats *d_variables, Variable_stats *s_variables, Variable_stats *g_variables, char **map)
+Tag *init_enemies (int number_of_enemies, Enemy *enemies, Variable_stats *d_variables, Variable_stats *s_variables, Variable_stats *g_variables, char **map)
 {
   Tag *tag = malloc (sizeof (Tag) * number_of_enemies);
   int current_enemy = 0;
@@ -181,9 +181,6 @@ void init_enemies (int number_of_enemies, Enemy *enemies, Variable_stats *d_vari
   free (g_variables);
   g_variables = NULL;
 
-  /* Free the tag */
-
   place_enemies (number_of_enemies, enemies, map);
+  return tag;
 }
-
-/*======================================== MOBs intel ===========================================*/
