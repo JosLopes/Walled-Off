@@ -187,7 +187,7 @@ Node find_path (Character *character, char **map, Node **node_array, Node *place
     }
   } while (path -> number_of_nodes != 0 && current_node.h > 10);
 
-  return path -> nodes[path -> head];
+  return *prev;
 }
 
 void build_path (Enemy *enemy, Character *charachter, char **map, Node **node_array, Path_queue *path, Node *place_holder)
@@ -208,4 +208,10 @@ void build_path (Enemy *enemy, Character *charachter, char **map, Node **node_ar
 
   free (origin_node);
   origin_node = NULL;
+
+  free (path->nodes);
+  path->nodes = NULL;
+
+  free (path);
+  path = NULL;
 }

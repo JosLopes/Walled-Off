@@ -128,17 +128,20 @@ int main ()
   {
     char temp_map[50][100];
 
-    for (int i = 0; i<50 ; i++)
-      for (int j = 0; j<100; j++)
-        temp_map[i][j] = map[i][j]; 
-
     /* Basic movement */
     movement (&character, map, ch, &previous_char);
+
+    for (int i = 0; i<50 ; i++)
+      for (int j = 0; j<100; j++)
+        temp_map[i][j] = map[i][j];
 
     /* Introducing vision */
     vision(main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
 
-    build_path (enemies, &character, map, node_array, path, place_holder);
+    if (previous_char != FIRE_CHAR)
+    {
+      build_path (enemies, &character, map, node_array, path, place_holder);
+    }
 
     /* At the end of every loop, refresh main_window */
     display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
