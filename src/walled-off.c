@@ -69,7 +69,6 @@ int main ()
   Character character;
 
   /* AI initialization */
-  Path_queue *path = malloc (sizeof (Path_queue)); /* Path builder */
   /* Place holder to occupie the array of nodes as a temporary node */
   Node *place_holder = malloc (sizeof (Node));
   init_place_holder_node (place_holder);
@@ -102,7 +101,7 @@ int main ()
   Variable_stats *smart_variables = s_enemies_variable_stats ();
   Variable_stats *genius_variables = g_enemies_variable_stats ();
   /* Initializes all the enemies stats, including pre-defined */
-  init_enemies (number_of_enemies, enemies, dumb_variables, smart_variables, genius_variables, map);
+  Tag *tag = init_enemies (number_of_enemies, enemies, dumb_variables, smart_variables, genius_variables, map);
 
   /* Finishes the building of the map */
   generateCorridors (map, not_overlpg, number_of_non_overlaping_rooms);
@@ -140,7 +139,7 @@ int main ()
 
     if (previous_char != FIRE_CHAR)
     {
-      build_path (enemies, &character, map, node_array, path, place_holder);
+      build_path (enemies, &character, map, node_array, place_holder);
     }
 
     /* At the end of every loop, refresh main_window */
@@ -159,9 +158,17 @@ int main ()
   {
     free (map[current_line]);
     map[current_line] = NULL;
+    free (node_array[current_line]);
+    node_array[current_line] = NULL;
   }
   free (map);
   map = NULL;
+  free (node_array);
+  node_array = NULL;
+
+  /* Free tag */
+  free (tag);
+  tag = NULL;
 
   /* Free not_overlpg */
   free (not_overlpg);
@@ -169,6 +176,9 @@ int main ()
 
   free (rooms);
   rooms = NULL;
+
+  free (place_holder);
+  place_holder = NULL;
 
   delwin (main_window);
   endwin ();
