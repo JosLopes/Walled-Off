@@ -126,6 +126,12 @@ int main ()
 
   while ((ch = wgetch(main_window)) != 'q')
   {
+    char temp_map[50][100];
+
+    for (int i = 0; i<50 ; i++)
+      for (int j = 0; j<100; j++)
+        temp_map[i][j] = map[i][j]; 
+
     /* Basic movement */
     movement (&character, map, ch, &previous_char);
 
@@ -136,6 +142,10 @@ int main ()
 
     /* At the end of every loop, refresh main_window */
     display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
+
+    for (int i = 0; i<50 ; i++)
+      for (int j = 0; j<100; j++)
+        map[i][j] = temp_map[i][j]; 
   }
 
   /* cleanup and exit */
