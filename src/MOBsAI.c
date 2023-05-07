@@ -190,11 +190,13 @@ Node find_path (Character *character, char **map, Node **node_array, Node *place
   return *prev;
 }
 
-void build_path (Enemy *enemy, Character *charachter, char **map, Node **node_array, Path_queue *path, Node *place_holder)
+void build_path (Enemy *enemy, Character *charachter, char **map, Node **node_array, Node *place_holder)
 {
   /* Starting the single first node */
   Node *origin_node = malloc (sizeof (Node));
   init_origin_node (origin_node, enemy);
+
+  Path_queue *path = malloc (sizeof (Path_queue)); /* Path builder */
   init_queue (path);
   insert_queue (path, *origin_node);  /* Inserts first node in the queue */
 
