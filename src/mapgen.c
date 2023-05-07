@@ -113,18 +113,6 @@ void init_non_overlaping_rooms (Room rooms[], int numRooms, Non_overlaping_rooms
   }
 }
 
-/* Using 
-void generate_walls (char **map, int nor_size)
-{
-  int current_wall = 0, number_of_walls = nor_size * (MIN_ROOM_HEIGHT + MIN_ROOM_WIDTH);
-
-  while (current_wall < number_of_walls)
-  {
-
-  }
-}
-*/
-
 void generateCorridors (char **map, Non_overlaping_rooms *no_overlpg, int nor_size) 
 {
   int bridge_ind = 0, temp;
@@ -153,35 +141,60 @@ void generateCorridors (char **map, Non_overlaping_rooms *no_overlpg, int nor_si
       endingY = temp;
     }
 
-    if ((directionX > 0 && directionY > 0) || (directionX < 0 && directionY < 0))
+    if ((directionX > 0 && directionY > 0) || 
+        (directionX < 0 && directionY < 0))
     {
       // percorre o corredor, desenhando o chão (FLOOR_CHAR) em cada posição
       for (; vector.startingX <= endingX; vector.startingX++) {
-        map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+            map[vector.startingY][vector.startingX] == WALL_CHAR)
+        {
+          map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        }
       }
     
       for (; vector.startingY <= endingY; vector.startingY++) {
-        map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+            map[vector.startingY][vector.startingX] == WALL_CHAR)
+        {
+          map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        }
       }
     } 
     else if ((directionX < 0 || directionX == 0) && (directionY > 0 || directionY == 0)) 
     {
       for (; vector.startingX > endingX; vector.startingX--) {
+        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+            map[vector.startingY][vector.startingX] == WALL_CHAR)
+        {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        }
       }
     
       for (; vector.startingY <= endingY; vector.startingY++) {
+        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+            map[vector.startingY][vector.startingX] == WALL_CHAR)
+        {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        }
       }
     }
     else if ((directionX > 0 || directionX == 0) && (directionY < 0 || directionY == 0))
     {
       for (; vector.startingX <= endingX; vector.startingX++) {
+        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+            map[vector.startingY][vector.startingX] == WALL_CHAR)
+        {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        }
       }
     
       for (; vector.startingY > endingY; vector.startingY--) {
+        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+            map[vector.startingY][vector.startingX] == WALL_CHAR)
+        {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        }
       }
     }
   }

@@ -68,15 +68,15 @@ void insert_queue (Path_queue *path, Node node)
 }
 
 /* Create a new node to insert in the queue */
-Node init_new_node (int new_row, int new_col, Character *character, Node prev)
+Node init_new_node (int new_row, int new_col, Character *character, Node node, Node *prev)
 {
   Node new_node;
   new_node.row = new_row;
   new_node.col = new_col;
-  new_node.prev = &prev; /* Origin (previous node before new_node) */
+  new_node.prev = prev; /* Origin (previous node before new_node) */
 
   /* Calculate g, h and f costs, described in the struct Node */
-  new_node.g = (10 * sqrt (pow (prev.row - new_row, 2) + pow (prev.col - new_col, 2))) + prev.g;
+  new_node.g = (10 * sqrt (pow (node.row - new_row, 2) + pow (node.col - new_col, 2))) + node.g;
   new_node.h = (10 * sqrt (pow (character -> y - new_row, 2) + pow (character -> x - new_col, 2)));
   new_node.f = new_node.g + new_node.h;
 
@@ -88,6 +88,7 @@ Node init_new_node (int new_row, int new_col, Character *character, Node prev)
    in the first iteraction it inserts only the origin */
 Node find_path (Character *character, char **map, Node **node_array, Node *place_holder, Path_queue *path)
 {
+  Node *prev;
   /* To be used in verifying paths in the loop */
   int current_row;
   int current_col;
@@ -107,6 +108,7 @@ Node find_path (Character *character, char **map, Node **node_array, Node *place
   // Construir os nodos à volta da origin e colocar na *priority* queue;
   do
   {
+    prev = &(path -> nodes[path -> head]);
     current_node = path -> nodes[path -> head];
     /* Use the node with the less f cost */
     node_array[current_node.row][current_node.col] = current_node;
@@ -126,10 +128,10 @@ Node find_path (Character *character, char **map, Node **node_array, Node *place
         node_array[current_row_plus][current_col].explored == 1)
     {
       /* Temporary above node */
-      temp = init_new_node (current_row_plus, current_col, character, current_node);
+      temp = init_new_node (current_row_plus, current_col, character, current_node, prev);
 
       /* Test the node above */
-      if (temp.f < node_array[current_row_plus][current_col].f) 
+      if (temp.f < node_array[current_row_plus][current_col].f)
       {
         node_array[current_row_plus][current_col] = temp;
         insert_queue (path, node_array[current_row_plus][current_col]);
@@ -142,7 +144,7 @@ Node find_path (Character *character, char **map, Node **node_array, Node *place
         node_array[current_row_less][current_col].explored == 1)
     {
       /* Temporary bellow node */
-      temp = init_new_node (current_row_less, current_col, character, current_node);
+      temp = init_new_node (current_row_less, current_col, character, current_node, prev);
 
       /* Test the node bellow */
       if (temp.f < node_array[current_row_less][current_col].f)
@@ -158,7 +160,7 @@ Node find_path (Character *character, char **map, Node **node_array, Node *place
         node_array[current_row][current_col_plus].explored == 1)
     {
       /* Temporary right node */
-      temp = init_new_node (current_row, current_col_plus, character, current_node);
+      temp = init_new_node (current_row, current_col_plus, character, current_node, prev);
 
       /* Test the node to the right */
       if (temp.f < node_array[current_row][current_col_plus].f)
@@ -174,7 +176,7 @@ Node find_path (Character *character, char **map, Node **node_array, Node *place
         node_array[current_row][current_col_less].explored == 1)
     {
       /* temporary left node */
-      temp = init_new_node (current_row, current_col_less, character, current_node);
+      temp = init_new_node (current_row, current_col_less, character, current_node, prev);
 
       /* Test the node to the left */
       if (temp.f < node_array[current_row][current_col_less].f)
@@ -185,7 +187,7 @@ Node find_path (Character *character, char **map, Node **node_array, Node *place
     }
   } while (path -> number_of_nodes != 0 && current_node.h > 10);
 
-  return current_node;
+  return path -> nodes[path -> head];
 }
 
 void build_path (Enemy *enemy, Character *charachter, char **map, Node **node_array, Path_queue *path, Node *place_holder)
