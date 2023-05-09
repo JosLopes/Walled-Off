@@ -54,6 +54,7 @@ typedef struct {
   int life;
   int range;  /* Range for ranged attacks */
   int damage;  /* Damage given to the player*/
+  int awake; /* If true, actevily pursues the main character */
 } Enemy;
 
 /* Individual (and variable) atributes */
@@ -82,5 +83,11 @@ typedef struct Path_queue {
   int head, tail;  /* Head and tail of the above array */
   int number_of_nodes;
 } Path_queue;
+
+typedef struct Awake {
+  Enemy *enemies_awaken;
+  int total_size;  /* Size of the array awaken (number of total enemies) */
+  int current_size;  /* Current number of enemies in the array 'awaken' */
+} Awake;
 
 #endif
