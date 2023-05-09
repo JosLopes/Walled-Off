@@ -130,6 +130,7 @@ void init_enemy_stats (Enemy *enemy, Tag *tag, Variable_stats *variables)
   enemy -> life = variables -> life;
   enemy -> range = variables -> range;
   enemy -> damage = variables -> damage;
+  enemy -> awake = 1; /* Enemy starts sleeping*/
 }
 
 /* 

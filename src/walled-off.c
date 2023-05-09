@@ -5,6 +5,7 @@
 #include "vision.h"
 #include "MOBs.h"
 #include "MOBsAI.h"
+#include "MOBsAI2.h"
 #include <ncurses.h>
 #include <time.h>
 #include <stdlib.h>
@@ -53,12 +54,9 @@ int main ()
   /* Map related initializations */
   int current_line;
   char **map = malloc (sizeof (char *) * MAP_HEIGHT);
-  /* Map to be used to find paths */
-  Node **node_array = malloc (sizeof (Node *) * MAP_HEIGHT);
   for (current_line = 0; current_line < MAP_HEIGHT; current_line ++)
   {
     map[current_line] = malloc (sizeof (char) * MAP_WIDTH);
-    node_array[current_line] = malloc (sizeof (Node) * MAP_WIDTH);
   }
 
   int numRooms = rand() % (MAX_ROOMS - 35) + 10;
@@ -95,7 +93,11 @@ int main ()
   /* Initializes the placement for all enemies, returning how many where placed in the map */
   /* from the max value "number_of_enemies"                                                */
   int number_of_enemies = locate_positions (MAP_HEIGHT, MAP_WIDTH, map, max_number_of_enemies, enemies, number_of_non_overlaping_rooms, not_overlpg);
-  
+  /* Awaken enemies for use in the pathfinding algorithm    */
+  /* When an enemy is awaken, it pursues the enemy actively */
+  Awake *is_awake = malloc (sizeof (Awake));
+  init_is_awake (number_of_enemies, is_awake);
+
   /* Initializes variable stats for each type of enemmy */
   Variable_stats *dumb_variables = d_enemies_variable_stats ();
   Variable_stats *smart_variables = s_enemies_variable_stats ();
@@ -139,7 +141,9 @@ int main ()
 
     if (previous_char != FIRE_CHAR)
     {
-      build_path (enemies, &character, map, node_array, place_holder);
+      /* Initializes more enemies, if necessary, to the is_awaken struct */
+      init_awaken_enemies (&character, enemies, is_awake);
+      build_path (is_awake, &character, map, place_holder);
     }
 
     /* At the end of every loop, refresh main_window */
@@ -158,13 +162,9 @@ int main ()
   {
     free (map[current_line]);
     map[current_line] = NULL;
-    free (node_array[current_line]);
-    node_array[current_line] = NULL;
   }
   free (map);
   map = NULL;
-  free (node_array);
-  node_array = NULL;
 
   /* Free tag */
   free (tag);

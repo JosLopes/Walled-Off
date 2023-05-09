@@ -1,6 +1,9 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+/* Max range for the vision */
+#define AWAKE_RANGE 4
+
 #define MAP_HEIGHT 50
 #define MAP_WIDTH 100
 #define MAX_ROOMS 50

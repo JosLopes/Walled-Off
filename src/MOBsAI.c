@@ -12,13 +12,13 @@ void init_queue (Path_queue *path)
   path -> number_of_nodes = 0;
 }
 
-void init_origin_node (Node *origin, Enemy *enemy)
+void init_origin_node (Character *objective, Node *origin, Enemy *enemy)
 {
   origin -> row = enemy -> y;
   origin -> col = enemy -> x;
 
   /* As this is the starting point, the costs are irrelevant */
-  origin -> h = 11; /* Needs to be superior to 10 so it doesnt stop the main loop */
+  origin -> h = (10 * sqrt (pow (objective -> y - enemy -> y, 2) + pow (objective -> x - enemy -> x, 2))); /* Needs to be superior to 10 so it doesnt stop the main loop */
   origin -> g = 0;
   origin -> f = 0;
 
@@ -68,7 +68,7 @@ void insert_queue (Path_queue *path, Node node)
 }
 
 /* Create a new node to insert in the queue */
-Node init_new_node (int new_row, int new_col, Character *character, Node node, Node *prev)
+Node init_new_node (int new_row, int new_col, Character *objective, Node node, Node *prev)
 {
   Node new_node;
   new_node.row = new_row;
@@ -77,7 +77,7 @@ Node init_new_node (int new_row, int new_col, Character *character, Node node, N
 
   /* Calculate g, h and f costs, described in the struct Node */
   new_node.g = (10 * sqrt (pow (node.row - new_row, 2) + pow (node.col - new_col, 2))) + node.g;
-  new_node.h = (10 * sqrt (pow (character -> y - new_row, 2) + pow (character -> x - new_col, 2)));
+  new_node.h = (10 * sqrt (pow (objective -> y - new_row, 2) + pow (objective -> x - new_col, 2)));
   new_node.f = new_node.g + new_node.h;
 
   new_node.explored = 1;
@@ -86,7 +86,7 @@ Node init_new_node (int new_row, int new_col, Character *character, Node node, N
 
 /* Insert the nodes surrounding the origin in the queue,
    in the first iteraction it inserts only the origin */
-Node find_path (Character *character, char **map, Node **node_array, Node *place_holder, Path_queue *path)
+Node find_path (Character *objective, char **map, Node *place_holder, Path_queue *path)
 {
   Node *prev;
   /* To be used in verifying paths in the loop */
@@ -96,6 +96,7 @@ Node find_path (Character *character, char **map, Node **node_array, Node *place
   Node current_node;  /* Current origin */
   Node temp;  /* Temporary node */
 
+  Node node_array[MAP_HEIGHT][MAP_WIDTH];
   /* Initializes the array of nodes with place_holders */
   for (current_row = 0; current_row < MAP_HEIGHT; current_row ++)
   {
@@ -124,11 +125,12 @@ Node find_path (Character *character, char **map, Node **node_array, Node *place
       If the node in the map array is valid to walk by enemies and
       the node in the same position was not yet explored, create a
       new node and verify another condition */
-    if (map[current_row_plus][current_col] == FLOOR_CHAR &&
+    if ((map[current_row_plus][current_col] == FLOOR_CHAR ||
+    map[current_row_plus][current_col] == '=') &&
         node_array[current_row_plus][current_col].explored == 1)
     {
       /* Temporary above node */
-      temp = init_new_node (current_row_plus, current_col, character, current_node, prev);
+      temp = init_new_node (current_row_plus, current_col, objective, current_node, prev);
 
       /* Test the node above */
       if (temp.f < node_array[current_row_plus][current_col].f)
@@ -140,11 +142,12 @@ Node find_path (Character *character, char **map, Node **node_array, Node *place
 
     int current_row_less = current_row - 1;
 
-    if (map[current_row_less][current_col] == FLOOR_CHAR &&
+    if ((map[current_row_less][current_col] == FLOOR_CHAR ||
+    map[current_row_less][current_col] == '=') &&
         node_array[current_row_less][current_col].explored == 1)
     {
       /* Temporary bellow node */
-      temp = init_new_node (current_row_less, current_col, character, current_node, prev);
+      temp = init_new_node (current_row_less, current_col, objective, current_node, prev);
 
       /* Test the node bellow */
       if (temp.f < node_array[current_row_less][current_col].f)
@@ -156,11 +159,12 @@ Node find_path (Character *character, char **map, Node **node_array, Node *place
 
     int current_col_plus = current_col + 1;
 
-    if (map[current_row][current_col_plus] == FLOOR_CHAR &&
+    if ((map[current_row][current_col_plus] == FLOOR_CHAR ||
+    map[current_row][current_col_plus] == '=') &&
         node_array[current_row][current_col_plus].explored == 1)
     {
       /* Temporary right node */
-      temp = init_new_node (current_row, current_col_plus, character, current_node, prev);
+      temp = init_new_node (current_row, current_col_plus, objective, current_node, prev);
 
       /* Test the node to the right */
       if (temp.f < node_array[current_row][current_col_plus].f)
@@ -172,11 +176,12 @@ Node find_path (Character *character, char **map, Node **node_array, Node *place
 
     int current_col_less = current_col -1;
 
-    if (map[current_row][current_col_less] == FLOOR_CHAR &&
+    if ((map[current_row][current_col_less] == FLOOR_CHAR ||
+    map[current_row][current_col_less] == '=') &&
         node_array[current_row][current_col_less].explored == 1)
     {
       /* temporary left node */
-      temp = init_new_node (current_row, current_col_less, character, current_node, prev);
+      temp = init_new_node (current_row, current_col_less, objective, current_node, prev);
 
       /* Test the node to the left */
       if (temp.f < node_array[current_row][current_col_less].f)
@@ -190,30 +195,35 @@ Node find_path (Character *character, char **map, Node **node_array, Node *place
   return *prev;
 }
 
-void build_path (Enemy *enemy, Character *charachter, char **map, Node **node_array, Node *place_holder)
+void build_path (Awake *is_awake, Character *objective, char **map, Node *place_holder)
 {
-  /* Starting the single first node */
-  Node *origin_node = malloc (sizeof (Node));
-  init_origin_node (origin_node, enemy);
-
-  Path_queue *path = malloc (sizeof (Path_queue)); /* Path builder */
-  init_queue (path);
-  insert_queue (path, *origin_node);  /* Inserts first node in the queue */
-
-  Node node = find_path (charachter, map, node_array, place_holder, path);
-
-  while (node.prev != NULL)
+  for (int index = 0; index < is_awake -> current_size; index ++)
   {
-    map[node.row][node.col] = '=';
-    node = *(node.prev);
+    /* Starting the single first node */
+    Node *origin_node = malloc (sizeof (Node));
+    init_origin_node (objective, origin_node, &(is_awake -> enemies_awaken[index]));
+
+    Path_queue *path = malloc (sizeof (Path_queue));  /* Path builder */
+    init_queue (path);
+    insert_queue (path, *origin_node);  /* Inserts first node in the queue */
+/*
+    if () //verificar se o desire dá match no tamanho da lista, se n der procurar o merdinhas mais próximo;
+*/
+    Node node = find_path (objective, map, place_holder, path);
+
+    while (node.prev != NULL)
+    {
+      map[node.row][node.col] = '=';
+      node = *(node.prev);
+    }
+
+    free (origin_node);
+    origin_node = NULL;
+
+    free (path->nodes);
+    path->nodes = NULL;
+
+    free (path);
+    path = NULL;
   }
-
-  free (origin_node);
-  origin_node = NULL;
-
-  free (path->nodes);
-  path->nodes = NULL;
-
-  free (path);
-  path = NULL;
 }
