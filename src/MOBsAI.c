@@ -194,36 +194,3 @@ Node find_path (Character *objective, char **map, Node *place_holder, Path_queue
 
   return *prev;
 }
-
-void build_path (Awake *is_awake, Character *objective, char **map, Node *place_holder)
-{
-  for (int index = 0; index < is_awake -> current_size; index ++)
-  {
-    /* Starting the single first node */
-    Node *origin_node = malloc (sizeof (Node));
-    init_origin_node (objective, origin_node, &(is_awake -> enemies_awaken[index]));
-
-    Path_queue *path = malloc (sizeof (Path_queue));  /* Path builder */
-    init_queue (path);
-    insert_queue (path, *origin_node);  /* Inserts first node in the queue */
-/*
-    if () //verificar se o desire dá match no tamanho da lista, se n der procurar o merdinhas mais próximo;
-*/
-    Node node = find_path (objective, map, place_holder, path);
-
-    while (node.prev != NULL)
-    {
-      map[node.row][node.col] = '=';
-      node = *(node.prev);
-    }
-
-    free (origin_node);
-    origin_node = NULL;
-
-    free (path->nodes);
-    path->nodes = NULL;
-
-    free (path);
-    path = NULL;
-  }
-}
