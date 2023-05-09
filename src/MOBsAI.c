@@ -4,6 +4,18 @@
 #include <stdlib.h>
 #include <math.h>
 
+int subtract_to_max (int x, int y)
+{
+  if (x > y) return x - y;
+  else return y - x;
+}
+
+/* Calculates the distance from the player to the enemy */
+int distance_from_objective (Point *objective, Enemy enemy)
+{
+  return subtract_to_max (objective -> y, enemy.y) + subtract_to_max (objective -> x, enemy.x);
+}
+
 void init_queue (Path_queue *path)
 {
   path -> nodes = malloc (sizeof (Path_queue) * (MAP_HEIGHT * MAP_WIDTH));
@@ -12,13 +24,14 @@ void init_queue (Path_queue *path)
   path -> number_of_nodes = 0;
 }
 
-void init_origin_node (Character *objective, Node *origin, Enemy *enemy)
+void init_origin_node (Point *objective, Node *origin, Enemy *enemy)
 {
   origin -> row = enemy -> y;
   origin -> col = enemy -> x;
 
-  /* As this is the starting point, the costs are irrelevant */
-  origin -> h = (10 * sqrt (pow (objective -> y - enemy -> y, 2) + pow (objective -> x - enemy -> x, 2))); /* Needs to be superior to 10 so it doesnt stop the main loop */
+  /* As this is the starting point, the costs are irrelevant except for h, */
+  /* h needs to be superior to 10 to dont stop the path loop               */
+  origin -> h = (10 * distance_from_objective (objective, *enemy));
   origin -> g = 0;
   origin -> f = 0;
 
@@ -68,7 +81,7 @@ void insert_queue (Path_queue *path, Node node)
 }
 
 /* Create a new node to insert in the queue */
-Node init_new_node (int new_row, int new_col, Character *objective, Node node, Node *prev)
+Node init_new_node (int new_row, int new_col, Point *objective, Node node, Node *prev)
 {
   Node new_node;
   new_node.row = new_row;
@@ -86,7 +99,7 @@ Node init_new_node (int new_row, int new_col, Character *objective, Node node, N
 
 /* Insert the nodes surrounding the origin in the queue,
    in the first iteraction it inserts only the origin */
-Node find_path (Character *objective, char **map, Node *place_holder, Path_queue *path)
+Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *path)
 {
   Node *prev;
   /* To be used in verifying paths in the loop */

@@ -2,6 +2,11 @@
 #define MY_HEADER_H
 
 typedef struct {
+  int y;
+  int x;
+} Point;
+
+typedef struct {
     int x, y;
     int width, height;
     int is_overlaping;
@@ -40,7 +45,6 @@ typedef struct {
 typedef struct {
   char inteligence;  /* Initial d(umb), s(mart) or g(enius), also used for display */
   int xp_from_death;  /*XP earned when the player kills the enemy */
-  int screaming_range;  /* Range from where it can call allies to fight with him*/
   int poison_level;  /* Damage given by poison (long duration) */
   int group_desire;  /* These type of enemys attack in group, this tells how many enemys */
                      /* In a group need to exist before he comes back to fight           */
