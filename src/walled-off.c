@@ -44,7 +44,23 @@ void init_ncurses() {
 int main ()
 {
   /* WINDOWS to be used */
+  WINDOW *menu;
   WINDOW *main_window;
+
+  /*=================================== Call menu ===================================*/
+
+  /* Creates menu (options window) from menu.c */
+  menu = create_menu (MAP_HEIGHT, MAP_WIDTH, 2, 2);
+
+  /* Display menu */
+  wrefresh(menu);
+
+  /* Wait for user input before starting game */
+  wgetch(menu);
+
+  /* Close menu window */
+  delwin(menu);
+  /*==================================================================================*/
 
   /* Guarantees a new sequence of "random" numbers */
   srand(time(NULL));

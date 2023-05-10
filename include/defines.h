@@ -30,4 +30,7 @@
 #define ENEMY_COLOR 7
 #define WALL_COLOR 8
 
+#define BACKGROUND_COLOR 20
+#define SELECTED_OPTION_COLOR 21
+
 #endif
