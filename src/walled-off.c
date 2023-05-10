@@ -143,7 +143,7 @@ int main ()
     {
       /* Initializes more enemies, if necessary, to the is_awaken struct */
       init_awaken_enemies (&character, enemies, is_awake);
-      build_path (is_awake, &character, map, place_holder);
+      build_path (is_awake, &character, map, place_holder, enemies);
     }
 
     /* At the end of every loop, refresh main_window */

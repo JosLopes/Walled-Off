@@ -11,9 +11,12 @@ int subtract_to_max (int x, int y)
 }
 
 /* Calculates the distance from the player to the enemy */
-int distance_from_objective (Point *objective, Enemy enemy)
+int distance_from_objective (Point objective, Point start)
 {
-  return subtract_to_max (objective -> y, enemy.y) + subtract_to_max (objective -> x, enemy.x);
+  /* 
+    Manhattan distance for one time's calculations, it will be used for some instances refering to 
+    the Pathfinder in this module, but the euclindian distance will be preferred */
+  return subtract_to_max (objective.y, start.y) + subtract_to_max (objective.x, start.x);
 }
 
 void init_queue (Path_queue *path)
@@ -24,14 +27,14 @@ void init_queue (Path_queue *path)
   path -> number_of_nodes = 0;
 }
 
-void init_origin_node (Point *objective, Node *origin, Enemy *enemy)
+void init_origin_node (Point *objective, Point *start, Node *origin)
 {
-  origin -> row = enemy -> y;
-  origin -> col = enemy -> x;
+  origin -> row = start -> y;
+  origin -> col = start -> x;
 
   /* As this is the starting point, the costs are irrelevant except for h, */
   /* h needs to be superior to 10 to dont stop the path loop               */
-  origin -> h = (10 * distance_from_objective (objective, *enemy));
+  origin -> h = (10 * distance_from_objective (*objective, *start));
   origin -> g = 0;
   origin -> f = 0;
 
