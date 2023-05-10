@@ -4,6 +4,7 @@
 #include "movement.h"
 #include "vision.h"
 #include "MOBs.h"
+#include "menu.h"
 #include <ncurses.h>
 #include <time.h>
 #include <stdlib.h>
@@ -44,22 +45,21 @@ void init_ncurses() {
 int main ()
 {
   /* WINDOWS to be used */
-  WINDOW *menu;
+  WINDOW *menu_window;
   WINDOW *main_window;
 
   /*=================================== Call menu ===================================*/
-
   /* Creates menu (options window) from menu.c */
-  menu = create_menu (MAP_HEIGHT, MAP_WIDTH, 2, 2);
+  menu_window = create_menu (MAP_HEIGHT, MAP_WIDTH, 2, 2);
 
   /* Display menu */
-  wrefresh(menu);
+  wrefresh(menu_window);
 
   /* Wait for user input before starting game */
-  wgetch(menu);
+  wgetch(menu_window);
 
   /* Close menu window */
-  delwin(menu);
+  delwin(menu_window);
   /*==================================================================================*/
 
   /* Guarantees a new sequence of "random" numbers */
@@ -76,6 +76,7 @@ int main ()
   int numRooms = rand() % (MAX_ROOMS - 35) + 10;
   Room *rooms = malloc (sizeof (Room) * numRooms); // Free this memory later !!!
   int number_of_non_overlaping_rooms;
+  
 
   /* Main Character related initializations */
   Character character;
@@ -122,6 +123,7 @@ int main ()
   wrefresh (main_window); /* Refresh main_window */
 
   /* Enable keyboard input for special keys */
+  keypad(menu_window, TRUE);
   keypad(main_window, TRUE);
 
   /*=================================== End of Initialization ===================================*/
@@ -161,6 +163,7 @@ int main ()
   free (rooms);
   rooms = NULL;
 
+  /* Clean up */
   delwin (main_window);
   endwin ();
     

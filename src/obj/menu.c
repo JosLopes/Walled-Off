@@ -1,16 +1,18 @@
-#include <stdio.h>
+#include <panel.h>
 #include <stdlib.h>
+#include <time.h>
 #include <ncurses.h>
+#include <math.h>
+#include "mapgen.h"
 #include "datatypes.h"
 #include "defines.h"
 #include "movement.h"
-#include "mapgen.h"
 #include "vision.h"
+#include "MOBs.h"
 #include "menu.h"
 
-/*definir para tirar som (ex)*/
 /* Create options of menu */
-char *options[4] = {
+char *options[] = {
   "START",
   "HOW TO PLAY",
   "QUIT",
@@ -20,38 +22,59 @@ char *options[4] = {
 /* Count the number of options */
 int n_options = sizeof(options) / sizeof(char *);
 
-/* Print the menu options to the screen */
-void print_menu(WINDOW *menu, int highlight) {
+/* 
+* Print the menu options to the screen 
+*/
+void print_menu(WINDOW *menu_window, int highlight) {
   int x, y, i;
   
   x = 2;
   y = 2;
 
   /* Draw a box around the menu */
-  box(menu, 0, 0);
+  box(menu_window, 0, 0);
 
   /* Print each option */
   for (i = 0; i < n_options; ++i) {
     if (highlight == i + 1) { /* Highlight the current choice */
-      wattron(menu, A_REVERSE);
-      mvwprintw(menu, y, x, "%s", options[i]);
-      wattroff(menu, A_REVERSE);
+      wattron(menu_window, COLOR_PAIR(SELECTED_OPTION_COLOR));
+      mvwprintw(menu_window, y, x, "%s", options[i]);
+      wattroff(menu_window, COLOR_PAIR(SELECTED_OPTION_COLOR));
     }
     else /* Don't highlight other choices */
-      mvwprintw(menu, y, x, "%s", options[i]);
+      wattron(menu_window, COLOR_PAIR(BACKGROUND_COLOR));
+      mvwprintw(menu_window, y, x, "%s", options[i]);
+      wattroff(menu_window, COLOR_PAIR(BACKGROUND_COLOR));
+
     ++y;
   }
   /* Update the menu display */
-  wrefresh(menu);
+  wrefresh(menu_window);
 }
 
-/* Create the menu window */
+/* 
+* Create the menu window 
+*/
 WINDOW *create_menu (int height, int width, int starting_x, int starting_y) {
-  WINDOW *menu;
+  WINDOW *menu_window;
+
+  int highlight = 1;
+  int option = 0;
+  int c;
+
+  initscr();
+  clear();
+  noecho();
+  cbreak(); /* Line buffering disabled. pass on everything */
+
+  /* Calculate center of screen */
+  starting_x = (80 - width) / 2;
+  starting_y = (24 - height) / 2;
 
   /* Create menu window */
-  menu = newwin (height, width, starting_y, starting_x);
-  keypad(menu, TRUE);  /* Enable keyboard input for the menu */
+  menu_window = newwin (height, width, starting_y, starting_x);
+  keypad(menu_window, TRUE);
+
   
   /* Initialize colors */
   if(has_colors() == TRUE) {
@@ -65,23 +88,12 @@ WINDOW *create_menu (int height, int width, int starting_x, int starting_y) {
     init_pair(SELECTED_OPTION_COLOR, COLOR_WHITE, 2);
   }
 
-  /* Calculate center of screen */
-  int start_x = (80 - width) / 2;
-  int start_y = (24 - height) / 2;
-
-  /*selecting option*/
-  int option = 0;
-  int highlight = 1;
-  int c;
-
-
   /* Print menu */
-  print_menu(menu_win, highlight);
-  wborder (menu, '|', '|', '-', '-', '*', '*', '*', '*');
+  print_menu(menu_window, highlight);
 
   /* Wait for user input */
   while (1) {
-    c = wgetch(menu_win);
+    c = wgetch(menu_window);
     switch(c) {
       case KEY_UP:  /* Move the highlight up */
         if (highlight == 1)
@@ -103,14 +115,15 @@ WINDOW *create_menu (int height, int width, int starting_x, int starting_y) {
         refresh();
         break;
     }
-    print_menu(menu_win, highlight); /* Update menu display */
+    print_menu(menu_window, highlight); /* Update menu display */
     if (option != 0) /* User made a choice */
       break;
   }
 
   /* Clean up */
+  clrtoeol();
   refresh ();
-  wrefresh (menu);
+  wrefresh (menu_window);
 
-  return menu;
+  return menu_window;
 }

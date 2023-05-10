@@ -3,6 +3,7 @@
 #include <ncurses.h>
 #include "datatypes.h"
 #include "defines.h"
+#include "menu.h"
 #include "movement.h"
 #include "mapgen.h"
 #include "vision.h"
@@ -22,7 +23,7 @@ int movement_restrictions(int x, int y, char **map)
   }
   return 0;
 }
-/****************************
+/*****************************
  *     Directions:           *
  *         0 = right         *
  *         1 = down          *
