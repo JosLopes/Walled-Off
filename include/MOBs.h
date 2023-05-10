@@ -13,21 +13,21 @@ Tag *init_enemies (int enemies_size, Enemy *enemies, Variable_stats *d_variables
 #define D_MAX_XP 10
 #define D_MIN_XP 1
 #define D_POISON 1
-#define D_GROUP_DESIRE 50
+#define D_GROUP_DESIRE 3
 #define D_ENEMIES 2  /* Number of distint enteties */
 
 #define S_CHAR 'S'
 #define S_MAX_XP 10
 #define S_MIN_XP 1
 #define S_POISON 1
-#define S_GROUP_DESIRE 50
+#define S_GROUP_DESIRE 3
 #define S_ENEMIES 2  /* Number of distint enteties */ 
 
 #define G_CHAR 'S'
 #define G_MAX_XP 10
 #define G_MIN_XP 1
 #define G_POISON 1
-#define G_GROUP_DESIRE 50
+#define G_GROUP_DESIRE 3
 #define G_ENEMIES 2  /* Number of distint enteties */ 
 
 #endif

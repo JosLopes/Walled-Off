@@ -111,6 +111,11 @@ Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *pa
 
   Node current_node;  /* Current origin */
   Node temp;  /* Temporary node */
+  /* 
+    In case the queue ends without finding a path,
+    return this value so the enemy stays in the 
+    same position */
+  Node starting_position = path -> nodes[path -> head];
 
   Node node_array[MAP_HEIGHT][MAP_WIDTH];
   /* Initializes the array of nodes with place_holders */
@@ -141,8 +146,7 @@ Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *pa
       If the node in the map array is valid to walk by enemies and
       the node in the same position was not yet explored, create a
       new node and verify another condition */
-    if ((map[current_row_plus][current_col] == FLOOR_CHAR ||
-    map[current_row_plus][current_col] == '=') &&
+    if (map[current_row_plus][current_col] == FLOOR_CHAR &&
         node_array[current_row_plus][current_col].explored == 1)
     {
       /* Temporary above node */
@@ -158,8 +162,7 @@ Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *pa
 
     int current_row_less = current_row - 1;
 
-    if ((map[current_row_less][current_col] == FLOOR_CHAR ||
-    map[current_row_less][current_col] == '=') &&
+    if (map[current_row_less][current_col] == FLOOR_CHAR &&
         node_array[current_row_less][current_col].explored == 1)
     {
       /* Temporary bellow node */
@@ -175,8 +178,7 @@ Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *pa
 
     int current_col_plus = current_col + 1;
 
-    if ((map[current_row][current_col_plus] == FLOOR_CHAR ||
-    map[current_row][current_col_plus] == '=') &&
+    if (map[current_row][current_col_plus] == FLOOR_CHAR &&
         node_array[current_row][current_col_plus].explored == 1)
     {
       /* Temporary right node */
@@ -192,8 +194,7 @@ Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *pa
 
     int current_col_less = current_col -1;
 
-    if ((map[current_row][current_col_less] == FLOOR_CHAR ||
-    map[current_row][current_col_less] == '=') &&
+    if (map[current_row][current_col_less] == FLOOR_CHAR &&
         node_array[current_row][current_col_less].explored == 1)
     {
       /* temporary left node */
@@ -207,6 +208,11 @@ Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *pa
       }
     }
   } while (path -> number_of_nodes != 0 && current_node.h > 10);
+
+  if (path -> number_of_nodes == 0)
+  {
+    return starting_position;
+  }
 
   return *prev;
 }
