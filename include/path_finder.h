@@ -1,6 +1,6 @@
 #include "datatypes.h"
-#ifndef MOBS_AI_H
-#define MOBS_AI_H
+#ifndef PATH_H
+#define PATH_H
 
 int subtract_to_max (int x, int y);
 int distance_from_objective (Point objective, Point future_start);
