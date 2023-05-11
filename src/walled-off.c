@@ -4,6 +4,8 @@
 #include "movement.h"
 #include "vision.h"
 #include "MOBs.h"
+#include "MOBsAI.h"
+#include "MOBsAI2.h"
 #include <ncurses.h>
 #include <time.h>
 #include <stdlib.h>
@@ -64,6 +66,11 @@ int main ()
   /* Main Character related initializations */
   Character character;
 
+  /* AI initialization */
+  /* Place holder to occupie the array of nodes as a temporary node */
+  Node *place_holder = malloc (sizeof (Node));
+  init_place_holder_node (place_holder);
+
   init_ncurses(); /* Initializes ncurses and its functionalities */
   clear();
   refresh();
@@ -86,20 +93,24 @@ int main ()
   /* Initializes the placement for all enemies, returning how many where placed in the map */
   /* from the max value "number_of_enemies"                                                */
   int number_of_enemies = locate_positions (MAP_HEIGHT, MAP_WIDTH, map, max_number_of_enemies, enemies, number_of_non_overlaping_rooms, not_overlpg);
-  
+  /* Awaken enemies for use in the pathfinding algorithm    */
+  /* When an enemy is awaken, it pursues the enemy actively */
+  Awake *is_awake = malloc (sizeof (Awake));
+  init_is_awake (number_of_enemies, is_awake);
+
   /* Initializes variable stats for each type of enemmy */
   Variable_stats *dumb_variables = d_enemies_variable_stats ();
   Variable_stats *smart_variables = s_enemies_variable_stats ();
   Variable_stats *genius_variables = g_enemies_variable_stats ();
   /* Initializes all the enemies stats, including pre-defined */
-  init_enemies (number_of_enemies, enemies, dumb_variables, smart_variables, genius_variables, map);
+  Tag *tag = init_enemies (number_of_enemies, enemies, dumb_variables, smart_variables, genius_variables, map);
 
   /* Finishes the building of the map */
   generateCorridors (map, not_overlpg, number_of_non_overlaping_rooms);
 
   /* Initializes main character, placing it in the map */
   init_character (&character);
-  place_player (MAP_HEIGHT, MAP_WIDTH, map, &character);
+  place_player (*not_overlpg, map, &character);
 
   /* Display the map on the main_window */
   display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
@@ -122,6 +133,13 @@ int main ()
     /* Introducing vision */
     vision(main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
 
+    if (previous_char != FIRE_CHAR)
+    {
+      /* Initializes more enemies, if necessary, to the is_awaken struct */
+      init_awaken_enemies (&character, enemies, is_awake);
+      build_path (is_awake, &character, map, place_holder, enemies);
+    }
+
     /* At the end of every loop, refresh main_window */
     display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
   }
@@ -138,12 +156,19 @@ int main ()
   free (map);
   map = NULL;
 
+  /* Free tag */
+  free (tag);
+  tag = NULL;
+
   /* Free not_overlpg */
   free (not_overlpg);
   not_overlpg = NULL;
 
   free (rooms);
   rooms = NULL;
+
+  free (place_holder);
+  place_holder = NULL;
 
   delwin (main_window);
   endwin ();

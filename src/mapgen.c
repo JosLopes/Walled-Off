@@ -67,20 +67,33 @@ int generateRooms(int map_height, int map_width, char **map, Room rooms[], int n
         if (overlap == 0){ 
           rooms[i].is_overlaping = 0;
           number_of_non_overlaping_rooms ++;
+
+          /*Se não houver sobreposição, adiciona a sala ao mapa*/
+          for (j = roomY; j < roomY + room_Height; j++) {
+              for (k = roomX; k < roomX + room_Width; k++) {
+                  map[j][k] = FLOOR_CHAR;
+                  map[roomY][k] = WALL_CHAR;
+                  map[roomY + room_Height][k] = WALL_CHAR;
+              }
+          map[j][roomX] = WALL_CHAR;
+          map[j][roomX + room_Width] = WALL_CHAR;
+          }
+        } else {
+        /*Se não houver sobreposição, adiciona a sala ao mapa*/
+          for (j = roomY; j < roomY + room_Height; j++) {
+            for (k = roomX; k < roomX + room_Width; k++) {
+              map[j][k] = FLOOR_CHAR;
+            }
+          }
         }
 
-        /*Se não houver sobreposição, adiciona a sala ao mapa*/
-            for (j = roomY; j < roomY + room_Height; j++) {
-                for (k = roomX; k < roomX + room_Width; k++) {
-                    map[j][k] = FLOOR_CHAR;
-                }
-            }
+        /* Atualiza colocando aleatóriamente walls */
 
-            /*Adiciona a sala à lista de salas */
-            rooms[i].x = roomX;
-            rooms[i].y = roomY;
-            rooms[i].width = room_Width;
-            rooms[i].height = room_Height; 
+        /*Adiciona a sala à lista de salas */
+        rooms[i].x = roomX;
+        rooms[i].y = roomY;
+        rooms[i].width = room_Width;
+        rooms[i].height = room_Height; 
     }
     return number_of_non_overlaping_rooms;
 }
@@ -100,7 +113,7 @@ void init_non_overlaping_rooms (Room rooms[], int numRooms, Non_overlaping_rooms
   }
 }
 
-void generateCorridors(char **map, Non_overlaping_rooms no_overlpg[], int nor_size) 
+void generateCorridors (char **map, Non_overlaping_rooms *no_overlpg, int nor_size) 
 {
   int bridge_ind = 0, temp;
   Vector vector;
@@ -115,9 +128,10 @@ void generateCorridors(char **map, Non_overlaping_rooms no_overlpg[], int nor_si
     // calcula a direção do corredor
     int directionX = endingX - vector.startingX;
     int directionY = endingY - vector.startingY;
-    
-    // se o corredor estiver na direção negativa em X, inverte os pontos inicial e final
-    if (directionX < 0 && directionY < 0) {
+
+    /*se o corredor estiver na direção negativa em X, inverte os pontos inicial e final*/
+    if (directionX < 0 && directionY < 0) 
+    {
       temp = vector.startingX;
       vector.startingX = endingX;
       endingX = temp;
@@ -127,45 +141,68 @@ void generateCorridors(char **map, Non_overlaping_rooms no_overlpg[], int nor_si
       endingY = temp;
     }
 
-    if ((directionX > 0 && directionY > 0) || (directionX < 0 && directionY < 0))
+    if ((directionX > 0 && directionY > 0) || 
+        (directionX < 0 && directionY < 0))
     {
       // percorre o corredor, desenhando o chão (FLOOR_CHAR) em cada posição
       for (; vector.startingX <= endingX; vector.startingX++) {
-        map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+            map[vector.startingY][vector.startingX] == WALL_CHAR)
+        {
+          map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        }
       }
     
       for (; vector.startingY <= endingY; vector.startingY++) {
-        map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+            map[vector.startingY][vector.startingX] == WALL_CHAR)
+        {
+          map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        }
       }
     } 
-    else if (directionX < 0 && directionY > 0) 
+    else if ((directionX < 0 || directionX == 0) && (directionY > 0 || directionY == 0)) 
     {
       for (; vector.startingX > endingX; vector.startingX--) {
+        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+            map[vector.startingY][vector.startingX] == WALL_CHAR)
+        {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        }
       }
     
       for (; vector.startingY <= endingY; vector.startingY++) {
+        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+            map[vector.startingY][vector.startingX] == WALL_CHAR)
+        {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        }
       }
     }
-    else if (directionX > 0 && directionY < 0) 
+    else if ((directionX > 0 || directionX == 0) && (directionY < 0 || directionY == 0))
     {
       for (; vector.startingX <= endingX; vector.startingX++) {
+        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+            map[vector.startingY][vector.startingX] == WALL_CHAR)
+        {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        }
       }
     
       for (; vector.startingY > endingY; vector.startingY--) {
+        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+            map[vector.startingY][vector.startingX] == WALL_CHAR)
+        {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
+        }
       }
     }
   }
 }
 
-void place_player(int map_height, int map_width, char **map, Character *character) {
-    do {
-        character -> x = rand() % (map_width-1) +1;
-        character -> y = rand() % (map_height-1) +1;
-    } while (map[character -> y][character -> x] != FLOOR_CHAR);
+void place_player(Non_overlaping_rooms room, char **map, Character *character) {
+    character -> x = room.midX;
+    character -> y = room.midY;
     map[character -> y][character -> x] = PLAYER_CHAR_UP;
 }
 

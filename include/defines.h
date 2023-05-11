@@ -1,6 +1,9 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+/* Max range for the vision */
+#define AWAKE_RANGE 4
+
 #define MAP_HEIGHT 50
 #define MAP_WIDTH 100
 #define MAX_ROOMS 50
@@ -9,7 +12,7 @@
 #define MIN_ROOM_WIDTH 6
 #define MAX_ROOM_WIDTH 16
 #define WALL_CHAR '#'
-#define FLOOR_CHAR ' '
+#define FLOOR_CHAR '.'
 #define FIRE_CHAR '~'
 #define ENEMY_G 'g'
 #define ENEMY_S 's'
