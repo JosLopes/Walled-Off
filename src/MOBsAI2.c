@@ -1,6 +1,6 @@
 #include "defines.h"
 #include "datatypes.h"
-#include "MOBsAI.h"
+#include "path_finder.h"
 #include <stdlib.h>
 
 void init_is_awake (int number_of_enemies, Awake *is_awake)
