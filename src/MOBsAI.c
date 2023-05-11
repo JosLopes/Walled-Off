@@ -209,7 +209,7 @@ Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *pa
     }
   } while (path -> number_of_nodes != 0 && current_node.h > 10);
 
-  if (path -> number_of_nodes == 0)
+  if (path -> number_of_nodes == 0 && current_node.h > 10)
   {
     return starting_position;
   }
