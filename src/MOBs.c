@@ -58,8 +58,8 @@ Variable_stats *d_enemies_variable_stats ()
 {
   Variable_stats *d_variables = malloc (sizeof (Variable_stats) * D_ENEMIES);
 
-  d_variables[0] = (Variable_stats){'A',"Albertino", 0, 0, 0};
-  d_variables[1] = (Variable_stats){'J',"Josefino", 0, 0, 0};
+  d_variables[0] = (Variable_stats){'D',"Albertino", 0, 0, 0};
+  d_variables[1] = (Variable_stats){'D',"Josefino", 0, 0, 0};
 
   return d_variables; 
 }
@@ -74,8 +74,8 @@ Variable_stats *s_enemies_variable_stats ()
 {
   Variable_stats *s_variables = malloc (sizeof (Variable_stats) * S_ENEMIES);
 
-  s_variables[0] = (Variable_stats){'C',"Carambolas", 0, 0, 0};
-  s_variables[1] = (Variable_stats){'M',"JMotherFucker", 0, 0, 0};
+  s_variables[0] = (Variable_stats){'S',"Carambolas", 0, 0, 0};
+  s_variables[1] = (Variable_stats){'S',"JMotherFucker", 0, 0, 0};
 
   return s_variables; 
 }
@@ -90,7 +90,7 @@ Variable_stats *g_enemies_variable_stats ()
 {
   Variable_stats *g_variables = malloc (sizeof (Variable_stats) * G_ENEMIES);
 
-  g_variables[0] = (Variable_stats){'I',"Imtired", 0, 0, 0};
+  g_variables[0] = (Variable_stats){'G',"Imtired", 0, 0, 0};
   g_variables[1] = (Variable_stats){'G',"Godblastmetodeath", 0, 0, 0 };
 
   return g_variables; 

@@ -74,21 +74,32 @@ Node closest_enemy (int number_of_enemies, char **map, Node *place_holder, Path_
   Takes the path build from the pathfinder and builds it backwards,
   from the previous  called objective (now suposed starting point) to 
   the previous start (now suposed objective) */
-void display_enemy_path (Node top_node, char **map, Enemy *enemy)
+void display_enemy_path (Node top_node, char **map, char traveled_path[][MAP_WIDTH], Enemy *enemy)
 {
+  int old_y = enemy -> y, old_x = enemy -> x;
+  
   if (top_node.prev != NULL)
   {
     /* Takes the enemy out of the map */
-    map[enemy -> y][enemy -> x] = FLOOR_CHAR;
+    map[old_y][old_x] = FLOOR_CHAR;
     /* Changing the position of the enemy */
     enemy -> y = top_node.row;
     enemy -> x = top_node.col;
     /* Displaying the character of the enemy in the map */
     map[enemy -> y][enemy -> x] = enemy -> display;
+
+    if (traveled_path[enemy -> y][enemy -> x] != '+')
+    {
+      traveled_path[enemy -> y][enemy -> x] = enemy -> display;
+    }
+    if (traveled_path[old_y][old_x] != '+')
+    {
+      traveled_path[old_y][old_x] = FLOOR_CHAR;
+    }
   }
 }
 
-void build_path (Awake *is_awake, Character *character, char **map, Node *place_holder, Enemy *enemies)
+void build_path (Awake *is_awake, Character *character, char **map, char traveled_path[][MAP_WIDTH], Node *place_holder, Enemy *enemies)
 {
   Node top_node;
   Path_queue path;  /* Path builder */
@@ -130,7 +141,7 @@ void build_path (Awake *is_awake, Character *character, char **map, Node *place_
       top_node = find_path (&objective, map, place_holder, &path);
     }
 
-    display_enemy_path (top_node, map, &(is_awake -> enemies_awaken[index]));
+    display_enemy_path (top_node, map, traveled_path, &(is_awake -> enemies_awaken[index]));
 
     free (path.nodes);
     path.nodes = NULL;

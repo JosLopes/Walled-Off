@@ -58,6 +58,9 @@ int main ()
   {
     map[current_line] = malloc (sizeof (char) * MAP_WIDTH);
   }
+  /* To display the traveled path */
+  char traveled_path[MAP_HEIGHT][MAP_WIDTH];
+  fillTraveledPath (MAP_HEIGHT, MAP_WIDTH, traveled_path);
 
   int numRooms = rand() % (MAX_ROOMS - 35) + 10;
   Room *rooms = malloc (sizeof (Room) * numRooms); // Free this memory later !!!
@@ -113,7 +116,7 @@ int main ()
   place_player (*not_overlpg, map, &character);
 
   /* Display the map on the main_window */
-  display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
+  display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
   wrefresh (main_window); /* Refresh main_window */
 
   /* Enable keyboard input for special keys */
@@ -131,17 +134,17 @@ int main ()
     movement (&character, map, ch, &previous_char);
 
     /* Introducing vision */
-    vision(main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
+    vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
 
     if (previous_char != FIRE_CHAR)
     {
       /* Initializes more enemies, if necessary, to the is_awaken struct */
       init_awaken_enemies (&character, enemies, is_awake);
-      build_path (is_awake, &character, map, place_holder, enemies);
+      build_path (is_awake, &character, map, traveled_path, place_holder, enemies);
     }
 
     /* At the end of every loop, refresh main_window */
-    display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
+    display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
   }
 
   /* cleanup and exit */
