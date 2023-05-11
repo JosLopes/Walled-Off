@@ -4,7 +4,7 @@
 #include "movement.h"
 #include "vision.h"
 #include "MOBs.h"
-#include "MOBsAI.h"
+#include "path_finder.h"
 #include "MOBsAI2.h"
 #include <ncurses.h>
 #include <time.h>
