@@ -5,7 +5,7 @@
 #include "vision.h"
 #include "MOBs.h"
 #include "path_finder.h"
-#include "MOBsAI2.h"
+#include "artificial_inteligence.h"
 #include <ncurses.h>
 #include <time.h>
 #include <stdlib.h>
