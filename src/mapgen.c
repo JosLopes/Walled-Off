@@ -8,6 +8,7 @@
 #include "mapgen.h"
 #include "defines.h"
 #include "vision.h"
+#include "MOBs.h"
 
 /*  é responsável por preencher o mapa com o caractere do chão (FLOOR_CHAR). 
 Ela percorre todas as posições do mapa e verifica se o caractere atual não é o caractere da parede (WALL_CHAR) 

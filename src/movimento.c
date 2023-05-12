@@ -6,21 +6,30 @@
 #include "movement.h"
 #include "mapgen.h"
 #include "vision.h"
+#include "MOBs.h"
 
 /*movement restriction*/
 int movement_restrictions(int x, int y, char **map)
 {
-  /*in case he is trying to move into a wall it stays in the same place*/
-  if (map[y][x] == WALL_CHAR)
+  switch (map[y][x])
   {
-    return 1; /*true -> can't move*/
-  }
-  /*in case he is trying to move into a enemy it stays in the same place*/
-  else if (map[y][x] == FLOOR_CHAR)
-  {
-    return 0;
-  }
+  case WALL_CHAR: /*case wall*/
+    return 1;
+    break;
+  /*case enemies*/
+  case D_CHAR:
+    return 1;
+    break;
+  case S_CHAR:
+    return 1;
+    break;
+  case G_CHAR:
+    return 1;
+    break;
+  default:
   return 0;
+    break;
+  }
 }
 /****************************
  *     Directions:           *

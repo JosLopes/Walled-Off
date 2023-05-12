@@ -6,6 +6,7 @@
 #include "defines.h"
 #include "movement.h"
 #include "mapgen.h"
+#include "MOBs.h"
 
 /*
 * Function that sets the range according to the character life

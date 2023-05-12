@@ -23,7 +23,7 @@ Tag *init_enemies (int enemies_size, Enemy *enemies, Variable_stats *d_variables
 #define S_GROUP_DESIRE 1
 #define S_ENEMIES 2  /* Number of distint enteties */ 
 
-#define G_CHAR 'S'
+#define G_CHAR 'G'
 #define G_MAX_XP 10
 #define G_MIN_XP 1
 #define G_POISON 1
