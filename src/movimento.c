@@ -6,7 +6,7 @@
 #include "movement.h"
 #include "mapgen.h"
 #include "vision.h"
-
+#include "combat.h"
 /*movement restriction*/
 int movement_restrictions(int x, int y, char **map)
 {
@@ -142,6 +142,7 @@ void movement(Character *character, char **map, int ch, char *previous_char)
         break;
     }
     break;
+  
   default:
     break;
   }

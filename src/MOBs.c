@@ -100,11 +100,10 @@ Variable_stats *g_enemies_variable_stats ()
   Initializes the tag to be used in the different enemies (depends only in the inteligence level)
   with pre-made stats that are common to that set type of enemy and can be changed in 'defines.h' */
 
-void init_tag (Tag *tag, char intel, int max_xp, int min_xp, int scream_range, int poison, int group_desire)
+void init_tag (Tag *tag, char intel, int max_xp, int min_xp, int poison, int group_desire)
 {
   tag -> inteligence = intel; /* Initial for "tag" */
   tag -> xp_from_death = rand() % (max_xp - min_xp) + min_xp; /* Xp gained from killing this enemy type */
-  tag -> screaming_range = scream_range;
   tag -> poison_level = poison;  /* Gives information about how long does it last, the higher the */
                                  /* Number, the more steps the player needs to take to decipate   */
                                  /* The poison and stop taking damage                             */
@@ -160,7 +159,7 @@ Tag *init_enemies (int number_of_enemies, Enemy *enemies, Variable_stats *d_vari
 
   for (; current_enemy < dumb_enemies; current_enemy ++)
   {
-    init_tag ((tag + current_enemy), D_CHAR, D_MAX_XP, D_MIN_XP, D_SCREAM_RANGE, D_POISON, D_GROUP_DESIRE);
+    init_tag ((tag + current_enemy), D_CHAR, D_MAX_XP, D_MIN_XP, D_POISON, D_GROUP_DESIRE);
     init_enemy_stats ((enemies + current_enemy), (tag + current_enemy), (d_variables + (rand() % D_ENEMIES)));
   }
   free (d_variables);
@@ -168,7 +167,7 @@ Tag *init_enemies (int number_of_enemies, Enemy *enemies, Variable_stats *d_vari
 
   for (; current_enemy < dumb_plus_smart; current_enemy ++)
   {
-    init_tag ((tag + current_enemy), S_CHAR, S_MAX_XP, S_MIN_XP, S_SCREAM_RANGE, S_POISON, S_GROUP_DESIRE);
+    init_tag ((tag + current_enemy), S_CHAR, S_MAX_XP, S_MIN_XP, S_POISON, S_GROUP_DESIRE);
     init_enemy_stats ((enemies + current_enemy), (tag + current_enemy), (s_variables + (rand() % S_ENEMIES)));
   }
   free (s_variables);
@@ -176,7 +175,7 @@ Tag *init_enemies (int number_of_enemies, Enemy *enemies, Variable_stats *d_vari
 
   for (; current_enemy < number_of_enemies ; current_enemy ++)
   {
-    init_tag ((tag + current_enemy), G_CHAR, G_MAX_XP, G_MIN_XP, G_SCREAM_RANGE, G_POISON, G_GROUP_DESIRE);
+    init_tag ((tag + current_enemy), G_CHAR, G_MAX_XP, G_MIN_XP, G_POISON, G_GROUP_DESIRE);
     init_enemy_stats ((enemies + current_enemy), (tag + current_enemy), (g_variables + (rand() % G_ENEMIES)));
   }
   free (g_variables);
