@@ -42,7 +42,7 @@ void fillTraveledPath(int map_height, int map_width, char traveled_path[][map_wi
 
     for (i = 0; i < map_height; i++) {
         for (j = 0; j < map_width; j++) {
-          traveled_path[i][j] = '+';
+          traveled_path[i][j] = ' ';
         }
     }
     /*Preenche as bordas do mapa com paredes*/
