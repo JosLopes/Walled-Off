@@ -37,20 +37,20 @@ int sets_range (int life){
 ******************************************************************/
 void vision_color (WINDOW *main_window, Character *character, char **map, int map_width ,char traveled_path[][map_width])
 {
-  int range = sets_range(character->life);
+  //int range = sets_range(character->life);
   /*defines x_min, x_max, y_min and y_max according to the range*/
   int x, y;
-  int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, MAP_WIDTH - 1);
-  int y_min = fmax(character->y - range+1, 0), y_max = fmin(character->y + range-1, MAP_HEIGHT - 1);
+  //int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, MAP_WIDTH - 1);
+  //int y_min = fmax(character->y - range+1, 0), y_max = fmin(character->y + range-1, MAP_HEIGHT - 1);
       
   for (x = 0; x < MAP_WIDTH; x++) {
     for (y = 0; y < MAP_HEIGHT; y++) {
 
-      if (x >= x_min && y > y_min && x <= x_max && y < y_max)
-      {
+      //if (x >= x_min && y > y_min && x <= x_max && y < y_max)
+      //{
         /* add the viwed places to the list traveled_path to make they apper on the screen */
         traveled_path[y][x] = map[y][x];
-      }
+      //}
 
       /*case character position*/
       if (x == character->x && y == character->y){

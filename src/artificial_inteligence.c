@@ -40,12 +40,14 @@ void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake)
   Calculates the closest path to an enemy, for use both in the smart AI and genius AI.
   When an enemy needs to call out for suport, be it by screaming or by reagruping, this 
   function finds the closest enemies who are not awaken yet */
-Node closest_enemy (int number_of_enemies, char **map, Node *place_holder, Path_queue *path, Point start, Enemy *enemies, Node origin_node)
+Node closest_enemy (int number_of_enemies, char **map, Node *place_holder, Path_queue *path, Point start, Enemy *enemies, Awake *is_awake, Node origin_node)
 {
   int index;
   int count, min_count = MAP_HEIGHT * MAP_WIDTH; /* Counters to find out which path is shorter */
-  Node closest_enemy;
+  Node closest_enemy_node;
   Point objective;
+  /* The closest enemy to wake up */
+  int choosen_one = -1;
 
   for (index = 0; index < number_of_enemies; index ++)
   {
@@ -62,12 +64,22 @@ Node closest_enemy (int number_of_enemies, char **map, Node *place_holder, Path_
     
       if (count < min_count)
       {
-        closest_enemy = node;
+        closest_enemy_node = node;
         min_count = count;
+        choosen_one = index;
       }
     }
   }
-  return closest_enemy;
+
+  /* Awakens the closest enemy, if it was found */
+  if (choosen_one != -1)
+  {
+    is_awake -> enemies_awaken[is_awake -> current_size] = enemies[choosen_one];
+    is_awake -> current_size ++;
+    enemies[choosen_one].awake = 0;
+  }
+
+  return closest_enemy_node;
 }
 
 /* 
@@ -88,6 +100,7 @@ void display_enemy_path (Node top_node, char **map, char traveled_path[][MAP_WID
     /* Displaying the character of the enemy in the map */
     map[enemy -> y][enemy -> x] = enemy -> display;
 
+    /* Make it so the enemy is only visible if it is in an area previously explored by the player */
     if (traveled_path[enemy -> y][enemy -> x] != '+')
     {
       traveled_path[enemy -> y][enemy -> x] = enemy -> display;
@@ -106,6 +119,7 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
   Node origin_node;
   /* By default the objective is the main character */
   Point objective, start;
+  int group_desire = 0;
 
   for (int index = 0; index < is_awake -> current_size; index ++)
   {
@@ -117,14 +131,16 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
       fight with them, if they are genius. This, ofcourse, only happens when the
       group desire isn't already achieved by the current awaken enemies or the
       number of enemy's in the game is suficient to reach the desired number */
-    if (is_awake -> current_size < is_awake -> total_size % (is_awake -> enemies_awaken[index].tag -> group_desire))
+    group_desire = is_awake -> enemies_awaken[index].tag -> group_desire;
+    if (is_awake -> current_size <  group_desire &&
+        is_awake -> total_size >= group_desire)
     {
       /* Starting the single starting node */
       start.y = is_awake -> enemies_awaken[index].y;
       start.x = is_awake -> enemies_awaken[index].x;
       
       /* The node to be used as the first in the future constructed path */
-      top_node = closest_enemy (is_awake -> total_size, map, place_holder, &path, start, enemies, origin_node);
+      top_node = closest_enemy (is_awake -> total_size, map, place_holder, &path, start, enemies, is_awake, origin_node);
     }
     else
     {
