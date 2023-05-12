@@ -60,7 +60,7 @@ Node closest_enemy (int number_of_enemies, char **map, Node *place_holder, Path_
       init_queue (path);
       insert_queue (path, origin_node);  /* Inserts first node in the queue */
       Node node = find_path (&objective, map, place_holder, path);
-      count = node.g; /* Distance from the starting point to the last node */
+      count = node.f; /* f distance from the starting point to the last node */
     
       if (count < min_count)
       {
@@ -79,7 +79,7 @@ Node closest_enemy (int number_of_enemies, char **map, Node *place_holder, Path_
     enemies[choosen_one].awake = 0;
   }
 
-  return closest_enemy_node;
+  return origin_node;
 }
 
 /* 
