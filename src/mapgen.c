@@ -310,8 +310,8 @@ void map_colors (WINDOW *main_window, int map_width, int j, int i, char traveled
 void display_map (WINDOW *main_window, Character *character, char **map, int map_width, char traveled_path[][map_width]) 
 {
   int range = sets_range(character->life);
-  int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, MAP_WIDTH - 1);
-  int y_min = fmax(character->y - range, 0), y_max = fmin(character->y + range, MAP_HEIGHT - 1);
+  int x_min = fmax(character->x - range+1, 0), x_max = fmin(character->x + range-1, MAP_WIDTH - 1);
+  int y_min = fmax(character->y - range+1, 0), y_max = fmin(character->y + range-1, MAP_HEIGHT - 1);
   
   /* Redraw map */
   for (int i = 0; i < MAP_WIDTH; i++) {
