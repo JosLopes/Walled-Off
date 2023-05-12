@@ -11,16 +11,12 @@
 int movement_restrictions(int x, int y, char **map)
 {
   /*in case he is trying to move into a wall it stays in the same place*/
-  if (map[y][x] == WALL_CHAR)
+  if (map[y][x] == FIRE_CHAR || map[y][x] == FLOOR_CHAR)
   {
-    return 1; /*true -> can't move*/
+    return 0; /* It can move */
   }
-  /*in case he is trying to move into a enemy it stays in the same place*/
-  else if (map[y][x] == FLOOR_CHAR)
-  {
-    return 0;
-  }
-  return 0;
+
+  return 1; /* Else, it can't */
 }
 /****************************
  *     Directions:           *

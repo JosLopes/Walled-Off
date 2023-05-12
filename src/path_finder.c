@@ -102,7 +102,7 @@ Node init_new_node (int new_row, int new_col, Point *objective, Node node, Node 
 
 /* Insert the nodes surrounding the origin in the queue,
    in the first iteraction it inserts only the origin */
-Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *path)
+Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *path, int *ended_without_path)
 {
   Node *prev;
   /* To be used in verifying paths in the loop */
@@ -209,9 +209,12 @@ Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *pa
     }
   } while (path -> number_of_nodes != 0 && current_node.h > 10);
 
-  if (path -> number_of_nodes == 0 && current_node.h > 10)
+  if (path -> number_of_nodes == 0 &&
+      current_node.h > 10 &&
+      *ended_without_path == 1)
   {
-    return starting_position;
+    *prev = starting_position;
+    *ended_without_path = 0;
   }
 
   return *prev;
