@@ -139,6 +139,7 @@ void movement(Character *character, char **map, int ch, char *previous_char)
         break;
     }
     break;
+  
   default:
     break;
   }

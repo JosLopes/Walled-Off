@@ -24,22 +24,25 @@ typedef struct
   int startingY;
 } Vector;
 
-/* Weapon parameters*/
 typedef struct {
   char name[20];
   int damage;
   float range;
+  char special_power[50]; // novo campo adicionado
 } Weapon;
 
-/* Caracter parameters */
 typedef struct {
   int x, y;
   char direction;
   char name[50];
-  int life;
-  int xp;
+  float life;
+  float initial_life;
+  float xp;
   Weapon weapons[3];
+  char weapon_special_powers[3][50];
+  int current_weapon_index; // novo campo adicionado
 } Character;
+
 
 /* Set of predefined atributes */
 typedef struct {
