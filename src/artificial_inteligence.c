@@ -101,11 +101,11 @@ void display_enemy_path (Node top_node, char **map, char traveled_path[][MAP_WID
     map[enemy -> y][enemy -> x] = enemy -> display;
 
     /* Make it so the enemy is only visible if it is in an area previously explored by the player */
-    if (traveled_path[enemy -> y][enemy -> x] != '+')
+    if (traveled_path[enemy -> y][enemy -> x] != UNDISCOVERED_PATH_CHAR)
     {
       traveled_path[enemy -> y][enemy -> x] = enemy -> display;
     }
-    if (traveled_path[old_y][old_x] != '+')
+    if (traveled_path[old_y][old_x] != UNDISCOVERED_PATH_CHAR)
     {
       traveled_path[old_y][old_x] = FLOOR_CHAR;
     }

@@ -30,10 +30,6 @@ int sets_range (int life){
   return range;
 }
 
-void vision_blocks (WINDOW *main_window, Character *character, char **map, int map_width ,char traveled_path[][map_width]){
-  
-}
-
 /******************************************************************
 *   Function that defines and print the range of vision around
 * the character and the different colors that are displayed. 
