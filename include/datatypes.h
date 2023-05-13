@@ -2,6 +2,11 @@
 #define MY_HEADER_H
 
 typedef struct {
+  int y;
+  int x;
+} Point;
+
+typedef struct {
     int x, y;
     int width, height;
     int is_overlaping;

@@ -4,8 +4,8 @@
 #include "movement.h"
 #include "vision.h"
 #include "MOBs.h"
-#include "MOBsAI.h"
-#include "MOBsAI2.h"
+#include "path_finder.h"
+#include "artificial_inteligence.h"
 #include <ncurses.h>
 #include <time.h>
 #include <stdlib.h>
@@ -54,10 +54,15 @@ int main ()
   /* Map related initializations */
   int current_line;
   char **map = malloc (sizeof (char *) * MAP_HEIGHT);
+  char **map_without_mobs = malloc (sizeof (char *) * MAP_HEIGHT);
   for (current_line = 0; current_line < MAP_HEIGHT; current_line ++)
   {
     map[current_line] = malloc (sizeof (char) * MAP_WIDTH);
+    map_without_mobs[current_line] = malloc (sizeof (char) * MAP_WIDTH);
   }
+  /* To display the traveled path */
+  char traveled_path[MAP_HEIGHT][MAP_WIDTH];
+  fillTraveledPath (MAP_HEIGHT, MAP_WIDTH, traveled_path);
 
   int numRooms = rand() % (MAX_ROOMS - 35) + 10;
   Room *rooms = malloc (sizeof (Room) * numRooms); // Free this memory later !!!
@@ -98,6 +103,17 @@ int main ()
   Awake *is_awake = malloc (sizeof (Awake));
   init_is_awake (number_of_enemies, is_awake);
 
+  /* Finishes the building of the map */
+  generateCorridors (map, not_overlpg, number_of_non_overlaping_rooms);
+
+  for (int index_y = 0; index_y < MAP_HEIGHT; index_y ++)
+  {
+    for (int index_x = 0; index_x < MAP_WIDTH; index_x ++)
+    {
+      map_without_mobs[index_y][index_x] = map[index_y][index_x];
+    }
+  }
+
   /* Initializes variable stats for each type of enemmy */
   Variable_stats *dumb_variables = d_enemies_variable_stats ();
   Variable_stats *smart_variables = s_enemies_variable_stats ();
@@ -105,15 +121,12 @@ int main ()
   /* Initializes all the enemies stats, including pre-defined */
   Tag *tag = init_enemies (number_of_enemies, enemies, dumb_variables, smart_variables, genius_variables, map);
 
-  /* Finishes the building of the map */
-  generateCorridors (map, not_overlpg, number_of_non_overlaping_rooms);
-
   /* Initializes main character, placing it in the map */
   init_character (&character);
   place_player (*not_overlpg, map, &character);
 
   /* Display the map on the main_window */
-  display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
+  display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
   wrefresh (main_window); /* Refresh main_window */
 
   /* Enable keyboard input for special keys */
@@ -127,31 +140,21 @@ int main ()
 
   while ((ch = wgetch(main_window)) != 'q')
   {
-    char temp_map[50][100];
-
     /* Basic movement */
     movement (&character, map, ch, &previous_char);
 
-    for (int i = 0; i<50 ; i++)
-      for (int j = 0; j<100; j++)
-        temp_map[i][j] = map[i][j];
-
     /* Introducing vision */
-    vision(main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
+    vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
 
     if (previous_char != FIRE_CHAR)
     {
       /* Initializes more enemies, if necessary, to the is_awaken struct */
       init_awaken_enemies (&character, enemies, is_awake);
-      build_path (is_awake, &character, map, place_holder);
+      build_path (is_awake, &character, map, traveled_path, map_without_mobs, place_holder, enemies);
     }
 
     /* At the end of every loop, refresh main_window */
-    display_map (main_window, &character, MAP_HEIGHT, MAP_WIDTH, map);
-
-    for (int i = 0; i<50 ; i++)
-      for (int j = 0; j<100; j++)
-        map[i][j] = temp_map[i][j]; 
+    display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
   }
 
   Weapon sword = {"Sword", 10, 2.5, "Slash"};

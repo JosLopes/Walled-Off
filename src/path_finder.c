@@ -1,8 +1,23 @@
-#include "MOBsAI.h"
+#include "path_finder.h"
 #include "defines.h"
 #include "datatypes.h"
 #include <stdlib.h>
 #include <math.h>
+
+int subtract_to_max (int x, int y)
+{
+  if (x > y) return x - y;
+  else return y - x;
+}
+
+/* Calculates the distance from the player to the enemy */
+int distance_from_objective (Point objective, Point start)
+{
+  /* 
+    Manhattan distance for one time's calculations, it will be used for some instances refering to 
+    the Pathfinder in this module, but the euclindian distance will be preferred */
+  return subtract_to_max (objective.y, start.y) + subtract_to_max (objective.x, start.x);
+}
 
 void init_queue (Path_queue *path)
 {
@@ -12,13 +27,14 @@ void init_queue (Path_queue *path)
   path -> number_of_nodes = 0;
 }
 
-void init_origin_node (Character *objective, Node *origin, Enemy *enemy)
+void init_origin_node (Point *objective, Point *start, Node *origin)
 {
-  origin -> row = enemy -> y;
-  origin -> col = enemy -> x;
+  origin -> row = start -> y;
+  origin -> col = start -> x;
 
-  /* As this is the starting point, the costs are irrelevant */
-  origin -> h = (10 * sqrt (pow (objective -> y - enemy -> y, 2) + pow (objective -> x - enemy -> x, 2))); /* Needs to be superior to 10 so it doesnt stop the main loop */
+  /* As this is the starting point, the costs are irrelevant except for h, */
+  /* h needs to be superior to 10 to dont stop the path loop               */
+  origin -> h = (10 * distance_from_objective (*objective, *start));
   origin -> g = 0;
   origin -> f = 0;
 
@@ -68,7 +84,7 @@ void insert_queue (Path_queue *path, Node node)
 }
 
 /* Create a new node to insert in the queue */
-Node init_new_node (int new_row, int new_col, Character *objective, Node node, Node *prev)
+Node init_new_node (int new_row, int new_col, Point *objective, Node node, Node *prev)
 {
   Node new_node;
   new_node.row = new_row;
@@ -86,7 +102,7 @@ Node init_new_node (int new_row, int new_col, Character *objective, Node node, N
 
 /* Insert the nodes surrounding the origin in the queue,
    in the first iteraction it inserts only the origin */
-Node find_path (Character *objective, char **map, Node *place_holder, Path_queue *path)
+Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *path, int *ended_without_path)
 {
   Node *prev;
   /* To be used in verifying paths in the loop */
@@ -95,6 +111,11 @@ Node find_path (Character *objective, char **map, Node *place_holder, Path_queue
 
   Node current_node;  /* Current origin */
   Node temp;  /* Temporary node */
+  /* 
+    In case the queue ends without finding a path,
+    return this value so the enemy stays in the 
+    same position */
+  Node starting_position = path -> nodes[path -> head];
 
   Node node_array[MAP_HEIGHT][MAP_WIDTH];
   /* Initializes the array of nodes with place_holders */
@@ -125,8 +146,7 @@ Node find_path (Character *objective, char **map, Node *place_holder, Path_queue
       If the node in the map array is valid to walk by enemies and
       the node in the same position was not yet explored, create a
       new node and verify another condition */
-    if ((map[current_row_plus][current_col] == FLOOR_CHAR ||
-    map[current_row_plus][current_col] == '=') &&
+    if (map[current_row_plus][current_col] == FLOOR_CHAR &&
         node_array[current_row_plus][current_col].explored == 1)
     {
       /* Temporary above node */
@@ -142,8 +162,7 @@ Node find_path (Character *objective, char **map, Node *place_holder, Path_queue
 
     int current_row_less = current_row - 1;
 
-    if ((map[current_row_less][current_col] == FLOOR_CHAR ||
-    map[current_row_less][current_col] == '=') &&
+    if (map[current_row_less][current_col] == FLOOR_CHAR &&
         node_array[current_row_less][current_col].explored == 1)
     {
       /* Temporary bellow node */
@@ -159,8 +178,7 @@ Node find_path (Character *objective, char **map, Node *place_holder, Path_queue
 
     int current_col_plus = current_col + 1;
 
-    if ((map[current_row][current_col_plus] == FLOOR_CHAR ||
-    map[current_row][current_col_plus] == '=') &&
+    if (map[current_row][current_col_plus] == FLOOR_CHAR &&
         node_array[current_row][current_col_plus].explored == 1)
     {
       /* Temporary right node */
@@ -176,8 +194,7 @@ Node find_path (Character *objective, char **map, Node *place_holder, Path_queue
 
     int current_col_less = current_col -1;
 
-    if ((map[current_row][current_col_less] == FLOOR_CHAR ||
-    map[current_row][current_col_less] == '=') &&
+    if (map[current_row][current_col_less] == FLOOR_CHAR &&
         node_array[current_row][current_col_less].explored == 1)
     {
       /* temporary left node */
@@ -192,38 +209,13 @@ Node find_path (Character *objective, char **map, Node *place_holder, Path_queue
     }
   } while (path -> number_of_nodes != 0 && current_node.h > 10);
 
-  return *prev;
-}
-
-void build_path (Awake *is_awake, Character *objective, char **map, Node *place_holder)
-{
-  for (int index = 0; index < is_awake -> current_size; index ++)
+  if (path -> number_of_nodes == 0 &&
+      current_node.h > 10 &&
+      *ended_without_path == 1)
   {
-    /* Starting the single first node */
-    Node *origin_node = malloc (sizeof (Node));
-    init_origin_node (objective, origin_node, &(is_awake -> enemies_awaken[index]));
-
-    Path_queue *path = malloc (sizeof (Path_queue));  /* Path builder */
-    init_queue (path);
-    insert_queue (path, *origin_node);  /* Inserts first node in the queue */
-/*
-    if () //verificar se o desire dá match no tamanho da lista, se n der procurar o merdinhas mais próximo;
-*/
-    Node node = find_path (objective, map, place_holder, path);
-
-    while (node.prev != NULL)
-    {
-      map[node.row][node.col] = '=';
-      node = *(node.prev);
-    }
-
-    free (origin_node);
-    origin_node = NULL;
-
-    free (path->nodes);
-    path->nodes = NULL;
-
-    free (path);
-    path = NULL;
+    *prev = starting_position;
+    *ended_without_path = 0;
   }
+
+  return *prev;
 }

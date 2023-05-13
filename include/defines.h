@@ -14,9 +14,7 @@
 #define WALL_CHAR '#'
 #define FLOOR_CHAR '.'
 #define FIRE_CHAR '~'
-#define ENEMY_G 'g'
-#define ENEMY_S 's'
-#define ENEMY_O 'o'
+#define UNDISCOVERED_PATH_CHAR ' '
 
 #define PLAYER_CHAR_LEFT '<'
 #define PLAYER_CHAR_RIGHT '>'
@@ -32,5 +30,6 @@
 #define FLOOR_COLOR 6
 #define ENEMY_COLOR 7
 #define WALL_COLOR 8
+#define OBSCURE_COLOR 9
 
 #endif
