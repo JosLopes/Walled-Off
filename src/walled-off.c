@@ -157,23 +157,6 @@ int main ()
     display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
   }
 
-  Weapon sword = {"Sword", 10, 2.5, "Slash"};
-  Weapon bow = {"Bow", 8, 5.0, "Shoot"};
-  Weapon magic_wand = {"Magic Wand", 15, 3.0, "Cast Spell"};
-
-  Character player = {
-    0, 0, 'E', "Player", 100.0, 100.0, 0.0, {sword, bow, magic_wand},
-    {"Slash", "Shoot", "Cast Spell"}, 0
-  };
-
-  Tag enemy_tag = {'s', 100, 5, 3};
-
-  Enemy goblin = {
-    &enemy_tag, 'G', "Goblin", 10, 5, 50, 2, 10, 1
-  };
-
-  Variable_stats boss = {'B', "Boss", 500, 10, 30};
-
 
   /* cleanup and exit */
   free (enemies); /* fazer uma função void free */
