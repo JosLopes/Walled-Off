@@ -1,3 +1,4 @@
+#include "menu.h"
 #include "mapgen.h"
 #include "datatypes.h"
 #include "defines.h"
@@ -32,6 +33,15 @@ void init_ncurses() {
       printf("Your terminal does not support color\n");
       exit(1);
   }
+
+  init_color(1, 148, 0, 300); /*dark purple background*/
+  init_color(2, 300, 0, 551); /*color of the selected option*/
+
+  /*Define color pairs*/
+  init_pair(BACKGROUND_COLOR, COLOR_WHITE, 1);
+  init_pair(SELECTED_OPTION_COLOR, COLOR_WHITE, 2);
+  init_pair(TITLE_COLOR, 2, 1);
+
   raw();
   noecho();
   curs_set(FALSE);
@@ -79,112 +89,118 @@ int main ()
   init_ncurses(); /* Initializes ncurses and its functionalities */
   clear();
   refresh();
+  /* Start the menu screen */
+  int start_the_game = start_menu ();
 
-  /* Creates main window (playable window) from mapgen.c */
-  main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 2, 2);
-
-  fillMap (MAP_HEIGHT, MAP_WIDTH, map);
-  number_of_non_overlaping_rooms = generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms);
-  Non_overlaping_rooms *not_overlpg = malloc (sizeof (Non_overlaping_rooms) * number_of_non_overlaping_rooms); // Free this memory later !!!
-
-  /* Mob's (enemies) related initializations */
-  int max_number_of_enemies = number_of_non_overlaping_rooms * 3; /* Max number of enemies */
-
-  /* Initializes a struct array that stores all non overlaping rooms */
-  init_non_overlaping_rooms (rooms, numRooms, not_overlpg, number_of_non_overlaping_rooms);
-  
-  Enemy *enemies = malloc (sizeof (Enemy) * max_number_of_enemies); /* Storage for every enemy */
-
-  /* Initializes the placement for all enemies, returning how many where placed in the map */
-  /* from the max value "number_of_enemies"                                                */
-  int number_of_enemies = locate_positions (MAP_HEIGHT, MAP_WIDTH, map, max_number_of_enemies, enemies, number_of_non_overlaping_rooms, not_overlpg);
-  /* Awaken enemies for use in the pathfinding algorithm    */
-  /* When an enemy is awaken, it pursues the enemy actively */
-  Awake *is_awake = malloc (sizeof (Awake));
-  init_is_awake (number_of_enemies, is_awake);
-
-  /* Finishes the building of the map */
-  generateCorridors (map, not_overlpg, number_of_non_overlaping_rooms);
-
-  for (int index_y = 0; index_y < MAP_HEIGHT; index_y ++)
+  if (start_the_game == 0)
   {
-    for (int index_x = 0; index_x < MAP_WIDTH; index_x ++)
+    /* Creates main window (playable window) from mapgen.c */
+    main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 0, 0);
+
+    fillMap (MAP_HEIGHT, MAP_WIDTH, map);
+    number_of_non_overlaping_rooms = generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms);
+    Non_overlaping_rooms *not_overlpg = malloc (sizeof (Non_overlaping_rooms) * number_of_non_overlaping_rooms); // Free this memory later !!!
+
+    /* Mob's (enemies) related initializations */
+    int max_number_of_enemies = number_of_non_overlaping_rooms * 3; /* Max number of enemies */
+
+    /* Initializes a struct array that stores all non overlaping rooms */
+    init_non_overlaping_rooms (rooms, numRooms, not_overlpg, number_of_non_overlaping_rooms);
+    
+    Enemy *enemies = malloc (sizeof (Enemy) * max_number_of_enemies); /* Storage for every enemy */
+
+    /* Initializes the placement for all enemies, returning how many where placed in the map */
+    /* from the max value "number_of_enemies"                                                */
+    int number_of_enemies = locate_positions (MAP_HEIGHT, MAP_WIDTH, map, max_number_of_enemies, enemies, number_of_non_overlaping_rooms, not_overlpg);
+    /* Awaken enemies for use in the pathfinding algorithm    */
+    /* When an enemy is awaken, it pursues the enemy actively */
+    Awake *is_awake = malloc (sizeof (Awake));
+    init_is_awake (number_of_enemies, is_awake);
+
+    /* Finishes the building of the map */
+    generateCorridors (map, not_overlpg, number_of_non_overlaping_rooms);
+
+    for (int index_y = 0; index_y < MAP_HEIGHT; index_y ++)
     {
-      map_without_mobs[index_y][index_x] = map[index_y][index_x];
-    }
-  }
-
-  /* Initializes variable stats for each type of enemmy */
-  Variable_stats *dumb_variables = d_enemies_variable_stats ();
-  Variable_stats *smart_variables = s_enemies_variable_stats ();
-  Variable_stats *genius_variables = g_enemies_variable_stats ();
-  /* Initializes all the enemies stats, including pre-defined */
-  Tag *tag = init_enemies (number_of_enemies, enemies, dumb_variables, smart_variables, genius_variables, map);
-
-  /* Initializes main character, placing it in the map */
-  init_character (&character);
-  place_player (*not_overlpg, map, &character);
-
-  /* Display the map on the main_window */
-  display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
-  wrefresh (main_window); /* Refresh main_window */
-
-  /* Enable keyboard input for special keys */
-  keypad(main_window, TRUE);
-
-  /*=================================== End of Initialization ===================================*/
-  
-  /* GAME LOOP */
-  int ch;  /* Input character read as an integer */
-  char previous_char = FLOOR_CHAR;  /* Char before the character got placed in the map */
-
-  while ((ch = wgetch(main_window)) != 'q')
-  {
-    /* Basic movement */
-    movement (&character, map, ch, &previous_char);
-
-    /* Introducing vision */
-    vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
-
-    if (previous_char != FIRE_CHAR)
-    {
-      /* Initializes more enemies, if necessary, to the is_awaken struct */
-      init_awaken_enemies (&character, enemies, is_awake);
-      build_path (is_awake, &character, map, traveled_path, map_without_mobs, place_holder, enemies);
+      for (int index_x = 0; index_x < MAP_WIDTH; index_x ++)
+      {
+        map_without_mobs[index_y][index_x] = map[index_y][index_x];
+      }
     }
 
-    /* At the end of every loop, refresh main_window */
+    /* Initializes variable stats for each type of enemmy */
+    Variable_stats *dumb_variables = d_enemies_variable_stats ();
+    Variable_stats *smart_variables = s_enemies_variable_stats ();
+    Variable_stats *genius_variables = g_enemies_variable_stats ();
+    /* Initializes all the enemies stats, including pre-defined */
+    Tag *tag = init_enemies (number_of_enemies, enemies, dumb_variables, smart_variables, genius_variables, map);
+
+    /* Initializes main character, placing it in the map */
+    init_character (&character);
+    place_player (*not_overlpg, map, &character);
+
+    /* Display the map on the main_window */
     display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
+    wrefresh (main_window); /* Refresh main_window */
+
+    /* Enable keyboard input for special keys */
+    keypad(main_window, TRUE);
+
+    /*=================================== End of Initialization ===================================*/
+    
+    /* GAME LOOP */
+    int ch;  /* Input character read as an integer */
+    char previous_char = FLOOR_CHAR;  /* Char before the character got placed in the map */
+
+    while ((ch = wgetch(main_window)) != 'q')
+    {
+      /* Basic movement */
+      movement (&character, map, ch, &previous_char);
+
+      /* Introducing vision */
+      vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
+
+      if (previous_char != FIRE_CHAR)
+      {
+        /* Initializes more enemies, if necessary, to the is_awaken struct */
+        init_awaken_enemies (&character, enemies, is_awake);
+        build_path (is_awake, &character, map, traveled_path, map_without_mobs, place_holder, enemies);
+      }
+
+      /* At the end of every loop, refresh main_window */
+      display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
+    }
+
+
+    /* cleanup and exit */
+    free (enemies); /* fazer uma função void free */
+    enemies = NULL;
+
+    for (current_line = 0; current_line < MAP_HEIGHT; current_line ++)
+    {
+      free (map[current_line]);
+      map[current_line] = NULL;
+    }
+    free (map);
+    map = NULL;
+
+    /* Free tag */
+    free (tag);
+    tag = NULL;
+
+    /* Free not_overlpg */
+    free (not_overlpg);
+    not_overlpg = NULL;
+
+    free (rooms);
+    rooms = NULL;
+
+    free (place_holder);
+    place_holder = NULL;
+  
+    delwin (main_window);
   }
 
-
-  /* cleanup and exit */
-  free (enemies); /* fazer uma função void free */
-  enemies = NULL;
-
-  for (current_line = 0; current_line < MAP_HEIGHT; current_line ++)
-  {
-    free (map[current_line]);
-    map[current_line] = NULL;
-  }
-  free (map);
-  map = NULL;
-
-  /* Free tag */
-  free (tag);
-  tag = NULL;
-
-  /* Free not_overlpg */
-  free (not_overlpg);
-  not_overlpg = NULL;
-
-  free (rooms);
-  rooms = NULL;
-
-  free (place_holder);
-  place_holder = NULL;
-
-  delwin (main_window);
   endwin ();
     
   return 0;
