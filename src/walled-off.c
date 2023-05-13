@@ -33,11 +33,54 @@ void init_ncurses() {
       printf("Your terminal does not support color\n");
       exit(1);
   }
-
+  /*== Create colors ==*/
+  /*colors of menu*/
   init_color(1, 148, 0, 300); /*dark purple background*/
   init_color(2, 300, 0, 551); /*color of the selected option*/
+  
+  /*colors for water*/
+  init_color(5, 500, 700, 1000); /*azul claro*/
+  init_color(6, 0, 100, 1000); /*azul escuro*/
 
-  /*Define color pairs*/
+  /*colors of range of vision*/
+  init_color(55, 125, 0, 250); /*roxo escuro*/
+  init_color(56, 514, 296, 799); /*roxo PLAYER_VISION_COLOR1    +perto*/
+  init_color(57, 413, 202, 694); /*PLAYER_VISION_COLOR2*/
+  init_color(58, 276, 132, 464); /*PLAYER_VISION_COLOR3*/
+  init_color(59, 183, 89, 308); /*PLAYER_VISION_COLOR4*/
+  //**************************************************************************
+  init_color(80, 398, 546, 995); /*water*/
+
+  init_color(60, 0, 0, 312); /*OBSCURE_COLOR -> */
+  init_color(61, 0, 1000, 0); /*ENEMY_COLOR -> green*/
+
+  /*== Define color pairs ==*/
+  /*for map*/
+  init_pair(WATER_COLOR, 6, 5);
+  init_pair(FLOOR_COLOR, COLOR_WHITE, 55);
+  init_pair(ENEMY_COLOR, 61, 55);
+  init_pair(WALL_COLOR, 56, 55);
+  init_pair(OBSCURE_COLOR, 60, 60);
+
+  /*range of vision*/
+  init_pair(PLAYER_VISION_COLOR1, COLOR_YELLOW, 56);
+  init_pair(WATER_VISION_COLOR1, 80, 56);
+  init_pair(ENEMY_VISION_COLOR1, 61, 56);
+
+  init_pair(PLAYER_VISION_COLOR2, COLOR_YELLOW, 57);
+  init_pair(WATER_VISION_COLOR2, 80, 57);
+  init_pair(ENEMY_VISION_COLOR2, 61, 57);
+
+  init_pair(PLAYER_VISION_COLOR3, COLOR_YELLOW, 58);
+  init_pair(WATER_VISION_COLOR3, 80, 58);
+  init_pair(ENEMY_VISION_COLOR3, 61, 58);
+
+  init_pair(PLAYER_VISION_COLOR4, COLOR_YELLOW, 59);
+  init_pair(WATER_VISION_COLOR4, 80, 59);
+  init_pair(ENEMY_VISION_COLOR4, 61, 59);
+  //**************************************************************************
+
+  /*for menu*/
   init_pair(BACKGROUND_COLOR, COLOR_WHITE, 1);
   init_pair(SELECTED_OPTION_COLOR, COLOR_WHITE, 2);
   init_pair(TITLE_COLOR, 2, 1);
@@ -160,7 +203,7 @@ int main ()
       /* Introducing vision */
       vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
 
-      if (previous_char != FIRE_CHAR)
+      if (previous_char != WATER_CHAR)
       {
         /* Initializes more enemies, if necessary, to the is_awaken struct */
         init_awaken_enemies (&character, enemies, is_awake);
