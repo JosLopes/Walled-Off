@@ -10,6 +10,6 @@ void init_place_holder_node (Node *place_holder);
 int dequeue (Path_queue *path);
 void insert_queue (Path_queue *path, Node node);
 Node init_new_node (int new_row, int new_col, Point *character, Node node, Node *prev);
-Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *path);
+Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *path, int *ended_without_path);
 
 #endif
