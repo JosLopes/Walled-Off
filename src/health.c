@@ -12,7 +12,6 @@
 #include "MOBs.h"
 #include "vision.h"
 
-
 /*
 * Function to spawn foods and potions in the map (WITHOUT ROOMS)
 */
@@ -30,33 +29,21 @@ void place_foods_and_potions(char** map, int number_of_enemies)
     /* Check if the randomly generated position is valid for placing a consumable */
     do
     {
-      x = rand() % 25;
-      y = rand() % 25;
+      x = rand() % MAP_WIDTH;
+      y = rand() % MAP_HEIGHT;
     } while (map[y][x] != FLOOR_CHAR);
   
     /* Determine the food/potion we are going to put on the map. Generate a random number between 0 and 4 */
     int consumable_index = rand() % NUM_CONSUMABLES;
 
     /* Check if the consumable is a food or a potion */
-    switch (consumable_index)
+    if (consumable_index < 3)
     {
-    case 0:
-      map[y][x] = APPLE_CHAR;
-      break;
-    case 1:
-      map[y][x] = AVOCADO_CHAR;
-      break;
-    case 2:
-      map[y][x] = CHICKEN_CHAR;
-      break;
-    case 3:
-      map[y][x] = ELIXIR_CHAR;
-      break;
-    case 4:
-      map[y][x] = BREW_CHAR;
-      break;
-    default:
-      break;
+      map[y][x] = FOOD_CHAR;
+    }
+    else
+    {
+      map[y][x] = POTION_CHAR;
     }
   }
 }
@@ -64,43 +51,41 @@ void place_foods_and_potions(char** map, int number_of_enemies)
 /*
 * Function responsible for eating
 */
-void food_and_potions(char **map, Character *character, Consumables consumables[])
+void food_and_potions(char **map, Character *character, Consumables *consumables, char *previous_char)
 {
-  /*if food replace for floor char*/
-  if(map[character->y][character->x] == APPLE_CHAR || map[character->y][character->x] == AVOCADO_CHAR || map[character->y][character->x] == CHICKEN_CHAR || map[character->y][character->x] == ELIXIR_CHAR || map[character->y][character->x] == BREW_CHAR){
-    switch (map[character->y][character->x])
-    {
-    case APPLE_CHAR:
-      /*Increase/Remove health*/
-      character->life = character->life + consumables[0].impact_life;
-      /*Delete the food and substitute it by a point*/
-      map[character->y][character->x] = FLOOR_CHAR;
-      break;
-    case AVOCADO_CHAR:
-      character->life = character->life + consumables[1].impact_life;
-      /*Delete the food and substitute it by a point*/
-      map[character->y][character->x] = FLOOR_CHAR;
-      break;
-    case CHICKEN_CHAR:
-      /*Increase/Remove health*/
-      character->life = character->life + consumables[2].impact_life;
-      /*Delete the food and substitute it by a point*/
-      map[character->y][character->x] = FLOOR_CHAR;
-      break;
-    case ELIXIR_CHAR:
-      /*Increase/Remove health*/
-      character->life = character->life + consumables[3].impact_life;
-      /*Delete the food and substitute it by a point*/
-      map[character->y][character->x] = FLOOR_CHAR;
-      break;
-    case BREW_CHAR:
-      /*Increase/Remove health*/
-      character->life = character->life + consumables[4].impact_life;
-      /*Delete the food and substitute it by a point*/
-      map[character->y][character->x] = FLOOR_CHAR;
-      break;
-    default:
-      break;
+  int x = character->x;
+  int y = character->y;
+
+  int x_f = consumables->x;
+  int y_f = consumables->y;
+
+  /*in case the position of character is the same as a consumable*/
+  if(map[y][x] == FOOD_CHAR || map[y][x] == POTION_CHAR){
+    /*makes the impact on character life*/
+    switch (consumables->identify)
+      {
+      case 'A':
+        character->life = character->life + consumables[0].impact_life;
+        break;
+      case 'V':
+        character->life = character->life + consumables[1].impact_life;
+        break;
+      case 'C':
+        character->life = character->life + consumables[2].impact_life;
+        break;
+      case 'E':
+        character->life = character->life + consumables[3].impact_life;
+        break;
+      case 'B':
+        character->life = character->life + consumables[4].impact_life;
+        break;
+      default:
+        break;
     }
+  }
+
+  /*Delete the food and substitute it by a FLOOR_CHAR*/
+  if(*previous_char == FOOD_CHAR || *previous_char == POTION_CHAR){
+    *previous_char = FLOOR_CHAR;
   }
 }

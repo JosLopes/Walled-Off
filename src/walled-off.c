@@ -10,6 +10,9 @@
 #include <time.h>
 #include <stdlib.h>
 #include "combat.h"
+#include "consumables.h"
+#include "health.h"
+
 void init_character(Character *character)
 {
   character -> x = 0;
@@ -113,6 +116,8 @@ int main ()
       map_without_mobs[index_y][index_x] = map[index_y][index_x];
     }
   }
+  /* Placing consumables */
+  place_foods_and_potions (map, number_of_enemies);
 
   /* Initializes variable stats for each type of enemmy */
   Variable_stats *dumb_variables = d_enemies_variable_stats ();
@@ -143,6 +148,10 @@ int main ()
     /* Basic movement */
     movement (&character, map, ch, &previous_char);
 
+    /* Foods and potions */
+    Consumables *consumables = consumablesHeap();
+    food_and_potions (map, &character, consumables, &previous_char);
+    
     /* Introducing vision */
     vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
 
