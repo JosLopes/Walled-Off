@@ -54,9 +54,11 @@ int main ()
   /* Map related initializations */
   int current_line;
   char **map = malloc (sizeof (char *) * MAP_HEIGHT);
+  char **map_without_mobs = malloc (sizeof (char *) * MAP_HEIGHT);
   for (current_line = 0; current_line < MAP_HEIGHT; current_line ++)
   {
     map[current_line] = malloc (sizeof (char) * MAP_WIDTH);
+    map_without_mobs[current_line] = malloc (sizeof (char) * MAP_WIDTH);
   }
   /* To display the traveled path */
   char traveled_path[MAP_HEIGHT][MAP_WIDTH];
@@ -101,15 +103,23 @@ int main ()
   Awake *is_awake = malloc (sizeof (Awake));
   init_is_awake (number_of_enemies, is_awake);
 
+  /* Finishes the building of the map */
+  generateCorridors (map, not_overlpg, number_of_non_overlaping_rooms);
+
+  for (int index_y = 0; index_y < MAP_HEIGHT; index_y ++)
+  {
+    for (int index_x = 0; index_x < MAP_WIDTH; index_x ++)
+    {
+      map_without_mobs[index_y][index_x] = map[index_y][index_x];
+    }
+  }
+
   /* Initializes variable stats for each type of enemmy */
   Variable_stats *dumb_variables = d_enemies_variable_stats ();
   Variable_stats *smart_variables = s_enemies_variable_stats ();
   Variable_stats *genius_variables = g_enemies_variable_stats ();
   /* Initializes all the enemies stats, including pre-defined */
   Tag *tag = init_enemies (number_of_enemies, enemies, dumb_variables, smart_variables, genius_variables, map);
-
-  /* Finishes the building of the map */
-  generateCorridors (map, not_overlpg, number_of_non_overlaping_rooms);
 
   /* Initializes main character, placing it in the map */
   init_character (&character);
@@ -140,7 +150,7 @@ int main ()
     {
       /* Initializes more enemies, if necessary, to the is_awaken struct */
       init_awaken_enemies (&character, enemies, is_awake);
-      build_path (is_awake, &character, map, traveled_path, place_holder, enemies);
+      build_path (is_awake, &character, map, traveled_path, map_without_mobs, place_holder, enemies);
     }
 
     /* At the end of every loop, refresh main_window */
