@@ -8,6 +8,7 @@
 #include "mapgen.h"
 #include "defines.h"
 #include "vision.h"
+#include "MOBs.h"
 
 /*  é responsável por preencher o mapa com o caractere do chão (FLOOR_CHAR). 
 Ela percorre todas as posições do mapa e verifica se o caractere atual não é o caractere da parede (WALL_CHAR) 
@@ -41,7 +42,7 @@ void fillTraveledPath(int map_height, int map_width, char traveled_path[][map_wi
 
     for (i = 0; i < map_height; i++) {
         for (j = 0; j < map_width; j++) {
-          traveled_path[i][j] = '+';
+          traveled_path[i][j] = ' ';
         }
     }
     /*Preenche as bordas do mapa com paredes*/

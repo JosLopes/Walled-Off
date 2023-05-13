@@ -6,6 +6,7 @@
 #include "movement.h"
 #include "mapgen.h"
 #include "vision.h"
+#include "MOBs.h"
 
 /*movement restriction*/
 int movement_restrictions(int x, int y, char **map)
