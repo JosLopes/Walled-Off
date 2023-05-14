@@ -14,7 +14,7 @@ void init_is_awake (int number_of_enemies, Awake *is_awake)
 /* 
   When the enemy is in a certain range from the player, it awakens (is added to the
   awaken array, inicating that it will pursue the player to kill him) */
-void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake)
+void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake, char **map_static_obstacles)
 {
   int index, distance;
   Point objective, future_start;
@@ -33,6 +33,8 @@ void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake)
       is_awake -> enemies_awaken[is_awake -> current_size] = enemies[index];
       is_awake -> current_size ++;
       enemies[index].awake = 0;
+      /* This enemy is no longer an obstacle as it searches for the player */
+      map_static_obstacles[enemies[index].y][enemies[index].x] = FLOOR_CHAR; 
     }
   }
 }
@@ -41,7 +43,7 @@ void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake)
   Calculates the closest path to an enemy, for use both in the smart AI and genius AI.
   When an enemy needs to call out for suport, be it by screaming or by reagruping, this 
   function finds the closest enemies who are not awaken yet */
-Node closest_enemy (char **map, Node *place_holder, Path_queue *path, Point start, Enemy *enemies, Awake *is_awake, Node origin_node)
+Node closest_enemy (char **map, char **map_static_obstacles, Node *place_holder, Path_queue *path, Point start, Enemy *enemies, Awake *is_awake, Node origin_node)
 {
   int ended_without_path = 0;  /* dont check diferent paths */
   int index;
@@ -77,6 +79,8 @@ Node closest_enemy (char **map, Node *place_holder, Path_queue *path, Point star
     is_awake -> enemies_awaken[is_awake -> current_size] = enemies[choosen_one];
     is_awake -> current_size ++;
     enemies[choosen_one].awake = 0;
+    /* This enemy is no longer an obstacle as it searches for the player */
+    map_static_obstacles[enemies[index].y][enemies[index].x] = FLOOR_CHAR;
   }
 
   return origin_node;
@@ -145,7 +149,7 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
       start.x = is_awake -> enemies_awaken[index].x;
       
       /* The node to be used as the first in the future constructed path */
-      top_node = closest_enemy (map, place_holder, &path, start, enemies, is_awake, origin_node);
+      top_node = closest_enemy (map, map_whithout_mobs, place_holder, &path, start, enemies, is_awake, origin_node);
     }
     /* 
       If the enemy isn't dumb, it searches for a path to trap the player,

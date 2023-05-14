@@ -25,7 +25,7 @@ Tag *init_enemies (int enemies_size, Enemy *enemies, Variable_stats *d_variables
 #define S_GROUP_DESIRE 2
 #define S_ENEMIES 2  /* Number of distint enteties */
 /* Range from the player required to start acting smarter and choose better paths */
-#define S_INTEL_RANGE 500
+#define S_INTEL_RANGE 700
 
 #define G_CHAR 'G'
 #define G_MAX_XP 10
@@ -34,6 +34,6 @@ Tag *init_enemies (int enemies_size, Enemy *enemies, Variable_stats *d_variables
 #define G_GROUP_DESIRE 4
 #define G_ENEMIES 2  /* Number of distint enteties */
 /* Range from the player required to start acting smarter and choose better paths */
-#define G_INTEL_RANGE 600
+#define G_INTEL_RANGE 900
 
 #endif
