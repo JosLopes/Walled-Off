@@ -1,3 +1,4 @@
+#include "MOBs.h"
 #include "defines.h"
 #include "datatypes.h"
 #include "path_finder.h"
@@ -13,7 +14,7 @@ void init_is_awake (int number_of_enemies, Awake *is_awake)
 /* 
   When the enemy is in a certain range from the player, it awakens (is added to the
   awaken array, inicating that it will pursue the player to kill him) */
-void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake)
+void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake, char **map_static_obstacles)
 {
   int index, distance;
   Point objective, future_start;
@@ -32,6 +33,8 @@ void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake)
       is_awake -> enemies_awaken[is_awake -> current_size] = enemies[index];
       is_awake -> current_size ++;
       enemies[index].awake = 0;
+      /* This enemy is no longer an obstacle as it searches for the player */
+      map_static_obstacles[enemies[index].y][enemies[index].x] = FLOOR_CHAR; 
     }
   }
 }
@@ -40,7 +43,7 @@ void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake)
   Calculates the closest path to an enemy, for use both in the smart AI and genius AI.
   When an enemy needs to call out for suport, be it by screaming or by reagruping, this 
   function finds the closest enemies who are not awaken yet */
-Node closest_enemy (char **map, Node *place_holder, Path_queue *path, Point start, Enemy *enemies, Awake *is_awake, Node origin_node)
+Node closest_enemy (char **map, char **map_static_obstacles, Node *place_holder, Path_queue *path, Point start, Enemy *enemies, Awake *is_awake, Node origin_node)
 {
   int ended_without_path = 0;  /* dont check diferent paths */
   int index;
@@ -76,6 +79,8 @@ Node closest_enemy (char **map, Node *place_holder, Path_queue *path, Point star
     is_awake -> enemies_awaken[is_awake -> current_size] = enemies[choosen_one];
     is_awake -> current_size ++;
     enemies[choosen_one].awake = 0;
+    /* This enemy is no longer an obstacle as it searches for the player */
+    map_static_obstacles[enemies[index].y][enemies[index].x] = FLOOR_CHAR;
   }
 
   return origin_node;
@@ -120,7 +125,8 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
   /* By default the objective is the main character */
   Point objective, start;
   int group_desire = 0;
-  int ended_without_path;
+  int ended_without_path = 1;
+  int distance_from_player = 0;
 
   for (int index = 0; index < is_awake -> current_size; index ++)
   {
@@ -143,7 +149,7 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
       start.x = is_awake -> enemies_awaken[index].x;
       
       /* The node to be used as the first in the future constructed path */
-      top_node = closest_enemy (map, place_holder, &path, start, enemies, is_awake, origin_node);
+      top_node = closest_enemy (map, map_whithout_mobs, place_holder, &path, start, enemies, is_awake, origin_node);
     }
     /* 
       If the enemy isn't dumb, it searches for a path to trap the player,
@@ -151,38 +157,93 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
       straight for the player without thinking about other enemies positions */
     else
     {
-      ended_without_path = 1;
       /*Starting the single first node */
       objective.y = is_awake -> enemies_awaken[index].y;
       objective.x = is_awake -> enemies_awaken[index].x;
       /* Starting node */
       start.y = character -> y;
       start.x = character -> x;
+      
+      /* Initializes the path */
       init_origin_node (&objective, &start, &origin_node);
-
       init_queue (&path);
       insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+
+      /* Calculates the distance from the player to the enemy */
       top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
-    }
+      distance_from_player = top_node.g;
 
-    /* 
-      If there is no path to trap the player, this version of the map with
-      no enemies will be able to find something. The path will be checked later
-      for colisions enemy to enemy */
-    if (ended_without_path == 0) 
-    {
-      ended_without_path = 0;
-      objective.y = is_awake -> enemies_awaken[index].y;
-      objective.x = is_awake -> enemies_awaken[index].x;
-      /* Starting node */
-      start.y = character -> y;
-      start.x = character -> x;
-
-      init_origin_node (&objective, &start, &origin_node);
-      init_queue (&path);
-      insert_queue (&path, origin_node);  /* Inserts first node in the queue */
-      /* Forces to find a path, even if there's enemies in the way */
-      top_node = find_path (&objective, map_whithout_mobs, place_holder, &path, &ended_without_path);
+      switch (is_awake -> enemies_awaken[index].tag -> inteligence)
+      {
+      case D_CHAR:
+        if (distance_from_player <= D_INTEL_RANGE)
+        {
+          /* Resets the path to find a smart way to get to the player */
+          init_queue (&path);
+          insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+          top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
+        }
+        /* 
+          If there is no path to trap the player, this version of the map with
+          no enemies will be able to find something. The path will be checked later
+          for colisions enemy to enemy */
+        if (ended_without_path == 0 || distance_from_player > D_INTEL_RANGE)
+        {
+          /* Resets path if it was not found but the player is still on land */
+          init_queue (&path);
+          insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+          top_node = find_path (&objective, map_whithout_mobs, place_holder, &path, &ended_without_path);
+          ended_without_path = 1;
+        }
+        break;
+      
+      case S_CHAR:
+        if (distance_from_player <= S_INTEL_RANGE)
+        {
+          /* Resets the path to find a smart way to get to the player */
+          init_queue (&path);
+          insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+          top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
+        }
+        /* 
+          If there is no path to trap the player, this version of the map with
+          no enemies will be able to find something. The path will be checked later
+          for colisions enemy to enemy */
+        if (ended_without_path == 0 || distance_from_player > S_INTEL_RANGE)
+        {
+          /* Resets path if it was not found but the player is still on land */
+          init_queue (&path);
+          insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+          top_node = find_path (&objective, map_whithout_mobs, place_holder, &path, &ended_without_path);
+          ended_without_path = 1;
+        }
+        break;
+      
+      case G_CHAR:
+        if (distance_from_player <= G_INTEL_RANGE)
+        {
+          /* Resets the path to find a smart way to get to the player */
+          init_queue (&path);
+          insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+          top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
+        }
+        /* 
+          If there is no path to trap the player, this version of the map with
+          no enemies will be able to find something. The path will be checked later
+          for colisions enemy to enemy */
+        if (ended_without_path == 0 || distance_from_player > G_INTEL_RANGE)
+        {
+          /* Resets path if it was not found but the player is still on land */
+          init_queue (&path);
+          insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+          top_node = find_path (&objective, map_whithout_mobs, place_holder, &path, &ended_without_path);
+          ended_without_path = 1;
+        }
+        break;
+      /* For every run, at least one of the above is choosen */
+      default:
+        break;
+      }
     }
 
     display_enemy_path (top_node, map, traveled_path, &(is_awake -> enemies_awaken[index]));

@@ -36,4 +36,9 @@
 #define WALL_COLOR 8
 #define OBSCURE_COLOR 9
 
+/* For menu */
+#define BACKGROUND_COLOR 20
+#define SELECTED_OPTION_COLOR 21
+#define TITLE_COLOR 22
+
 #endif
