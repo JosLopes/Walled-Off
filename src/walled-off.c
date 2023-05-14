@@ -11,6 +11,9 @@
 #include <time.h>
 #include <stdlib.h>
 #include "combat.h"
+#include "consumables.h"
+#include "health.h"
+
 void init_character(Character *character)
 {
   character -> x = 0;
@@ -127,6 +130,11 @@ int main ()
     /* Initializes all the enemies stats, including pre-defined */
     Tag *tag = init_enemies (number_of_enemies, enemies, dumb_variables, smart_variables, genius_variables, map);
 
+    /* Foods and potions */
+    Consumables *consumables = consumablesHeap();
+    /* Placing consumables */
+    place_foods_and_potions (map, number_of_enemies);
+    
     /* Initializes a map with fixed obstacles */
     for (int index_y = 0; index_y < MAP_HEIGHT; index_y ++)
     {
@@ -135,7 +143,7 @@ int main ()
         map_static_obstacles[index_y][index_x] = map[index_y][index_x];
       }
     }
-
+    
     /* Initializes main character, placing it in the map */
     init_character (&character);
     place_player (*not_overlpg, map, &character);
@@ -161,6 +169,8 @@ int main ()
       /* Introducing vision */
       vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
 
+      food_and_potions (map, &character, consumables, &previous_char);
+    
       if (previous_char != FIRE_CHAR)
       {
         /* Initializes more enemies, if necessary, to the is_awaken struct */

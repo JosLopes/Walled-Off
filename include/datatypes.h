@@ -31,6 +31,15 @@ typedef struct {
   char special_power[50]; // novo campo adicionado
 } Weapon;
 
+/* Consumables parameters */
+typedef struct {
+  char identify;
+  char name[20];
+  int impact_life;
+  int impact_xp;
+  int x, y;
+} Consumables;
+
 typedef struct {
   int x, y;
   char direction;
