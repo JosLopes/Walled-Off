@@ -1,3 +1,4 @@
+#include "MOBs.h"
 #include "defines.h"
 #include "datatypes.h"
 #include "path_finder.h"
@@ -120,7 +121,8 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
   /* By default the objective is the main character */
   Point objective, start;
   int group_desire = 0;
-  int ended_without_path;
+  int ended_without_path = 1;
+  int distance_from_player = 0;
 
   for (int index = 0; index < is_awake -> current_size; index ++)
   {
@@ -151,38 +153,93 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
       straight for the player without thinking about other enemies positions */
     else
     {
-      ended_without_path = 1;
       /*Starting the single first node */
       objective.y = is_awake -> enemies_awaken[index].y;
       objective.x = is_awake -> enemies_awaken[index].x;
       /* Starting node */
       start.y = character -> y;
       start.x = character -> x;
+      
+      /* Initializes the path */
       init_origin_node (&objective, &start, &origin_node);
-
       init_queue (&path);
       insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+
+      /* Calculates the distance from the player to the enemy */
       top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
-    }
+      distance_from_player = top_node.g;
 
-    /* 
-      If there is no path to trap the player, this version of the map with
-      no enemies will be able to find something. The path will be checked later
-      for colisions enemy to enemy */
-    if (ended_without_path == 0) 
-    {
-      ended_without_path = 0;
-      objective.y = is_awake -> enemies_awaken[index].y;
-      objective.x = is_awake -> enemies_awaken[index].x;
-      /* Starting node */
-      start.y = character -> y;
-      start.x = character -> x;
-
-      init_origin_node (&objective, &start, &origin_node);
-      init_queue (&path);
-      insert_queue (&path, origin_node);  /* Inserts first node in the queue */
-      /* Forces to find a path, even if there's enemies in the way */
-      top_node = find_path (&objective, map_whithout_mobs, place_holder, &path, &ended_without_path);
+      switch (is_awake -> enemies_awaken[index].tag -> inteligence)
+      {
+      case D_CHAR:
+        if (distance_from_player <= D_INTEL_RANGE)
+        {
+          /* Resets the path to find a smart way to get to the player */
+          init_queue (&path);
+          insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+          top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
+        }
+        /* 
+          If there is no path to trap the player, this version of the map with
+          no enemies will be able to find something. The path will be checked later
+          for colisions enemy to enemy */
+        if (ended_without_path == 0 || distance_from_player > D_INTEL_RANGE)
+        {
+          /* Resets path if it was not found but the player is still on land */
+          init_queue (&path);
+          insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+          top_node = find_path (&objective, map_whithout_mobs, place_holder, &path, &ended_without_path);
+          ended_without_path = 1;
+        }
+        break;
+      
+      case S_CHAR:
+        if (distance_from_player <= S_INTEL_RANGE)
+        {
+          /* Resets the path to find a smart way to get to the player */
+          init_queue (&path);
+          insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+          top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
+        }
+        /* 
+          If there is no path to trap the player, this version of the map with
+          no enemies will be able to find something. The path will be checked later
+          for colisions enemy to enemy */
+        if (ended_without_path == 0 || distance_from_player > S_INTEL_RANGE)
+        {
+          /* Resets path if it was not found but the player is still on land */
+          init_queue (&path);
+          insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+          top_node = find_path (&objective, map_whithout_mobs, place_holder, &path, &ended_without_path);
+          ended_without_path = 1;
+        }
+        break;
+      
+      case G_CHAR:
+        if (distance_from_player <= G_INTEL_RANGE)
+        {
+          /* Resets the path to find a smart way to get to the player */
+          init_queue (&path);
+          insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+          top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
+        }
+        /* 
+          If there is no path to trap the player, this version of the map with
+          no enemies will be able to find something. The path will be checked later
+          for colisions enemy to enemy */
+        if (ended_without_path == 0 || distance_from_player > G_INTEL_RANGE)
+        {
+          /* Resets path if it was not found but the player is still on land */
+          init_queue (&path);
+          insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+          top_node = find_path (&objective, map_whithout_mobs, place_holder, &path, &ended_without_path);
+          ended_without_path = 1;
+        }
+        break;
+      /* For every run, at least one of the above is choosen */
+      default:
+        break;
+      }
     }
 
     display_enemy_path (top_node, map, traveled_path, &(is_awake -> enemies_awaken[index]));
