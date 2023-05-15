@@ -7,10 +7,11 @@
 #include "MOBs.h"
 #include "path_finder.h"
 #include "artificial_inteligence.h"
+#include "combat.h"
+#include "display.h"
 #include <ncurses.h>
 #include <time.h>
 #include <stdlib.h>
-#include "combat.h"
 void init_character(Character *character)
 {
   character -> x = 0;
@@ -100,6 +101,9 @@ int main ()
 {
   /* WINDOWS to be used */
   WINDOW *main_window;
+  WINDOW *display_win;
+  WINDOW *instructions_win;
+
 
   /* Guarantees a new sequence of "random" numbers */
   srand(time(NULL));
@@ -186,6 +190,8 @@ int main ()
     display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
     wrefresh (main_window); /* Refresh main_window */
 
+    start_display (&character, &enemies);
+    start_instructions (&character, &enemies);                                               
     /* Enable keyboard input for special keys */
     keypad(main_window, TRUE);
 
@@ -212,6 +218,8 @@ int main ()
 
       /* At the end of every loop, refresh main_window */
       display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
+      start_display (&character, &enemies);  
+      start_instructions (&character, &enemies);                                                                                                     
     }
 
 
