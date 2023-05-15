@@ -130,10 +130,10 @@ int main ()
     /* Initializes all the enemies stats, including pre-defined */
     Tag *tag = init_enemies (number_of_enemies, enemies, dumb_variables, smart_variables, genius_variables, map);
 
-    /* Foods and potions */
-    Consumables *consumables = consumablesHeap();
     /* Placing consumables */
-    place_foods_and_potions (map, number_of_enemies);
+    Consumables *consumables = consumablesHeap();
+    locate_positions_consumables(MAP_HEIGHT, MAP_WIDTH, map, consumables, number_of_enemies, number_of_non_overlaping_rooms, not_overlpg);
+    place_foods_and_potions (MAP_HEIGHT, MAP_WIDTH, map, consumables, number_of_enemies, number_of_non_overlaping_rooms, not_overlpg);
     
     /* Initializes a map with fixed obstacles */
     for (int index_y = 0; index_y < MAP_HEIGHT; index_y ++)
