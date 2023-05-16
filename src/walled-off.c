@@ -143,7 +143,7 @@ int main ()
   {
     /* Creates main window (playable window) from mapgen.c */
     main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 0, 0);
-
+    
     fillMap (MAP_HEIGHT, MAP_WIDTH, map);
     number_of_non_overlaping_rooms = generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms);
     Non_overlaping_rooms *not_overlpg = malloc (sizeof (Non_overlaping_rooms) * number_of_non_overlaping_rooms); // Free this memory later !!!
@@ -190,8 +190,19 @@ int main ()
     display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
     wrefresh (main_window); /* Refresh main_window */
 
+    /* Creats the windows of instructions and parameters*/
+    instructions_win = newwin(9, MAP_WIDTH, MAP_HEIGHT, 0);
+    display_win = newwin(MAP_HEIGHT, 40, 0, MAP_WIDTH);
+
     start_display (&character, &enemies);
-    start_instructions (&character, &enemies);                                               
+    print_displays (display_win, &character, &enemies);   
+    refresh();  
+    wrefresh(display_win);
+    start_instructions (&character, &enemies, traveled_path);
+    print_instructions_win (instructions_win, &character, &enemies, traveled_path);  
+    wrefresh(instructions_win);   
+    refresh();
+
     /* Enable keyboard input for special keys */
     keypad(main_window, TRUE);
 
@@ -216,10 +227,10 @@ int main ()
         build_path (is_awake, &character, map, traveled_path, map_without_mobs, place_holder, enemies);
       }
 
-      /* At the end of every loop, refresh main_window */
+      /* At the end of every loop, refresh main_window, display_win and instructions_win */
       display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
-      start_display (&character, &enemies);  
-      start_instructions (&character, &enemies);                                                                                                     
+      print_instructions_win (instructions_win, &character, &enemies, traveled_path);  
+      print_displays (display_win, &character, &enemies);                                                                                                     
     }
 
 
