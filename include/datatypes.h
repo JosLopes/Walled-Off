@@ -24,12 +24,33 @@ typedef struct
   int startingY;
 } Vector;
 
+
+/* Consumables parameters */
+typedef struct {
+  char identify;
+  char name[20];
+  int impact_life;
+  int impact_xp;
+  int x, y;
+} Consumables;
+
+enum SpecialPowerType {
+  DamageBoost, // poder especial que aumenta o dano da arma em 1,5 vezes
+  Fire, // poder especial que causa dano de fogo adicional
+  Poison // poder especial que envenena o inimigo, causando dano a cada turno
+};
+
 typedef struct {
   char name[20];
   int damage;
   float range;
-  char special_power[50]; // novo campo adicionado
+  char special_power[50];
+  enum SpecialPowerType special_type;
+  int special_duration; // duração do poder especial em turnos
+  int turns_left;
 } Weapon;
+
+
 
 typedef struct {
   int x, y;
@@ -62,6 +83,7 @@ typedef struct {
   int range;  /* Range for ranged attacks */
   int damage;  /* Damage given to the player*/
   int awake; /* If true, actevily pursues the main character */
+  int index;
 } Enemy;
 
 /* Individual (and variable) atributes */

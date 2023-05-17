@@ -13,6 +13,7 @@
   enemies */
 int locate_positions (int map_heigth, int map_width, char **map, int number_of_enemies, Enemy *enemies, int nor_size, Non_overlaping_rooms no_overlpg[])
 {
+  int index, already_placed = 1;
   int enemies_ind = 0, rooms_ind = 1, max_per_room = 0;
   int offset, impossible_location = 0;  /* Max offset from the center of a room */
 
@@ -31,13 +32,33 @@ int locate_positions (int map_heigth, int map_width, char **map, int number_of_e
       int possible_x = no_overlpg[rooms_ind].midX + (rand () % offset - rand () % offset);
       int possible_y = no_overlpg[rooms_ind].midY + (rand () % offset - rand () % offset);
 
+      /* Checks if the spawn point is valid */
       if (possible_x < map_width && possible_x > 0 && possible_y < map_heigth && possible_y > 0 && map[possible_y][possible_x] == FLOOR_CHAR)
       {
-        enemies[enemies_ind].x = possible_x;
-        enemies[enemies_ind].y = possible_y;
-        max_per_room ++;
-        enemies_ind ++;
-        offset += 2;
+        /* 
+          Checks if there is already an enemy in the same place,
+          due to the nature of the spawn and game builder, its
+          convenient to not spawn the enmies imidiatly */
+        
+        for (index = 0; index < enemies_ind; index ++)
+        {
+          if (enemies[index].y == possible_y && enemies[index].x == possible_x)
+          {
+            already_placed = 0; /* True, there is already an enemy in this location */
+          }
+        }
+
+        if (already_placed == 1)
+        {
+          enemies[enemies_ind].x = possible_x;
+          enemies[enemies_ind].y = possible_y;
+          max_per_room ++;
+          enemies_ind ++;
+          offset += 2;
+        }
+
+        /* Reset already_placed to FALSE */
+        already_placed = 1;
       }
       else
       {

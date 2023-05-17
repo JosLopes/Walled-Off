@@ -247,7 +247,7 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
 void map_colors (WINDOW *main_window, int map_width, int j, int i, char traveled_path[][map_width]){
   switch (traveled_path[j][i])
   {
-  case '+':
+  case UNDISCOVERED_PATH_CHAR:
     wattron(main_window,COLOR_PAIR(OBSCURE_COLOR)); 
     mvwaddch(main_window, j, i, traveled_path[j][i]); 
     wattroff(main_window,COLOR_PAIR(OBSCURE_COLOR));

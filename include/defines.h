@@ -16,6 +16,10 @@
 #define WATER_CHAR '~'
 #define UNDISCOVERED_PATH_CHAR ' '
 
+#define FOOD_CHAR '='
+#define POTION_CHAR '@'
+#define NUM_CONSUMABLES 5
+
 #define PLAYER_CHAR_LEFT '<'
 #define PLAYER_CHAR_RIGHT '>'
 #define PLAYER_CHAR_UP '^'
