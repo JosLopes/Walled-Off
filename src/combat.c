@@ -123,7 +123,10 @@ void remove_dead_enemy(int index, Awake *is_awake, Enemy *enemies)
 
 void enemy_take_damage(Character *player, Enemy *enemy, Awake *is_awake, Enemy *enemies)
 {
-  enemy->life -= calculate_enemy_damage(player, enemy);
+  int weapon_damage = player->weapons[player->current_weapon_index].damage;
+  
+  enemy->life -= weapon_damage;
+  
   if (enemy->life > 0)/*If the enemy's life is greater than 0 after taking damage, it means the enemy is still alive, so its awake flag 
   is set to 1 and it will attack the player by calling enemy_attack function.*/
   {
