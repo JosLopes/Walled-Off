@@ -2,7 +2,7 @@
 #define DEFINES_H
 
 /* Max range for the vision */
-#define AWAKE_RANGE 4
+#define AWAKE_RANGE 5
 
 #define MAP_HEIGHT 50
 #define MAP_WIDTH 100

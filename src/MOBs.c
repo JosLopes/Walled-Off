@@ -58,8 +58,8 @@ Variable_stats *d_enemies_variable_stats ()
 {
   Variable_stats *d_variables = malloc (sizeof (Variable_stats) * D_ENEMIES);
 
-  d_variables[0] = (Variable_stats){'D',"Albertino", 0, 0, 0};
-  d_variables[1] = (Variable_stats){'D',"Josefino", 0, 0, 0};
+  d_variables[0] = (Variable_stats){'D',{"Albertino"}, 0, 0, 0};
+  d_variables[1] = (Variable_stats){'D',{"Josefino"}, 0, 0, 0};
 
   return d_variables; 
 }
@@ -74,8 +74,8 @@ Variable_stats *s_enemies_variable_stats ()
 {
   Variable_stats *s_variables = malloc (sizeof (Variable_stats) * S_ENEMIES);
 
-  s_variables[0] = (Variable_stats){'S',"Carambolas", 0, 0, 0};
-  s_variables[1] = (Variable_stats){'S',"JMotherFucker", 0, 0, 0};
+  s_variables[0] = (Variable_stats){'S',{"Carambol"}, 0, 0, 0};
+  s_variables[1] = (Variable_stats){'S',{"JMF"}, 0, 0, 0};
 
   return s_variables; 
 }
@@ -90,8 +90,8 @@ Variable_stats *g_enemies_variable_stats ()
 {
   Variable_stats *g_variables = malloc (sizeof (Variable_stats) * G_ENEMIES);
 
-  g_variables[0] = (Variable_stats){'G',"Imtired", 0, 0, 0};
-  g_variables[1] = (Variable_stats){'G',"Godblastmetodeath", 0, 0, 0 };
+  g_variables[0] = (Variable_stats){'G',{"IMO"}, 0, 0, 0};
+  g_variables[1] = (Variable_stats){'G',{"JGod"}, 0, 0, 0 };
 
   return g_variables; 
 }
@@ -115,16 +115,11 @@ void init_tag (Tag *tag, char intel, int max_xp, int min_xp, int poison, int gro
 
 void init_enemy_stats (Enemy *enemy, Tag *tag, Variable_stats *variables)
 {
-  int name_ind;
   enemy -> tag = tag;
   enemy -> display = variables -> display; /* Character to represent the enemy in the map */
 
   /* Copies the string "name" to the respective struct */
-  for (name_ind = 0; name_ind < 9 && (enemy -> name[name_ind]) != '\0'; name_ind ++)
-  {
-    enemy -> name[name_ind] = variables -> name[name_ind];
-  }
-  enemy -> name[name_ind] = '\0';
+  enemy -> name[0] = variables -> name[0];
 
   enemy -> life = variables -> life;
   enemy -> range = variables -> range;

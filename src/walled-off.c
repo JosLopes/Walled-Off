@@ -196,11 +196,11 @@ int main ()
 
     char previous_char = FLOOR_CHAR;  /* Char before the character got placed in the map */
 
-    start_display (&character, is_awake);
+    start_display ();
     print_displays (display_win, &character, is_awake, traveled_path);   
     refresh();  
     wrefresh(display_win);
-    start_instructions (&character, traveled_path);
+    start_instructions ();
     print_instructions_win (instructions_win, &character, traveled_path, &previous_char);  
     wrefresh(instructions_win);
     refresh();

@@ -29,7 +29,7 @@ int n_personagem = sizeof(personagem)/ sizeof(char *);*/
 * Vertical window that gives information about the state 
 * of the character and the enemies around him.
 *********************************************************/
-WINDOW* start_display(Character *character, Awake *is_awake) {
+WINDOW* start_display(void) {
     WINDOW *display_win;
 
     int startx = MAP_WIDTH;
@@ -47,13 +47,11 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
   int x, y;
   x = 1;
   y = 1;
-  
-  int indice = 0;
+
   int range = sets_range(character->life);
   int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, MAP_WIDTH - 1);
   int y_min = fmax(character->y - range, 0), y_max = fmin(character->y + range, MAP_HEIGHT - 1);
   
-
   /* Draw a box around the display window*/
   box(display_win, 0, 0);
 
@@ -66,7 +64,7 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
   y++;
   mvwprintw(display_win, y, x, "Vida: %f", character->life);
   y++;
-  mvwprintw(display_win, y, x, "XP: %d", character->xp);
+  mvwprintw(display_win, y, x, "XP: %f", character->xp);
   y++;
   mvwprintw(display_win, y, x, "Arma: Calhau");
   y=y+5;
@@ -76,26 +74,31 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
   /* range of vision of character */
   for (int i = x_min; i < x_max; i++) {
     for (int j = y_min; j < y_max; j++) {
-      switch (traveled_path[i][j])
-      {
-      case 'D':
-      case 'S':
-      case 'G': 
-        /*walks through the array of awake enemies*/
-        for(int u = 0; u < is_awake->current_size; u++)
-        { /*if enemy is on range of vison and is awake -> print is parameters*/
-          if(is_awake -> enemies_awaken[u].x == i && is_awake -> enemies_awaken[u].y == j){
-            mvwprintw(display_win, y, x, "Nome: %s", is_awake -> enemies_awaken[u].name);
+      int dist = sqrt(pow(i - character ->x, 2) + pow(j - character->y, 2));
+      
+      if (dist<=range){
+        switch (traveled_path[j][i])
+        {
+        case 'D':
+        case 'S':
+        case 'G': 
+          /*walks through the array of awake enemies*/
+          for(int u = 0; u < is_awake->current_size; u++)
+          { /*if enemy is on range of vison and is awake -> print is parameters*/
+            if (y == 28) {
+              y = 10;
+            }
+            mvwprintw(display_win, y, x, "Nome: %s                      ", is_awake -> enemies_awaken[u].name[0]);
             y++;
-            mvwprintw(display_win, y, x, "Vida: %d", is_awake -> enemies_awaken[u].life);
+            mvwprintw(display_win, y, x, "Vida: %d                      ", is_awake -> enemies_awaken[u].life);
             y++;
-            mvwprintw(display_win, y, x, "Dano: %d", is_awake -> enemies_awaken[u].damage);
-            u = MAP_HEIGHT * MAP_WIDTH;
+            mvwprintw(display_win, y, x, "Dano: %d                      ", is_awake -> enemies_awaken[u].damage);
+            y+=2;
           }
+          break;
+        default:
+          break;
         }
-        break;
-      default:
-        break;
       }
     }
   }
@@ -129,7 +132,7 @@ char *instrucoes[10] = {
 * Function that sets the instruction according to visible 
 * things for character
 ***************************************************************/
-WINDOW* start_instructions (Character *character, char traveled_path[][MAP_WIDTH])
+WINDOW* start_instructions (void)
 {
 
   WINDOW *instructions_win;
@@ -148,7 +151,6 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, char
   x = 1;
   y = 1;
 
-  int indice = 0;
   int range = sets_range(character->life);
   int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, MAP_WIDTH - 1);
   int y_min = fmax(character->y - range, 0), y_max = fmin(character->y + range, MAP_HEIGHT - 1);
