@@ -104,30 +104,17 @@ void food_and_potions(char **map, Character *character, Consumables *consumables
   int x = character->x;
   int y = character->y;
 
-  int x_f = consumables->x;
-  int y_f = consumables->y;
-
   /*in case the position of character is the same as a consumable*/
-  if(map[y][x] == FOOD_CHAR || map[y][x] == POTION_CHAR){
+  if(*previous_char == FOOD_CHAR || *previous_char == POTION_CHAR){
     /*makes the impact on character life*/
     switch (consumables->identify)
       {
-      case 'A':
+      case '=':
         character->life = character->life + consumables[0].impact_life;
         break;
-      case 'V':
-        character->life = character->life + consumables[1].impact_life;
-        break;
-      case 'C':
-        character->life = character->life + consumables[2].impact_life;
-        break;
-      case 'E':
+      case '@':
         character->life = character->life + consumables[3].impact_life;
-        break;
-      case 'B':
-        character->life = character->life + consumables[4].impact_life;
-        break;
-      default:
+        character->xp = character->xp + consumables[3].impact_xp;
         break;
     }
   }
