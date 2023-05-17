@@ -29,15 +29,12 @@ int n_personagem = sizeof(personagem)/ sizeof(char *);*/
 * Vertical window that gives information about the state 
 * of the character and the enemies around him.
 *********************************************************/
-WINDOW* start_display(Character *character, Enemy *enemies) {
+WINDOW* start_display(Character *character, Awake *is_awake) {
     WINDOW *display_win;
 
     int startx = MAP_WIDTH;
     int starty = 0;
     display_win = newwin(MAP_HEIGHT, 40, starty, startx);
-
-    /* Print display */
-    print_displays(display_win, character, enemies);
 
     refresh();
     wrefresh(display_win);
@@ -45,12 +42,18 @@ WINDOW* start_display(Character *character, Enemy *enemies) {
     return display_win;
 }
 
-void print_displays(WINDOW *display_win, Character *character, Enemy *enemies)
+void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, char traveled_path[][MAP_WIDTH])
 {
   int x, y;
-
   x = 1;
   y = 1;
+  
+  int indice = 0;
+  int range = sets_range(character->life);
+  int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, MAP_WIDTH - 1);
+  int y_min = fmax(character->y - range, 0), y_max = fmin(character->y + range, MAP_HEIGHT - 1);
+  
+
   /* Draw a box around the display window*/
   box(display_win, 0, 0);
 
@@ -63,17 +66,39 @@ void print_displays(WINDOW *display_win, Character *character, Enemy *enemies)
   y++;
   mvwprintw(display_win, y, x, "Vida: %f", character->life);
   y++;
-  mvprintw(display_win, y, x, "XP: %d", character->xp);
+  mvwprintw(display_win, y, x, "XP: %d", character->xp);
   y++;
-  mvprintw(display_win, y, x, "Arma: %s", character->weapons[character->current_weapon_index]);
+  mvwprintw(display_win, y, x, "Arma: Calhau");
   y=y+5;
   mvwprintw(display_win, y, x, "   Inimigos");
   y++;
-  mvprintw(y, x, "Nome: %s", enemies->name);
-  y++;
-  mvprintw(display_win, y, x, "Vida: %d", enemies->life);
-  y++;
-  mvprintw(display_win, y, x, "Dano: %d", enemies->damage);
+  
+  /* range of vision of character */
+  for (int i = x_min; i < x_max; i++) {
+    for (int j = y_min; j < y_max; j++) {
+      switch (traveled_path[i][j])
+      {
+      case 'D':
+      case 'S':
+      case 'G': 
+        /*walks through the array of awake enemies*/
+        for(int u = 0; u < is_awake->current_size; u++)
+        { /*if enemy is on range of vison and is awake -> print is parameters*/
+          if(is_awake -> enemies_awaken[u].x == i && is_awake -> enemies_awaken[u].y == j){
+            mvwprintw(display_win, y, x, "Nome: %s", is_awake -> enemies_awaken[u].name);
+            y++;
+            mvwprintw(display_win, y, x, "Vida: %d", is_awake -> enemies_awaken[u].life);
+            y++;
+            mvwprintw(display_win, y, x, "Dano: %d", is_awake -> enemies_awaken[u].damage);
+            u = MAP_HEIGHT * MAP_WIDTH;
+          }
+        }
+        break;
+      default:
+        break;
+      }
+    }
+  }
 
   wattroff(display_win, COLOR_PAIR(BACKGROUND_COLOR));
 
@@ -104,7 +129,7 @@ char *instrucoes[10] = {
 * Function that sets the instruction according to visible 
 * things for character
 ***************************************************************/
-WINDOW* start_instructions (Character *character, Enemy *enemies, char traveled_path[][MAP_WIDTH])
+WINDOW* start_instructions (Character *character, char traveled_path[][MAP_WIDTH])
 {
 
   WINDOW *instructions_win;
@@ -112,15 +137,12 @@ WINDOW* start_instructions (Character *character, Enemy *enemies, char traveled_
   int starty = MAP_HEIGHT;
   instructions_win = newwin(9, MAP_WIDTH, starty, startx);
 
-  /* Print display */
-  print_instructions_win(instructions_win, character, enemies, traveled_path);
-
   refresh ();
   wrefresh (instructions_win);
 
   return instructions_win;
 }
-void print_instructions_win(WINDOW *instructions_win, Character *character, Enemy *enemies, char traveled_path[][MAP_WIDTH])
+void print_instructions_win(WINDOW *instructions_win, Character *character, char traveled_path[][MAP_WIDTH], char *prev)
 {
   int x, y;
   x = 1;
@@ -146,16 +168,12 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Enem
   for (int i = x_min; i < x_max; i++) {
     for (int j = y_min; j < y_max; j++) {
 
-      if (y == 11) {
+      if (y == 8) {
         y = 1;
       }
 
       switch (traveled_path[j][i])
       {
-      case WATER_CHAR:
-        mvwprintw(instructions_win, y, x, "%s", instrucoes[0]);
-        y++;
-        break;
       case 'D':
         mvwprintw(instructions_win, y, x, "%s", instrucoes[1]);
         y++;
@@ -180,6 +198,11 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Enem
         break;
       }
     }
+  }
+  if (*prev == WATER_CHAR)
+  {
+    mvwprintw(instructions_win, y, x, "%s", instrucoes[0]);
+    y++;
   }
 
   wattroff(instructions_win, COLOR_PAIR(BACKGROUND_COLOR));

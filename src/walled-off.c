@@ -194,13 +194,15 @@ int main ()
     instructions_win = newwin(9, MAP_WIDTH, MAP_HEIGHT, 0);
     display_win = newwin(MAP_HEIGHT, 40, 0, MAP_WIDTH);
 
-    start_display (&character, &enemies);
-    print_displays (display_win, &character, &enemies);   
+    char previous_char = FLOOR_CHAR;  /* Char before the character got placed in the map */
+
+    start_display (&character, is_awake);
+    print_displays (display_win, &character, is_awake, traveled_path);   
     refresh();  
     wrefresh(display_win);
-    start_instructions (&character, &enemies, traveled_path);
-    print_instructions_win (instructions_win, &character, &enemies, traveled_path);  
-    wrefresh(instructions_win);   
+    start_instructions (&character, traveled_path);
+    print_instructions_win (instructions_win, &character, traveled_path, &previous_char);  
+    wrefresh(instructions_win);
     refresh();
 
     /* Enable keyboard input for special keys */
@@ -210,7 +212,6 @@ int main ()
     
     /* GAME LOOP */
     int ch;  /* Input character read as an integer */
-    char previous_char = FLOOR_CHAR;  /* Char before the character got placed in the map */
 
     while ((ch = wgetch(main_window)) != 'q')
     {
@@ -229,8 +230,8 @@ int main ()
 
       /* At the end of every loop, refresh main_window, display_win and instructions_win */
       display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
-      print_instructions_win (instructions_win, &character, &enemies, traveled_path);  
-      print_displays (display_win, &character, &enemies);                                                                                                     
+      print_instructions_win (instructions_win, &character, traveled_path, &previous_char);
+      print_displays (display_win, &character, is_awake, traveled_path);                                                                                                     
     }
 
 

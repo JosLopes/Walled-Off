@@ -82,17 +82,16 @@ void vision_color (WINDOW *main_window, Character *character, char **map, int ma
               mvwaddch(main_window, y, x, traveled_path[y][x]); 
               wattroff(main_window,COLOR_PAIR(WATER_VISION_COLOR4));
               break;
-            case D_CHAR:
-            case S_CHAR:
-            case G_CHAR:
-              wattron(main_window,COLOR_PAIR(ENEMY_VISION_COLOR4)); 
-              mvwaddch(main_window, y, x, traveled_path[y][x]); 
-              wattroff(main_window,COLOR_PAIR(ENEMY_VISION_COLOR4));
-              break;
-            default:
+            case WALL_CHAR:
+            case FLOOR_CHAR:
               wattron(main_window, COLOR_PAIR(PLAYER_VISION_COLOR4)); 
               mvwaddch(main_window, y, x, traveled_path[y][x]); 
               wattroff(main_window, COLOR_PAIR(PLAYER_VISION_COLOR4));
+              break;
+            default:
+              wattron(main_window,COLOR_PAIR(ENEMY_VISION_COLOR4)); 
+              mvwaddch(main_window, y, x, traveled_path[y][x]); 
+              wattroff(main_window,COLOR_PAIR(ENEMY_VISION_COLOR4));
               break;
             }
             break;
@@ -105,17 +104,16 @@ void vision_color (WINDOW *main_window, Character *character, char **map, int ma
               mvwaddch(main_window, y, x, traveled_path[y][x]); 
               wattroff(main_window,COLOR_PAIR(WATER_VISION_COLOR3));
               break;
-            case D_CHAR:
-            case S_CHAR:
-            case G_CHAR:
-              wattron(main_window,COLOR_PAIR(ENEMY_VISION_COLOR3)); 
-              mvwaddch(main_window, y, x, traveled_path[y][x]); 
-              wattroff(main_window,COLOR_PAIR(ENEMY_VISION_COLOR3));
-              break;
-            default:
+            case WALL_CHAR:
+            case FLOOR_CHAR:
               wattron(main_window, COLOR_PAIR(PLAYER_VISION_COLOR3)); 
               mvwaddch(main_window, y, x, traveled_path[y][x]); 
               wattroff(main_window, COLOR_PAIR(PLAYER_VISION_COLOR3));
+              break;
+            default:
+              wattron(main_window,COLOR_PAIR(ENEMY_VISION_COLOR3)); 
+              mvwaddch(main_window, y, x, traveled_path[y][x]); 
+              wattroff(main_window,COLOR_PAIR(ENEMY_VISION_COLOR3));
               break;
             }
             break;
@@ -128,17 +126,16 @@ void vision_color (WINDOW *main_window, Character *character, char **map, int ma
               mvwaddch(main_window, y, x, traveled_path[y][x]); 
               wattroff(main_window,COLOR_PAIR(WATER_VISION_COLOR3));
               break;
-            case D_CHAR:
-            case S_CHAR:
-            case G_CHAR:
-              wattron(main_window,COLOR_PAIR(ENEMY_VISION_COLOR3)); 
-              mvwaddch(main_window, y, x, traveled_path[y][x]); 
-              wattroff(main_window,COLOR_PAIR(ENEMY_VISION_COLOR3));
-              break;
-            default:
+            case WALL_CHAR:
+            case FLOOR_CHAR:
               wattron(main_window, COLOR_PAIR(PLAYER_VISION_COLOR3)); 
               mvwaddch(main_window, y, x, traveled_path[y][x]); 
               wattroff(main_window, COLOR_PAIR(PLAYER_VISION_COLOR3));
+              break;
+            default:
+              wattron(main_window,COLOR_PAIR(ENEMY_VISION_COLOR3)); 
+              mvwaddch(main_window, y, x, traveled_path[y][x]); 
+              wattroff(main_window,COLOR_PAIR(ENEMY_VISION_COLOR3));
               break;
             }
             break;
@@ -151,17 +148,16 @@ void vision_color (WINDOW *main_window, Character *character, char **map, int ma
               mvwaddch(main_window, y, x, traveled_path[y][x]); 
               wattroff(main_window,COLOR_PAIR(WATER_VISION_COLOR2));
               break;
-            case D_CHAR:
-            case S_CHAR:
-            case G_CHAR:
-              wattron(main_window,COLOR_PAIR(ENEMY_VISION_COLOR2)); 
-              mvwaddch(main_window, y, x, traveled_path[y][x]); 
-              wattroff(main_window,COLOR_PAIR(ENEMY_VISION_COLOR2));
-              break;
-            default:
+            case WALL_CHAR:
+            case FLOOR_CHAR:
               wattron(main_window, COLOR_PAIR(PLAYER_VISION_COLOR2)); 
               mvwaddch(main_window, y, x, traveled_path[y][x]); 
               wattroff(main_window, COLOR_PAIR(PLAYER_VISION_COLOR2));
+              break;
+            default:
+              wattron(main_window,COLOR_PAIR(ENEMY_VISION_COLOR2)); 
+              mvwaddch(main_window, y, x, traveled_path[y][x]); 
+              wattroff(main_window,COLOR_PAIR(ENEMY_VISION_COLOR2));
               break;
             }
             break;
@@ -174,17 +170,16 @@ void vision_color (WINDOW *main_window, Character *character, char **map, int ma
               mvwaddch(main_window, y, x, traveled_path[y][x]); 
               wattroff(main_window,COLOR_PAIR(WATER_VISION_COLOR1));
               break;
-            case D_CHAR:
-            case S_CHAR:
-            case G_CHAR:
-              wattron(main_window,COLOR_PAIR(ENEMY_VISION_COLOR1)); 
-              mvwaddch(main_window, y, x, traveled_path[y][x]); 
-              wattroff(main_window,COLOR_PAIR(ENEMY_VISION_COLOR1));
-              break;
-            default:
+            case WALL_CHAR:
+            case FLOOR_CHAR:
               wattron(main_window, COLOR_PAIR(PLAYER_VISION_COLOR1)); 
               mvwaddch(main_window, y, x, traveled_path[y][x]); 
               wattroff(main_window, COLOR_PAIR(PLAYER_VISION_COLOR1));
+              break;
+            default:
+              wattron(main_window,COLOR_PAIR(ENEMY_VISION_COLOR1)); 
+              mvwaddch(main_window, y, x, traveled_path[y][x]); 
+              wattroff(main_window,COLOR_PAIR(ENEMY_VISION_COLOR1));
               break;
             }
             break;
