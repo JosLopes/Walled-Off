@@ -77,7 +77,7 @@ typedef struct {
 typedef struct {
   Tag *tag;  /* dumb, smart or genius (evaluates the enemys inteligence) */
   char display;
-  char name[20];
+  char *name[1];
   int x, y;  /* Position on the map */
   int life;
   int range;  /* Range for ranged attacks */
@@ -89,7 +89,7 @@ typedef struct {
 /* Individual (and variable) atributes */
 typedef struct {
   char display;
-  char name[20];
+  char *name[1];
   int life;
   int range;
   int damage;
