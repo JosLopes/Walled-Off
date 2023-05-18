@@ -30,6 +30,161 @@ int sets_range (int life){
   return range;
 }
 
+int euclidean_distance (Point start, Point finish)
+{
+  /* Calculates the euclidean distance between two points */
+  return sqrt(pow(start.y - finish.y, 2) + pow(start.x - finish.x, 2));
+}
+
+/* 
+  Explores different rays and verifies a set of conditions to give a restricted vision for
+  the player */
+void ray_cast (int map_width, char traveled_path[][map_width], char **map, int row, int col)
+{
+  int total_circ_rad;  /* Used to limit the radius of the vision circle surrounding the player */
+  double increment = M_PI/ (double) 300;
+  int destination_row = row;
+  double scale;
+
+  /* A static point for the player character */
+  Point player;
+  player.y = row;
+  player.x = col;
+
+  /* A variable point for his vision */
+  Point vision;
+
+  /*
+    Explores all the angles from -π/2 to π/2, where the cos()
+    is positive and the sin() is negative or postive, to find
+    enoumerous y = mx equations that represent lines of sight
+    to the right side of the character, when seen from the top */
+  for (double radius = (double) (-1) * (M_PI/ (double) 2); radius < (M_PI/ (double) 2); radius += increment)
+  {
+    /* scale to discover the row in realtion to the col */
+    scale = tan (radius);
+
+    total_circ_rad = 0;
+    if (scale >= 0)
+    {
+      while (map[row][col] != WALL_CHAR && total_circ_rad < VISION_RANGE)
+      {
+        if (row < destination_row) row ++;
+        else
+        {
+          col ++;
+          /* The location of y in realtion to x     */
+          /* Resets the row value to acert the line */
+          destination_row = player.y;
+          destination_row += scale * (col - player.x);
+        }
+        traveled_path[row][col] = map[row][col];
+        /* Calculates the distance from the player to the current vision point, */
+        /* i.e, to the current node that is being uncovered by the vision using */
+        /* the Manhattan distance                                               */
+        vision.y = row; vision.x = col;
+        total_circ_rad = euclidean_distance (player, vision);
+      }
+    }
+    else
+    {
+      while (map[row][col] != WALL_CHAR && total_circ_rad < VISION_RANGE)
+      {
+        if (row > destination_row) row --;
+        else
+        {
+          col ++;
+          /* The location of y in realtion to x     */
+          /* Resets the row value to acert the line */
+          destination_row = player.y;
+          destination_row += scale * (col - player.x);
+        }
+        traveled_path[row][col] = map[row][col];
+        vision.y = row; vision.x = col;
+        total_circ_rad = euclidean_distance (player, vision);
+      }
+    }
+    /* Restes every value */
+    destination_row = player.y;
+    row = player.y;
+    col = player.x;
+  }
+
+  /* 
+    Explores all the angles from π/2 to 3(π/2), where the cos()
+    is negative and the sin() is negative or postive, to find
+    enoumerous y = mx equations that represent lines of sight,
+    this time for the left side of the main character        */
+  for (double radius = (M_PI/ (double) 2); radius < ((double) 3 * (M_PI / (double) 2)); radius += increment)
+  {
+    /* scale to discover the row in realtion to the col */
+    scale = tan (radius);
+
+    total_circ_rad = 0;
+    if (scale >= 0)
+    {
+      while (map[row][col] != WALL_CHAR && total_circ_rad < VISION_RANGE)
+      {
+        if (row > destination_row) row --;
+        else
+        {
+          col --;
+          /* The location of y in realtion to x     */
+          /* Resets the row value to acert the line */
+          destination_row = player.y;
+          destination_row += scale * (col - player.x);
+        }
+        traveled_path[row][col] = map[row][col];
+        vision.y = row; vision.x = col;
+        total_circ_rad = euclidean_distance (player, vision);
+      }
+    }
+    else
+    {
+      while (map[row][col] != WALL_CHAR && total_circ_rad < VISION_RANGE)
+      {
+        if (row < destination_row) row ++;
+        else
+        {
+          col --;
+          /* The location of y in realtion to x     */
+          /* Resets the row value to acert the line */
+          destination_row = player.y;
+          destination_row += scale * (col - player.x);
+        }
+        traveled_path[row][col] = map[row][col];
+        vision.y = row; vision.x = col;
+        total_circ_rad = euclidean_distance (player, vision);
+      }
+    }
+    /* Restes every value */
+    destination_row = player.y;
+    row = player.y;
+    col = player.x;
+  }
+
+  /* Ensures that the vertical equacion x = 0 is buiilt */
+  int reverse = row;  /* Its used to build the downword (upword in game) line */
+  total_circ_rad = 0;
+  while (map[row][col] != WALL_CHAR && total_circ_rad < VISION_RANGE)
+  {
+    row ++;
+    traveled_path[row][col] = map[row][col];
+    total_circ_rad ++;
+  }
+
+  total_circ_rad = 0;
+  /* Displays the player */
+  traveled_path[reverse][col] = map[reverse][col];
+  while (map[reverse][col] != WALL_CHAR && total_circ_rad < VISION_RANGE)
+  {
+    reverse --;
+    traveled_path[reverse][col] = map[reverse][col];
+    total_circ_rad ++;
+  }
+}
+
+
 /******************************************************************
 *   Function that defines and print the range of vision around
 * the character and the different colors that are displayed. 
@@ -42,23 +197,18 @@ int sets_range (int life){
 void vision_color (WINDOW *main_window, Character *character, char **map, int map_width ,char traveled_path[][map_width])
 {
   int range = sets_range(character->life);
+  int y, x;
+  y = character -> y;
+  x = character -> x;
 
-  /*defines x_min, x_max, y_min and y_max according to the range*/
-  int x, y;
+  int dist = sqrt(pow(x - character ->x, 2) + pow(y - character->y, 2));
+  /* add the viwed places to the list traveled_path to make they apper on the screen */
+  ray_cast (map_width, traveled_path, map, y, x);
 
-  for (x = 0; x < MAP_WIDTH; x++) {
-    for (y = 0; y < MAP_HEIGHT; y++) {
-  
-    int dist = sqrt(pow(x - character ->x, 2) + pow(y - character->y, 2));
-    int x_min = fmax(character->x - dist, 0), x_max = fmin(character->x + dist, MAP_WIDTH - 1);
-    int y_min = fmax(character->y - dist, 0), y_max = fmin(character->y + dist, MAP_HEIGHT - 1);
-  
-      if (dist<=range && x >= x_min && y >= y_min && x <= x_max && y <= y_max)
-      {
-        /* add the viwed places to the list traveled_path to make they apper on the screen */
-        traveled_path[y][x] = map[y][x];
-      }
-
+  for (int x = 0; x < MAP_WIDTH; x++)
+  {
+    for (int y = 0; y < MAP_HEIGHT; y++)
+    { 
       /*case character position*/
       if (x == character->x && y == character->y)
       {
