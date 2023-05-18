@@ -9,12 +9,6 @@ char *choices[] = {
   "QUIT"};
 int n_choices = sizeof(choices) / sizeof(char *);
 
-/*
-8  8  8888  8     8     88888  8888     8888  8     8888  8 8
-8888  8  8   8 8 8        8    8  8     8 _8  8     8 _8   8
-8  8  8888    8 8         8    8888     8     8888  8  8   8
-*/
-
 char *instructions[]={
   "                                                                                                  ",
   "    88888888888                                                                    88888888888    ",   

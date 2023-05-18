@@ -7,6 +7,8 @@
 #include "MOBs.h"
 #include "path_finder.h"
 #include "artificial_inteligence.h"
+#include "combat.h"
+#include "display.h"
 #include <ncurses.h>
 #include <time.h>
 #include <stdlib.h>
@@ -36,11 +38,54 @@ void init_ncurses() {
       printf("Your terminal does not support color\n");
       exit(1);
   }
-
+  /*== Create colors ==*/
+  /*colors of menu*/
   init_color(1, 148, 0, 300); /*dark purple background*/
   init_color(2, 300, 0, 551); /*color of the selected option*/
+  
+  /*colors for water*/
+  init_color(5, 500, 700, 1000); /*azul claro*/
+  init_color(6, 0, 100, 1000); /*azul escuro*/
 
-  /*Define color pairs*/
+  /*colors of range of vision*/
+  init_color(55, 125, 0, 250); /*roxo escuro*/
+  init_color(56, 514, 296, 799); /*roxo PLAYER_VISION_COLOR1    +perto*/
+  init_color(57, 413, 202, 694); /*PLAYER_VISION_COLOR2*/
+  init_color(58, 276, 132, 464); /*PLAYER_VISION_COLOR3*/
+  init_color(59, 183, 89, 308); /*PLAYER_VISION_COLOR4*/
+  //**************************************************************************
+  init_color(80, 398, 546, 995); /*water*/
+
+  init_color(60, 0, 0, 312); /*OBSCURE_COLOR -> */
+  init_color(61, 0, 1000, 0); /*ENEMY_COLOR -> green*/
+
+  /*== Define color pairs ==*/
+  /*for map*/
+  init_pair(WATER_COLOR, 6, 5);
+  init_pair(FLOOR_COLOR, COLOR_WHITE, 55);
+  init_pair(ENEMY_COLOR, 61, 55);
+  init_pair(WALL_COLOR, 56, 55);
+  init_pair(OBSCURE_COLOR, 60, 60);
+
+  /*range of vision*/
+  init_pair(PLAYER_VISION_COLOR1, COLOR_YELLOW, 56);
+  init_pair(WATER_VISION_COLOR1, 80, 56);
+  init_pair(ENEMY_VISION_COLOR1, 61, 56);
+
+  init_pair(PLAYER_VISION_COLOR2, COLOR_YELLOW, 57);
+  init_pair(WATER_VISION_COLOR2, 80, 57);
+  init_pair(ENEMY_VISION_COLOR2, 61, 57);
+
+  init_pair(PLAYER_VISION_COLOR3, COLOR_YELLOW, 58);
+  init_pair(WATER_VISION_COLOR3, 80, 58);
+  init_pair(ENEMY_VISION_COLOR3, 61, 58);
+
+  init_pair(PLAYER_VISION_COLOR4, COLOR_YELLOW, 59);
+  init_pair(WATER_VISION_COLOR4, 80, 59);
+  init_pair(ENEMY_VISION_COLOR4, 61, 59);
+  //**************************************************************************
+
+  /*for menu*/
   init_pair(BACKGROUND_COLOR, COLOR_WHITE, 1);
   init_pair(SELECTED_OPTION_COLOR, COLOR_WHITE, 2);
   init_pair(TITLE_COLOR, 2, 1);
@@ -60,6 +105,9 @@ int main ()
 {
   /* WINDOWS to be used */
   WINDOW *main_window;
+  WINDOW *display_win;
+  WINDOW *instructions_win;
+
 
   /* Guarantees a new sequence of "random" numbers */
   srand(time(NULL));
@@ -99,7 +147,7 @@ int main ()
   {
     /* Creates main window (playable window) from mapgen.c */
     main_window = create_window (MAP_HEIGHT, MAP_WIDTH, 0, 0);
-
+    
     fillMap (MAP_HEIGHT, MAP_WIDTH, map);
     number_of_non_overlaping_rooms = generateRooms (MAP_HEIGHT, MAP_WIDTH, map, rooms, numRooms);
     Non_overlaping_rooms *not_overlpg = malloc (sizeof (Non_overlaping_rooms) * number_of_non_overlaping_rooms); // Free this memory later !!!
@@ -152,6 +200,21 @@ int main ()
     display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
     wrefresh (main_window); /* Refresh main_window */
 
+    /* Creats the windows of instructions and parameters*/
+    instructions_win = newwin(9, MAP_WIDTH, MAP_HEIGHT, 0);
+    display_win = newwin(MAP_HEIGHT, 40, 0, MAP_WIDTH);
+
+    char previous_char = FLOOR_CHAR;  /* Char before the character got placed in the map */
+
+    start_display ();
+    print_displays (display_win, &character, is_awake, traveled_path);   
+    refresh();  
+    wrefresh(display_win);
+    start_instructions ();
+    print_instructions_win (instructions_win, &character, traveled_path, &previous_char);  
+    wrefresh(instructions_win);
+    refresh();
+
     /* Enable keyboard input for special keys */
     keypad(main_window, TRUE);
 
@@ -159,7 +222,6 @@ int main ()
     
     /* GAME LOOP */
     int ch;  /* Input character read as an integer */
-    char previous_char = FLOOR_CHAR;  /* Char before the character got placed in the map */
 
     while ((ch = wgetch(main_window)) != 'q')
     {
@@ -170,16 +232,18 @@ int main ()
       vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
 
       food_and_potions (map, &character, consumables, &previous_char);
-    
-      if (previous_char != FIRE_CHAR)
+      
+      if (previous_char != WATER_CHAR)
       {
         /* Initializes more enemies, if necessary, to the is_awaken struct */
         init_awaken_enemies (&character, enemies, is_awake, map_static_obstacles);
         build_path (is_awake, &character, map, traveled_path, map_static_obstacles, place_holder, enemies);
       }
 
-      /* At the end of every loop, refresh main_window */
+      /* At the end of every loop, refresh main_window, display_win and instructions_win */
       display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
+      print_instructions_win (instructions_win, &character, traveled_path, &previous_char);
+      print_displays (display_win, &character, is_awake, traveled_path);                                                                                                     
     }
 
 

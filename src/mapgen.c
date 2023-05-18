@@ -21,7 +21,7 @@ void fillMap(int map_height, int map_width, char **map) {
 
     for (i = 0; i < map_height; i++) {
         for (j = 0; j < map_width; j++) {
-          map[i][j] = FIRE_CHAR;
+          map[i][j] = WATER_CHAR;
         }
     }
 
@@ -167,7 +167,7 @@ void generateCorridors (char **map, Non_overlaping_rooms *no_overlpg, int nor_si
     {
       // percorre o corredor, desenhando o chão (FLOOR_CHAR) em cada posição
       for (; vector.startingX <= endingX; vector.startingX++) {
-        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+        if (map[vector.startingY][vector.startingX] == WATER_CHAR ||
             map[vector.startingY][vector.startingX] == WALL_CHAR)
         {
           map[vector.startingY][vector.startingX] = FLOOR_CHAR;
@@ -175,7 +175,7 @@ void generateCorridors (char **map, Non_overlaping_rooms *no_overlpg, int nor_si
       }
     
       for (; vector.startingY <= endingY; vector.startingY++) {
-        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+        if (map[vector.startingY][vector.startingX] == WATER_CHAR ||
             map[vector.startingY][vector.startingX] == WALL_CHAR)
         {
           map[vector.startingY][vector.startingX] = FLOOR_CHAR;
@@ -185,7 +185,7 @@ void generateCorridors (char **map, Non_overlaping_rooms *no_overlpg, int nor_si
     else if ((directionX < 0 || directionX == 0) && (directionY > 0 || directionY == 0)) 
     {
       for (; vector.startingX > endingX; vector.startingX--) {
-        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+        if (map[vector.startingY][vector.startingX] == WATER_CHAR ||
             map[vector.startingY][vector.startingX] == WALL_CHAR)
         {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
@@ -193,7 +193,7 @@ void generateCorridors (char **map, Non_overlaping_rooms *no_overlpg, int nor_si
       }
     
       for (; vector.startingY <= endingY; vector.startingY++) {
-        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+        if (map[vector.startingY][vector.startingX] == WATER_CHAR ||
             map[vector.startingY][vector.startingX] == WALL_CHAR)
         {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
@@ -203,7 +203,7 @@ void generateCorridors (char **map, Non_overlaping_rooms *no_overlpg, int nor_si
     else if ((directionX > 0 || directionX == 0) && (directionY < 0 || directionY == 0))
     {
       for (; vector.startingX <= endingX; vector.startingX++) {
-        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+        if (map[vector.startingY][vector.startingX] == WATER_CHAR ||
             map[vector.startingY][vector.startingX] == WALL_CHAR)
         {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
@@ -211,7 +211,7 @@ void generateCorridors (char **map, Non_overlaping_rooms *no_overlpg, int nor_si
       }
     
       for (; vector.startingY > endingY; vector.startingY--) {
-        if (map[vector.startingY][vector.startingX] == FIRE_CHAR ||
+        if (map[vector.startingY][vector.startingX] == WATER_CHAR ||
             map[vector.startingY][vector.startingX] == WALL_CHAR)
         {
         map[vector.startingY][vector.startingX] = FLOOR_CHAR;
@@ -233,34 +233,6 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
     
   local_window = newwin (height, width, startingY, startingX);
   wborder (local_window, '|', '|', '-', '-', '*', '*', '*', '*');
-  if(has_colors() == TRUE) {
-    start_color();
-
-    /*create colors*/
-    init_color(55, 125, 0, 250); /*roxo escuro*/
-
-    init_color(56, 514, 296, 799); /*roxo PLAYER_VISION_COLOR1    +perto*/
-    init_color(57, 413, 202, 694); /*PLAYER_VISION_COLOR2*/
-    init_color(58, 276, 132, 464); /*PLAYER_VISION_COLOR3*/
-    init_color(59, 183, 89, 308); /*PLAYER_VISION_COLOR4*/
-
-    init_color(60, 0, 0, 312); /*OBSCURE_COLOR*/
-
-    init_color(61, 0, 1000, 0); /*ENEMY_COLOR*/
-
-    init_color(5, 500, 700, 1000); /*azul claro*/
-    init_color(6, 0, 100, 1000); /*azul escuro*/
-    /*Define color pairs*/
-    init_pair(WATER_COLOR, 6, 5);
-    init_pair(PLAYER_VISION_COLOR1, COLOR_YELLOW, 56);
-    init_pair(PLAYER_VISION_COLOR2, COLOR_YELLOW, 57);
-    init_pair(PLAYER_VISION_COLOR3, COLOR_YELLOW, 58);
-    init_pair(PLAYER_VISION_COLOR4, COLOR_YELLOW, 59);
-    init_pair(FLOOR_COLOR, COLOR_WHITE, 55);
-    init_pair(ENEMY_COLOR, 61, 55);
-    init_pair(WALL_COLOR, 56, 55);
-    init_pair(OBSCURE_COLOR, 60, 60);
-    }
 
   refresh ();
   wrefresh (local_window);
@@ -280,7 +252,7 @@ void map_colors (WINDOW *main_window, int map_width, int j, int i, char traveled
     mvwaddch(main_window, j, i, traveled_path[j][i]); 
     wattroff(main_window,COLOR_PAIR(OBSCURE_COLOR));
     break;
-  case FIRE_CHAR:
+  case WATER_CHAR:
     wattron(main_window,COLOR_PAIR(WATER_COLOR)); 
     mvwaddch(main_window, j, i, traveled_path[j][i]); 
     wattroff(main_window,COLOR_PAIR(WATER_COLOR)); 

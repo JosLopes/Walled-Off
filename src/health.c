@@ -61,10 +61,10 @@ void food_and_potions(char **map, Character *character, Consumables *consumables
     /*makes the impact on character life*/
     switch (consumables->identify)
       {
-      case 'A':
+      case '=':
         character->life = character->life + consumables[0].impact_life;
         break;
-      case 'V':
+      case 'p':
         character->life = character->life + consumables[1].impact_life;
         break;
       case 'C':
