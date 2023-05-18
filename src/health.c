@@ -56,9 +56,6 @@ void food_and_potions(char **map, Character *character, Consumables *consumables
   int x = character->x;
   int y = character->y;
 
-  int x_f = consumables->x;
-  int y_f = consumables->y;
-
   /*in case the position of character is the same as a consumable*/
   if(map[y][x] == FOOD_CHAR || map[y][x] == POTION_CHAR){
     /*makes the impact on character life*/
