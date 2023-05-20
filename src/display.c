@@ -62,9 +62,9 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
 
   mvwprintw(display_win, y, x, "   Personagem");
   y++;
-  mvwprintw(display_win, y, x, "Vida: %f", character->life);
+  mvwprintw(display_win, y, x, "Vida: %d", (int) character->life);
   y++;
-  mvwprintw(display_win, y, x, "XP: %f", character->xp);
+  mvwprintw(display_win, y, x, "XP: %d", (int) character->xp);
   y++;
   mvwprintw(display_win, y, x, "Arma: Calhau");
   y=y+5;
@@ -116,8 +116,8 @@ char *instrucoes[10] = {
 "D:                                                                  ",
 "S:                                                                  ",
 "G:                                                                  ",
-"F: food                                                             ",
-"P: potion                                                           ",
+"=: food                                                             ",
+"@: potion                                                           ",
 "                                                                    ",
 "                                                                    ",
 "                                                                    ",
@@ -145,11 +145,11 @@ WINDOW* start_instructions (void)
 
   return instructions_win;
 }
-void print_instructions_win(WINDOW *instructions_win, Character *character, char traveled_path[][MAP_WIDTH], char *prev)
+
+void print_instructions_win(WINDOW *instructions_win, Character *character, Awake *is_awake, char traveled_path[][MAP_WIDTH], char *prev)
 {
-  int x, y;
-  x = 1;
-  y = 1;
+  int x = 1, y = 1;
+  int index; 
 
   int range = sets_range(character->life);
   int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, MAP_WIDTH - 1);
@@ -176,27 +176,27 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, char
 
       switch (traveled_path[j][i])
       {
-      case 'D':
-        mvwprintw(instructions_win, y, x, "%s", instrucoes[1]);
-        y++;
+      case WALL_CHAR:
+      case WATER_CHAR:
+      case FLOOR_CHAR:
         break;
-      case 'S':
-        mvwprintw(instructions_win, y, x, "%s", instrucoes[2]);
-        y++;
-        break;
-      case 'G':
-        mvwprintw(instructions_win, y, x, "%s", instrucoes[3]);
-        y++;
-        break;
-      case 'F':
+      case '=':
         mvwprintw(instructions_win, y, x, "%s", instrucoes[4]);
         y++;
         break;
-      case 'P':
+      case '@':
         mvwprintw(instructions_win, y, x, "%s", instrucoes[5]);
         y++;
         break;      
       default:
+        for (index = 0; index <  is_awake -> current_size; index ++)
+        {
+          if (j == is_awake -> enemies_awaken[index].y && i == is_awake -> enemies_awaken[index].x)
+          {
+            mvwprintw (instructions_win, y, x, "%s", is_awake -> enemies_awaken[index].instruction[0]);
+            y ++;
+          }
+        }
         break;
       }
     }

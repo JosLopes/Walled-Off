@@ -211,7 +211,7 @@ int main ()
     refresh();  
     wrefresh(display_win);
     start_instructions ();
-    print_instructions_win (instructions_win, &character, traveled_path, &previous_char);  
+    print_instructions_win (instructions_win, &character, is_awake, traveled_path, &previous_char);  
     wrefresh(instructions_win);
     refresh();
 
@@ -242,7 +242,7 @@ int main ()
 
       /* At the end of every loop, refresh main_window, display_win and instructions_win */
       display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
-      print_instructions_win (instructions_win, &character, traveled_path, &previous_char);
+      print_instructions_win (instructions_win, &character, is_awake,traveled_path, &previous_char);
       print_displays (display_win, &character, is_awake, traveled_path);                                                                                                     
     }
 

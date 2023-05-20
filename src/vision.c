@@ -201,14 +201,15 @@ void vision_color (WINDOW *main_window, Character *character, char **map, int ma
   y = character -> y;
   x = character -> x;
 
-  int dist = sqrt(pow(x - character ->x, 2) + pow(y - character->y, 2));
   /* add the viwed places to the list traveled_path to make they apper on the screen */
   ray_cast (map_width, traveled_path, map, y, x);
 
   for (int x = 0; x < MAP_WIDTH; x++)
   {
     for (int y = 0; y < MAP_HEIGHT; y++)
-    { 
+    {
+      int dist = sqrt(pow(x - character ->x, 2) + pow(y - character->y, 2));
+
       /*case character position*/
       if (x == character->x && y == character->y)
       {
@@ -216,7 +217,10 @@ void vision_color (WINDOW *main_window, Character *character, char **map, int ma
         mvwaddch(main_window, y, x, traveled_path[y][x]); 
         wattroff(main_window, COLOR_PAIR(PLAYER_VISION_COLOR1));
       }
-      else if (traveled_path[y][x] == WALL_CHAR){
+      else if (traveled_path[y][x] == WALL_CHAR ||
+               traveled_path[y][x] == UNDISCOVERED_PATH_CHAR ||
+               traveled_path[y][x] == WATER_CHAR)
+      {
         map_colors(main_window, map_width, y, x, traveled_path);
       }
       else
