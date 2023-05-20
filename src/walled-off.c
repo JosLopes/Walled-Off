@@ -1,4 +1,7 @@
 #include "menu.h"
+#include <ncurses.h>
+#include <time.h>
+#include <stdlib.h>
 #include "mapgen.h"
 #include "datatypes.h"
 #include "defines.h"
@@ -9,9 +12,6 @@
 #include "artificial_inteligence.h"
 #include "combat.h"
 #include "display.h"
-#include <ncurses.h>
-#include <time.h>
-#include <stdlib.h>
 #include "combat.h"
 #include "consumables.h"
 #include "health.h"
@@ -20,7 +20,9 @@ void init_character(Character *character)
 {
   character -> x = 0;
   character -> y = 0;
-  character -> life = 100;
+  character -> life = 80;
+  character -> initial_life = 100;
+  character -> xp = 0;
 }
 
 void init_ncurses() {
@@ -180,8 +182,12 @@ int main ()
 
     /* Foods and potions */
     Consumables *consumables = consumablesHeap();
+    /* Array of available consumables that store the consumables generated */
+    /* Use this random number to determine the number of foods/potions in the map (it needs to be > 5) */
+    int number_of_consumables = number_of_enemies / 3;
+    Consumables *available = malloc (sizeof (Consumables) * number_of_consumables);
     /* Placing consumables */
-    place_foods_and_potions (map, number_of_enemies);
+    place_foods_and_potions (map, number_of_consumables, consumables, available);
     
     /* Initializes a map with fixed obstacles */
     for (int index_y = 0; index_y < MAP_HEIGHT; index_y ++)
@@ -211,7 +217,7 @@ int main ()
     refresh();  
     wrefresh(display_win);
     start_instructions ();
-    print_instructions_win (instructions_win, &character, is_awake, traveled_path, &previous_char);  
+    print_instructions_win (instructions_win, &character, available, is_awake, traveled_path, &previous_char, number_of_consumables);  
     wrefresh(instructions_win);
     refresh();
 
@@ -231,7 +237,7 @@ int main ()
       /* Introducing vision */
       vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
 
-      food_and_potions (&character, consumables, &previous_char);
+      food_and_potions (map, &character, consumables, &previous_char);
       
       if (previous_char != WATER_CHAR)
       {
@@ -242,7 +248,7 @@ int main ()
 
       /* At the end of every loop, refresh main_window, display_win and instructions_win */
       display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
-      print_instructions_win (instructions_win, &character, is_awake,traveled_path, &previous_char);
+      print_instructions_win (instructions_win, &character, available, is_awake,traveled_path, &previous_char, number_of_consumables);
       print_displays (display_win, &character, is_awake, traveled_path);                                                                                                     
     }
 

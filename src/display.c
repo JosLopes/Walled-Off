@@ -44,6 +44,7 @@ WINDOW* start_display(void) {
 
 void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, char traveled_path[][MAP_WIDTH])
 {
+  int index;
   int x, y;
   x = 1;
   y = 1;
@@ -79,24 +80,25 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
       if (dist<=range){
         switch (traveled_path[j][i])
         {
-        case 'D':
-        case 'S':
-        case 'G': 
-          /*walks through the array of awake enemies*/
-          for(int u = 0; u < is_awake->current_size; u++)
-          { /*if enemy is on range of vison and is awake -> print is parameters*/
-            if (y == 28) {
-              y = 10;
-            }
-            mvwprintw(display_win, y, x, "Nome: %s                      ", is_awake -> enemies_awaken[u].name[0]);
-            y++;
-            mvwprintw(display_win, y, x, "Vida: %d                      ", is_awake -> enemies_awaken[u].life);
-            y++;
-            mvwprintw(display_win, y, x, "Dano: %d                      ", is_awake -> enemies_awaken[u].damage);
-            y+=2;
-          }
+        case WALL_CHAR:
+        case WATER_CHAR:
+        case FLOOR_CHAR:
+        case FOOD_CHAR:
+        case POTION_CHAR:  
           break;
         default:
+          for (index = 0; index <  is_awake -> current_size; index ++)
+          {
+            if (j == is_awake -> enemies_awaken[index].y && i == is_awake -> enemies_awaken[index].x)
+            {
+              mvwprintw (display_win, y, x, "%s", is_awake -> enemies_awaken[index].name[0]);
+              y ++;
+              mvwprintw (display_win, y, x, "%d", (int) is_awake -> enemies_awaken[index].life);
+              y ++;
+              mvwprintw (display_win, y, x, "%d", (int) is_awake -> enemies_awaken[index].damage);
+              y ++;
+            }
+          }
           break;
         }
       }
@@ -146,10 +148,10 @@ WINDOW* start_instructions (void)
   return instructions_win;
 }
 
-void print_instructions_win(WINDOW *instructions_win, Character *character, Awake *is_awake, char traveled_path[][MAP_WIDTH], char *prev)
+void print_instructions_win(WINDOW *instructions_win, Character *character, Consumables *available, Awake *is_awake, char traveled_path[][MAP_WIDTH], char *prev, int number_of_consumables)
 {
   int x = 1, y = 1;
-  int index; 
+  int index1, index2;
 
   int range = sets_range(character->life);
   int x_min = fmax(character->x - range, 0), x_max = fmin(character->x + range, MAP_WIDTH - 1);
@@ -180,20 +182,23 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Awak
       case WATER_CHAR:
       case FLOOR_CHAR:
         break;
-      case '=':
-        mvwprintw(instructions_win, y, x, "%s", instrucoes[4]);
-        y++;
-        break;
-      case '@':
-        mvwprintw(instructions_win, y, x, "%s", instrucoes[5]);
-        y++;
+      case FOOD_CHAR:
+      case POTION_CHAR:
+        for (index2 = 0; index2 < number_of_consumables; index2 ++)
+        {
+          if (j == available[index2].y && i == available[index2].x)
+          {
+            mvwprintw (instructions_win, y, x, "%s", available[index2].instruction[0]);
+            y ++;
+          }
+        }
         break;      
       default:
-        for (index = 0; index <  is_awake -> current_size; index ++)
+        for (index1 = 0; index1 <  is_awake -> current_size; index1 ++)
         {
-          if (j == is_awake -> enemies_awaken[index].y && i == is_awake -> enemies_awaken[index].x)
+          if (j == is_awake -> enemies_awaken[index1].y && i == is_awake -> enemies_awaken[index1].x)
           {
-            mvwprintw (instructions_win, y, x, "%s", is_awake -> enemies_awaken[index].instruction[0]);
+            mvwprintw (instructions_win, y, x, "%s", is_awake -> enemies_awaken[index1].instruction[0]);
             y ++;
           }
         }

@@ -79,10 +79,10 @@ Variable_stats *d_enemies_variable_stats ()
 {
   Variable_stats *d_variables = malloc (sizeof (Variable_stats) * D_ENEMIES);
 
-  d_variables[0] = (Variable_stats){'D',{"Albertino"},
+  d_variables[0] = (Variable_stats){'A',{"Albertino"},
                     {"D: Albertino                                     "},
                     0, 0, 0};
-  d_variables[1] = (Variable_stats){'D',{"Josefino"},
+  d_variables[1] = (Variable_stats){'J',{"Josefino"},
                     {"D: Josefino                                      "},
                     0, 0, 0};
 
@@ -99,10 +99,10 @@ Variable_stats *s_enemies_variable_stats ()
 {
   Variable_stats *s_variables = malloc (sizeof (Variable_stats) * S_ENEMIES);
 
-  s_variables[0] = (Variable_stats){'S',{"Carambol"},
+  s_variables[0] = (Variable_stats){'C',{"Carambol"},
                     {"S: Carambol                                      "},
                     0, 0, 0};
-  s_variables[1] = (Variable_stats){'S',{"JMF"},
+  s_variables[1] = (Variable_stats){'J',{"JMF"},
                     {"S: JMF                                           "},
                     0, 0, 0};
 
@@ -119,10 +119,10 @@ Variable_stats *g_enemies_variable_stats ()
 {
   Variable_stats *g_variables = malloc (sizeof (Variable_stats) * G_ENEMIES);
 
-  g_variables[0] = (Variable_stats){'G',{"IMO"},
+  g_variables[0] = (Variable_stats){'I',{"IMO"},
                     {"G: IMO                                           "},
                     0, 0, 0};
-  g_variables[1] = (Variable_stats){'G',{"JGod"},
+  g_variables[1] = (Variable_stats){'J',{"JGod"},
                     {"G: JGod                                          "},
                     0, 0, 0};
 

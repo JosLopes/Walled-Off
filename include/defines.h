@@ -5,6 +5,9 @@
 #define AWAKE_RANGE 4
 #define VISION_RANGE 5
 
+/* Defines PI */
+#define M_PI 3.14159265358979323846
+
 #define MAP_HEIGHT 50
 #define MAP_WIDTH 100
 #define MAX_ROOMS 50
