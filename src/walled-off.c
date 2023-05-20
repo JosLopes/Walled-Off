@@ -231,7 +231,7 @@ int main ()
       /* Introducing vision */
       vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
 
-      food_and_potions (map, &character, consumables, &previous_char);
+      food_and_potions (&character, consumables, &previous_char);
       
       if (previous_char != WATER_CHAR)
       {

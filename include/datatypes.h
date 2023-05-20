@@ -29,6 +29,7 @@ typedef struct
 typedef struct {
   char identify;
   char name[20];
+  char *instruction[1]; /* For display in the bottom panel */
   int impact_life;
   int impact_xp;
   int x, y;

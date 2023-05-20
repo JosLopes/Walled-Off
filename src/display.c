@@ -112,7 +112,7 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
 
 
 char *instrucoes[10] = {
-"You're on the water. Watch out for drownings!                       ",
+"You're on the water. Watch out for drownings!    ",
 "D:                                                                  ",
 "S:                                                                  ",
 "G:                                                                  ",

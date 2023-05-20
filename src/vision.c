@@ -196,7 +196,6 @@ void ray_cast (int map_width, char traveled_path[][map_width], char **map, int r
 ******************************************************************/
 void vision_color (WINDOW *main_window, Character *character, char **map, int map_width ,char traveled_path[][map_width])
 {
-  int range = sets_range(character->life);
   int y, x;
   y = character -> y;
   x = character -> x;
@@ -231,11 +230,6 @@ void vision_color (WINDOW *main_window, Character *character, char **map, int ma
           case 5:
             switch (traveled_path[y][x])
             {
-            case WATER_CHAR:
-              wattron(main_window,COLOR_PAIR(WATER_VISION_COLOR4)); 
-              mvwaddch(main_window, y, x, traveled_path[y][x]); 
-              wattroff(main_window,COLOR_PAIR(WATER_VISION_COLOR4));
-              break;
             case WALL_CHAR:
             case FLOOR_CHAR:
               wattron(main_window, COLOR_PAIR(PLAYER_VISION_COLOR4)); 
@@ -253,11 +247,6 @@ void vision_color (WINDOW *main_window, Character *character, char **map, int ma
           case 4:
             switch (traveled_path[y][x])
             {
-            case WATER_CHAR:
-              wattron(main_window,COLOR_PAIR(WATER_VISION_COLOR3)); 
-              mvwaddch(main_window, y, x, traveled_path[y][x]); 
-              wattroff(main_window,COLOR_PAIR(WATER_VISION_COLOR3));
-              break;
             case WALL_CHAR:
             case FLOOR_CHAR:
               wattron(main_window, COLOR_PAIR(PLAYER_VISION_COLOR3)); 
@@ -275,11 +264,6 @@ void vision_color (WINDOW *main_window, Character *character, char **map, int ma
           case 3:
             switch (traveled_path[y][x])
             {
-            case WATER_CHAR:
-              wattron(main_window,COLOR_PAIR(WATER_VISION_COLOR3)); 
-              mvwaddch(main_window, y, x, traveled_path[y][x]); 
-              wattroff(main_window,COLOR_PAIR(WATER_VISION_COLOR3));
-              break;
             case WALL_CHAR:
             case FLOOR_CHAR:
               wattron(main_window, COLOR_PAIR(PLAYER_VISION_COLOR3)); 
@@ -297,11 +281,6 @@ void vision_color (WINDOW *main_window, Character *character, char **map, int ma
           case 2:
             switch (traveled_path[y][x])
             {
-            case WATER_CHAR:
-              wattron(main_window,COLOR_PAIR(WATER_VISION_COLOR2)); 
-              mvwaddch(main_window, y, x, traveled_path[y][x]); 
-              wattroff(main_window,COLOR_PAIR(WATER_VISION_COLOR2));
-              break;
             case WALL_CHAR:
             case FLOOR_CHAR:
               wattron(main_window, COLOR_PAIR(PLAYER_VISION_COLOR2)); 
@@ -319,11 +298,6 @@ void vision_color (WINDOW *main_window, Character *character, char **map, int ma
           case 1:
             switch (traveled_path[y][x])
             {
-            case WATER_CHAR:
-              wattron(main_window,COLOR_PAIR(WATER_VISION_COLOR1)); 
-              mvwaddch(main_window, y, x, traveled_path[y][x]); 
-              wattroff(main_window,COLOR_PAIR(WATER_VISION_COLOR1));
-              break;
             case WALL_CHAR:
             case FLOOR_CHAR:
               wattron(main_window, COLOR_PAIR(PLAYER_VISION_COLOR1)); 
