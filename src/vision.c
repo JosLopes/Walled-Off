@@ -196,7 +196,6 @@ void ray_cast (int map_width, char traveled_path[][map_width], char **map, int r
 ******************************************************************/
 void vision_color (WINDOW *main_window, Character *character, char **map, int map_width ,char traveled_path[][map_width])
 {
-  int range = sets_range(character->life);
   int y, x;
   y = character -> y;
   x = character -> x;

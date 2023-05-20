@@ -22,7 +22,6 @@ void init_character(Character *character)
   character -> y = 0;
   character -> life = 80;
   character -> initial_life = 100;
-  character -> xp = 0;
 }
 
 void init_ncurses() {
@@ -237,7 +236,7 @@ int main ()
       /* Introducing vision */
       vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
 
-      food_and_potions (map, &character, consumables, &previous_char);
+      food_and_potions (&character, available, &previous_char, number_of_consumables);
       
       if (previous_char != WATER_CHAR)
       {

@@ -172,7 +172,7 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Cons
   for (int i = x_min; i < x_max; i++) {
     for (int j = y_min; j < y_max; j++) {
 
-      if (y == 8) {
+      if (y == 10) {
         y = 1;
       }
 

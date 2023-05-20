@@ -54,30 +54,30 @@ void place_foods_and_potions(char** map, int number_of_consumables, Consumables 
 /*
 * Function responsible for eating
 */
-void food_and_potions(char **map, Character *character, Consumables *consumables, char *previous_char)
+void food_and_potions (Character *character, Consumables *available, char *previous_char, int number_of_consumables)
 {
-  /*in case the position of character is the same as a consumable*/
-  if(*previous_char == FOOD_CHAR || *previous_char == POTION_CHAR){
+
+  if (*previous_char == FOOD_CHAR || *previous_char == POTION_CHAR)
+  {
+  for (int i = 0; i < number_of_consumables; i++)
+  {
     /*makes the impact on character life*/
-    switch (consumables->identify)
-      {
-        /*== DEFENIR PARA ALTERAR VIDA DE ACORDO COM O TIPO DE COMIDA ==*/
-      case '=':
-        if (character->life < character -> initial_life) {
-          character->life = character->life + consumables[0].impact_life;
+    if (available[i].y == character -> y && available[i].x == character -> x)
+    {
+        if (character->life < character -> initial_life)
+        {
+          character->life += available[i].impact_life;
+          character->xp += available[i].impact_xp;
         }
-          break;
-      case '@':
-        if (character->life < character -> initial_life) {
-          character->life = character->life + consumables[3].impact_life;
-          character->xp = character->xp + consumables[3].impact_xp;
-        }
-          break;
+        i = number_of_consumables;
     }
   }
+  }
+
 
   /*Delete the food and substitute it by a FLOOR_CHAR*/
-  if(*previous_char == FOOD_CHAR || *previous_char == POTION_CHAR){
+  if (*previous_char == FOOD_CHAR || *previous_char == POTION_CHAR)
+  {
     *previous_char = FLOOR_CHAR;
   }
 }
