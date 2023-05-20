@@ -15,11 +15,8 @@
 /*
 * Function to spawn foods and potions in the map (WITHOUT ROOMS)
 */
-void place_foods_and_potions(char** map, int number_of_enemies)
+void place_foods_and_potions(char** map, int number_of_consumables, Consumables *consumables, Consumables *available)
 {
-  /* Use this random number to determine the number of foods/potions in the map (it needs to be > 5) */
-  int number_of_consumables = number_of_enemies / 3;
-
   /* Loop that works between 0 and number of consumables */
   for (int i = 0; i < number_of_consumables; i++)
   {
@@ -40,10 +37,16 @@ void place_foods_and_potions(char** map, int number_of_enemies)
     if (consumable_index < 3)
     {
       map[y][x] = FOOD_CHAR;
+      available[i] = consumables[consumable_index];
+      available[i].x = x;
+      available[i].y = y;
     }
     else
     {
       map[y][x] = POTION_CHAR;
+      available[i] = consumables[consumable_index];
+      available[i].x = x;
+      available[i].y = y;
     }
   }
 }
@@ -51,38 +54,30 @@ void place_foods_and_potions(char** map, int number_of_enemies)
 /*
 * Function responsible for eating
 */
-void food_and_potions(char **map, Character *character, Consumables *consumables, char *previous_char)
+void food_and_potions (Character *character, Consumables *available, char *previous_char, int number_of_consumables)
 {
-  int x = character->x;
-  int y = character->y;
 
-  /*in case the position of character is the same as a consumable*/
-  if(map[y][x] == FOOD_CHAR || map[y][x] == POTION_CHAR){
+  if (*previous_char == FOOD_CHAR || *previous_char == POTION_CHAR)
+  {
+  for (int i = 0; i < number_of_consumables; i++)
+  {
     /*makes the impact on character life*/
-    switch (consumables->identify)
-      {
-      case '=':
-        character->life = character->life + consumables[0].impact_life;
-        break;
-      case 'p':
-        character->life = character->life + consumables[1].impact_life;
-        break;
-      case 'C':
-        character->life = character->life + consumables[2].impact_life;
-        break;
-      case 'E':
-        character->life = character->life + consumables[3].impact_life;
-        break;
-      case 'B':
-        character->life = character->life + consumables[4].impact_life;
-        break;
-      default:
-        break;
+    if (available[i].y == character -> y && available[i].x == character -> x)
+    {
+        if (character->life < character -> initial_life)
+        {
+          character->life += available[i].impact_life;
+          character->xp += available[i].impact_xp;
+        }
+        i = number_of_consumables;
     }
   }
+  }
+
 
   /*Delete the food and substitute it by a FLOOR_CHAR*/
-  if(*previous_char == FOOD_CHAR || *previous_char == POTION_CHAR){
+  if (*previous_char == FOOD_CHAR || *previous_char == POTION_CHAR)
+  {
     *previous_char = FLOOR_CHAR;
   }
 }
