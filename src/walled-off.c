@@ -248,7 +248,9 @@ int main ()
       /* At the end of every loop, refresh main_window, display_win and instructions_win */
       display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
       print_instructions_win (instructions_win, &character, available, is_awake,traveled_path, &previous_char, number_of_consumables);
-      print_displays (display_win, &character, is_awake, traveled_path);                                                                                                     
+      werase(instructions_win);
+      print_displays (display_win, &character, is_awake, traveled_path);
+      werase(display_win);                                                                                                     
     }
 
 

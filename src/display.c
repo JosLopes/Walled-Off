@@ -112,27 +112,11 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
   refresh(); 
 }
 
-
-char *instrucoes[10] = {
-"You're on the water. Watch out for drownings!    ",
-"D:                                                                  ",
-"S:                                                                  ",
-"G:                                                                  ",
-"=: food                                                             ",
-"@: potion                                                           ",
-"                                                                    ",
-"                                                                    ",
-"                                                                    ",
-"                                                                    "
-};
-
 /**************************************************************
 * Horizontal window that gives information/instructions during 
 * the course of the game.
-***************************************************************/
-/**************************************************************
 * Function that sets the instruction according to visible 
-* things for character
+* things for character.
 ***************************************************************/
 WINDOW* start_instructions (void)
 {
@@ -173,7 +157,7 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Cons
     for (int j = y_min; j < y_max; j++) {
 
       if (y == 10) {
-        y = 1;
+        y = 2;
       }
 
       switch (traveled_path[j][i])
@@ -208,7 +192,7 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Cons
   }
   if (*prev == WATER_CHAR)
   {
-    mvwprintw(instructions_win, y, x, "%s", instrucoes[0]);
+    mvwprintw(instructions_win, y, x, "%s", "You're on the water. Watch out for drownings!    ");
     y++;
   }
 
