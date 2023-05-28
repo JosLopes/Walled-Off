@@ -13,6 +13,7 @@
 #include "vision.h"
 
 /*
+* a104086 - Daniel Silva
 * a104188 - Ana Cerqueira
 * Function to spawn foods and potions in the map (WITHOUT ROOMS)
 * Generates three random numbers, one for an index between 0 and
@@ -57,6 +58,7 @@ void place_foods_and_potions(char** map, int number_of_consumables, Consumables 
 }
 
 /*
+* a104086 - Daniel Silva
 * a104188 - Ana Cerqueira
 * Function responsible for eating.
 * This functons delete the chars on the map the represent

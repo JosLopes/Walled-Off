@@ -10,6 +10,7 @@
 #include "consumables.h"
 
 /*
+* a104086 - Daniel Silva
 * a104188 - Ana Cerqueira
 * It define the consumables available in the game
 */
