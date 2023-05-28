@@ -240,10 +240,11 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
   return local_window;
 }
 
-/****************************************************************
-*   Function that defines the colors according to the different
+/*
+* a104188 - Ana Cerqueira
+* Function that defines the colors according to the different
 * character that is displaying on the screen.
-****************************************************************/
+*/
 void map_colors (WINDOW *main_window, int map_width, int j, int i, char traveled_path[][map_width]){
   switch (traveled_path[j][i])
   {
@@ -276,9 +277,10 @@ void map_colors (WINDOW *main_window, int map_width, int j, int i, char traveled
   }
 }
 
-/*****************************************************
-*   Function that displays the map on the screen
-******************************************************/
+/*
+* a104188 - Ana Cerqueira
+* Function that displays the map on the screen
+*/
 void display_map (WINDOW *main_window, Character *character, char **map, int map_width, char traveled_path[][map_width]) 
 {
   int range = sets_range(character->life);

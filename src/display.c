@@ -14,21 +14,10 @@
 #include <math.h>
 
 /*
-* Function that prints the displays
-*/
-
-/*char *personagem[]= {
-  "  Personagem                                    ",
-  " "
-};
-int n_personagem = sizeof(personagem)/ sizeof(char *);*/
-
-
-
-/********************************************************
+* a104188 - Ana Cerqueira
 * Vertical window that gives information about the state 
 * of the character and the enemies around him.
-*********************************************************/
+*/
 WINDOW* start_display(void) {
     WINDOW *display_win;
 
@@ -41,7 +30,12 @@ WINDOW* start_display(void) {
 
     return display_win;
 }
-
+/*
+* a104188 - Ana Cerqueira
+* Function that prints the vertical window.
+* It gives information/instructions during the
+* course of the game.
+*/
 void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, char traveled_path[][MAP_WIDTH])
 {
   int index;
@@ -112,28 +106,11 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
   refresh(); 
 }
 
-
-char *instrucoes[10] = {
-"You're on the water. Watch out for drownings!    ",
-"D:                                                                  ",
-"S:                                                                  ",
-"G:                                                                  ",
-"=: food                                                             ",
-"@: potion                                                           ",
-"                                                                    ",
-"                                                                    ",
-"                                                                    ",
-"                                                                    "
-};
-
-/**************************************************************
-* Horizontal window that gives information/instructions during 
-* the course of the game.
-***************************************************************/
-/**************************************************************
-* Function that sets the instruction according to visible 
-* things for character
-***************************************************************/
+/*
+* a104188 - Ana Cerqueira
+* Horizontal window that gives information/
+* instructions during the course of the game.
+*/
 WINDOW* start_instructions (void)
 {
 
@@ -147,7 +124,13 @@ WINDOW* start_instructions (void)
 
   return instructions_win;
 }
-
+/*
+* a104188 - Ana Cerqueira
+* Function that prints the horizontal window
+* It sets the instruction according to visible 
+* things for character and gives information
+* about their surroundings
+*/
 void print_instructions_win(WINDOW *instructions_win, Character *character, Consumables *available, Awake *is_awake, char traveled_path[][MAP_WIDTH], char *prev, int number_of_consumables)
 {
   int x = 1, y = 1;
@@ -173,7 +156,7 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Cons
     for (int j = y_min; j < y_max; j++) {
 
       if (y == 10) {
-        y = 1;
+        y = 2;
       }
 
       switch (traveled_path[j][i])
@@ -208,7 +191,7 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Cons
   }
   if (*prev == WATER_CHAR)
   {
-    mvwprintw(instructions_win, y, x, "%s", instrucoes[0]);
+    mvwprintw(instructions_win, y, x, "%s", "You're on the water. Watch out for drownings!    ");
     y++;
   }
 
