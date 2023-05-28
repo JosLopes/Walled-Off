@@ -9,6 +9,10 @@
 #include "mapgen.h"
 #include "consumables.h"
 
+/*
+* a104188 - Ana Cerqueira
+* It define the consumables available in the game
+*/
 Consumables *consumablesHeap(void) {
   
   /* Different foods and potions */

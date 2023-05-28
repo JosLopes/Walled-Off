@@ -9,6 +9,7 @@
 #include "MOBs.h"
 
 /*
+* a104188 - Ana Cerqueira
 * Function that sets the range according to the character life
 */
 int sets_range (int life){
@@ -37,8 +38,9 @@ int euclidean_distance (Point start, Point finish)
 }
 
 /* 
-  Explores different rays and verifies a set of conditions to give a restricted vision for
-  the player */
+*  Explores different rays and verifies a set of conditions to give a restricted vision for
+*  the player 
+*/
 void ray_cast (int map_width, char traveled_path[][map_width], char **map, int row, int col)
 {
   int total_circ_rad;  /* Used to limit the radius of the vision circle surrounding the player */
@@ -185,7 +187,8 @@ void ray_cast (int map_width, char traveled_path[][map_width], char **map, int r
 }
 
 
-/******************************************************************
+/*
+* a104188 - Ana Cerqueira
 *   Function that defines and print the range of vision around
 * the character and the different colors that are displayed. 
 *   Displays the vision of the character on the screen according
@@ -193,7 +196,7 @@ void ray_cast (int map_width, char traveled_path[][map_width], char **map, int r
 * the charactes that define the differents lands.
 *   Save the path that the character have discovered already on 
 * the array traveled_path so it can be displayed on the screen.
-******************************************************************/
+*/
 void vision_color (WINDOW *main_window, Character *character, char **map, int map_width ,char traveled_path[][map_width])
 {
   int y, x;

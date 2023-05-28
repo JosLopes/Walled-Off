@@ -13,7 +13,12 @@
 #include "vision.h"
 
 /*
+* a104188 - Ana Cerqueira
 * Function to spawn foods and potions in the map (WITHOUT ROOMS)
+* Generates three random numbers, one for an index between 0 and
+* the number of consumables and another two to determine the 
+* position of the consumable on the map. It also keeps the consumables 
+* generated in the array available.
 */
 void place_foods_and_potions(char** map, int number_of_consumables, Consumables *consumables, Consumables *available)
 {
@@ -52,7 +57,11 @@ void place_foods_and_potions(char** map, int number_of_consumables, Consumables 
 }
 
 /*
-* Function responsible for eating
+* a104188 - Ana Cerqueira
+* Function responsible for eating.
+* This functons delete the chars on the map the represent
+* the food and potion and adds the impact that is defined
+* for each consumable.
 */
 void food_and_potions (Character *character, Consumables *available, char *previous_char, int number_of_consumables)
 {

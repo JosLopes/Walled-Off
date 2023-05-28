@@ -8,7 +8,12 @@
 #include "vision.h"
 #include "MOBs.h"
 
-/*movement restriction*/
+/*
+* a104188 - Ana Cerqueira
+* Sets the movement restrictions.
+* The player only can walk over water, floor 
+* and the foods
+*/
 int movement_restrictions(int x, int y, char **map)
 {
   /*in case he is trying to move into a wall it stays in the same place*/
@@ -19,14 +24,21 @@ int movement_restrictions(int x, int y, char **map)
 
   return 1; /* Else, it can't */
 }
-/****************************
- *     Directions:           *
- *         0 = right         *
- *         1 = down          *
- *         2 = left          *
- *         3 = up            *
- *     q -> quit comand      *
- ****************************/
+
+/*
+* a104188 - Ana Cerqueira
+* Sets the player's movement and direction in the game.
+* It works using the arrow keys for move the character
+* and the 'a' and 'd' keys to define where the player 
+* is looking at.
+*
+* Directions:           
+*   > = right         
+*   v = down          
+*   < = left          
+*   ^ = up        
+*    
+*/
 void movement(Character *character, char **map, int ch, char *previous_char)
 {
   /*Update character position based on input*/
