@@ -64,16 +64,19 @@ void food_and_potions (Character *character, Consumables *available, char *previ
     /*makes the impact on character life*/
     if (available[i].y == character -> y && available[i].x == character -> x)
     {
-        if (character->life < character -> initial_life)
+        if (character->life + available[i].impact_life < character -> initial_life)
         {
           character->life += available[i].impact_life;
           character->xp += available[i].impact_xp;
+        } else if (character->life + available[i].impact_life > character -> initial_life) {
+          character->life = character -> initial_life;
+          character->xp += available[i].impact_xp;
         }
+
         i = number_of_consumables;
     }
   }
   }
-
 
   /*Delete the food and substitute it by a FLOOR_CHAR*/
   if (*previous_char == FOOD_CHAR || *previous_char == POTION_CHAR)
