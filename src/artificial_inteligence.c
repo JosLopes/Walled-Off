@@ -4,6 +4,9 @@
 #include "path_finder.h"
 #include <stdlib.h>
 
+/*
+a104541-José António Fernandes Alves Lopes
+*/
 void init_is_awake (int number_of_enemies, Awake *is_awake)
 {
   is_awake -> enemies_awaken = malloc (sizeof (Enemy) * number_of_enemies);
@@ -12,6 +15,7 @@ void init_is_awake (int number_of_enemies, Awake *is_awake)
 }
 
 /* 
+  a104541-José António Fernandes Alves Lopes
   When the enemy is in a certain range from the player, it awakens (is added to the
   awaken array, inicating that it will pursue the player to kill him) */
 void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake, char **map_static_obstacles)
@@ -40,6 +44,7 @@ void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake,
 }
 
 /* 
+  a104541-José António Fernandes Alves Lopes
   Calculates the closest path to an enemy, for use both in the smart AI and genius AI.
   When an enemy needs to call out for suport, be it by screaming or by reagruping, this 
   function finds the closest enemies who are not awaken yet */
@@ -87,6 +92,7 @@ Node closest_enemy (char **map, char **map_static_obstacles, Node *place_holder,
 }
 
 /* 
+  a104541-José António Fernandes Alves Lopes
   Takes the path build from the pathfinder and builds it backwards,
   from the previous  called objective (now suposed starting point) to 
   the previous start (now suposed objective) */
@@ -116,7 +122,9 @@ void display_enemy_path (Node top_node, char **map, char traveled_path[][MAP_WID
     }
   }
 }
-
+/*
+a104541-José António Fernandes Alves Lopes
+*/
 void build_path (Awake *is_awake, Character *character, char **map, char traveled_path[][MAP_WIDTH], char **map_whithout_mobs, Node *place_holder, Enemy *enemies)
 {
   Node top_node;
