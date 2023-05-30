@@ -3,17 +3,22 @@
 #include "datatypes.h"
 #include <stdlib.h>
 #include <math.h>
-
+/*
+a104541-José António Fernandes Alves Lopes
+*/
 int subtract_to_max (int x, int y)
 {
   if (x > y) return x - y;
   else return y - x;
 }
 
-/* Calculates the distance from the player to the enemy */
+/*
+ a104541-José António Fernandes Alves Lopes
+ Calculates the distance from the player to the enemy */
 int distance_from_objective (Point objective, Point start)
 {
   /* 
+    a104541-José António Fernandes Alves Lopes
     Manhattan distance for one time's calculations, it will be used for some instances refering to 
     the Pathfinder in this module, but the euclindian distance will be preferred */
   return subtract_to_max (objective.y, start.y) + subtract_to_max (objective.x, start.x);
@@ -43,6 +48,7 @@ void init_origin_node (Point *objective, Point *start, Node *origin)
 }
 
 /* 
+  a104541-José António Fernandes Alves Lopes
   Initialize a place holder wich the only purpose is to wait for another
   node to take its place. Every other node created will have a f cost lower
   than the place_holder node */
@@ -66,7 +72,9 @@ int dequeue (Path_queue *path)
   }
 }
 
-/* Insert sort's a new node in the queue to make sure it stays a priority queue */
+/* 
+a104541-José António Fernandes Alves Lopes
+Insert sort's a new node in the queue to make sure it stays a priority queue */
 void insert_queue (Path_queue *path, Node node)
 {
   int index;
@@ -83,7 +91,9 @@ void insert_queue (Path_queue *path, Node node)
   path -> number_of_nodes ++;
 }
 
-/* Create a new node to insert in the queue */
+/* 
+a104541-José António Fernandes Alves Lopes
+Create a new node to insert in the queue */
 Node init_new_node (int new_row, int new_col, Point *objective, Node node, Node *prev)
 {
   Node new_node;
@@ -100,7 +110,9 @@ Node init_new_node (int new_row, int new_col, Point *objective, Node node, Node 
   return new_node;
 }
 
-/* Insert the nodes surrounding the origin in the queue,
+/* 
+   a104541-José António Fernandes Alves Lopes
+   Insert the nodes surrounding the origin in the queue,
    in the first iteraction it inserts only the origin */
 Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *path, int *ended_without_path)
 {
