@@ -59,6 +59,7 @@ Node closest_enemy (char **map, char **map_static_obstacles, Node *place_holder,
 
   for (index = 0; index < is_awake -> total_size; index ++)
   {
+    ended_without_path = 0;
     if (enemies[index].awake == 1)
     {
       objective.y = enemies[index].y;
@@ -69,11 +70,19 @@ Node closest_enemy (char **map, char **map_static_obstacles, Node *place_holder,
       insert_queue (path, origin_node);  /* Inserts first node in the queue */
       Node node = find_path (&objective, map, place_holder, path, &ended_without_path);
       count = node.f; /* f distance from the starting point to the last node */
-    
-      if (count < min_count)
+
+      if (count < min_count && ended_without_path == 0)
       {
         min_count = count;
         choosen_one = index;
+      }
+
+      /* Cleans the path */
+      while (path -> nodes != NULL)
+      {
+        Node *temp = path -> nodes;
+        free (path -> nodes);
+        path -> nodes = temp -> prev;
       }
     }
   }
