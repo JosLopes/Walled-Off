@@ -175,7 +175,7 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Cons
             y ++;
           }
         }
-        break;      
+        break;
       default:
         for (index1 = 0; index1 <  is_awake -> current_size; index1 ++)
         {
@@ -189,6 +189,7 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Cons
       }
     }
   }
+
   if (*prev == WATER_CHAR)
   {
     mvwprintw(instructions_win, y, x, "%s", "You're on the water. Watch out for drownings!    ");

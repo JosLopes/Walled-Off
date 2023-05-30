@@ -104,8 +104,8 @@ Variable_stats *s_enemies_variable_stats ()
   s_variables[0] = (Variable_stats){'C',{"Carambol"},
                     {"S: Carambol                                      "},
                     0, 0, 0};
-  s_variables[1] = (Variable_stats){'J',{"JMF"},
-                    {"S: JMF                                           "},
+  s_variables[1] = (Variable_stats){'S',{"SegmatationFault"},
+                    {"S: Creates a segmentation fault                  "},
                     0, 0, 0};
 
   return s_variables; 
