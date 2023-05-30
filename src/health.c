@@ -58,6 +58,7 @@ void place_foods_and_potions(char** map, int number_of_consumables, Consumables 
 
 /*
 * a104188 - Ana Cerqueira
+* a104541 - José António Fernandes Alves Lopes
 * Function responsible for eating.
 * This functons delete the chars on the map the represent
 * the food and potion and adds the impact that is defined

@@ -31,16 +31,20 @@ int sets_range (int life){
   return range;
 }
 
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * Euclidean distance between two points
+ */
 int euclidean_distance (Point start, Point finish)
 {
-  /* Calculates the euclidean distance between two points */
   return sqrt(pow(start.y - finish.y, 2) + pow(start.x - finish.x, 2));
 }
 
-/* 
-*  Explores different rays and verifies a set of conditions to give a restricted vision for
-*  the player 
-*/
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * Explores different rays and verifies a set of conditions to give a restricted vision for
+ * the player 
+ */
 void ray_cast (int map_width, char traveled_path[][map_width], char **map, int row, int col)
 {
   int total_circ_rad;  /* Used to limit the radius of the vision circle surrounding the player */
@@ -56,11 +60,12 @@ void ray_cast (int map_width, char traveled_path[][map_width], char **map, int r
   /* A variable point for his vision */
   Point vision;
 
-  /*
-    Explores all the angles from -π/2 to π/2, where the cos()
-    is positive and the sin() is negative or postive, to find
-    enoumerous y = mx equations that represent lines of sight
-    to the right side of the character, when seen from the top */
+  /**
+   * Explores all the angles from -π/2 to π/2, where the cos()
+   * is positive and the sin() is negative or postive, to find
+   * enoumerous y = mx equations that represent lines of sight
+   * to the right side of the character, when seen from the top
+   */
   for (double radius = (double) (-1) * (M_PI/ (double) 2); radius < (M_PI/ (double) 2); radius += increment)
   {
     /* scale to discover the row in realtion to the col */
@@ -75,15 +80,19 @@ void ray_cast (int map_width, char traveled_path[][map_width], char **map, int r
         else
         {
           col ++;
-          /* The location of y in realtion to x     */
-          /* Resets the row value to acert the line */
+          /**
+           * The location of y in realtion to x
+           * Resets the row value to acert the line
+           */
           destination_row = player.y;
           destination_row += scale * (col - player.x);
         }
         traveled_path[row][col] = map[row][col];
-        /* Calculates the distance from the player to the current vision point, */
-        /* i.e, to the current node that is being uncovered by the vision using */
-        /* the Manhattan distance                                               */
+        /**
+         * Calculates the distance from the player to the current vision point,
+         * i.e, to the current node that is being uncovered by the vision using
+         * the Manhattan distance
+         */       
         vision.y = row; vision.x = col;
         total_circ_rad = euclidean_distance (player, vision);
       }
@@ -96,8 +105,10 @@ void ray_cast (int map_width, char traveled_path[][map_width], char **map, int r
         else
         {
           col ++;
-          /* The location of y in realtion to x     */
-          /* Resets the row value to acert the line */
+          /**
+           * The location of y in realtion to x
+           * Resets the row value to acert the line
+           */
           destination_row = player.y;
           destination_row += scale * (col - player.x);
         }
@@ -112,11 +123,12 @@ void ray_cast (int map_width, char traveled_path[][map_width], char **map, int r
     col = player.x;
   }
 
-  /* 
-    Explores all the angles from π/2 to 3(π/2), where the cos()
-    is negative and the sin() is negative or postive, to find
-    enoumerous y = mx equations that represent lines of sight,
-    this time for the left side of the main character        */
+  /** 
+   * Explores all the angles from π/2 to 3(π/2), where the cos()
+   * is negative and the sin() is negative or postive, to find
+   * enoumerous y = mx equations that represent lines of sight,
+   * this time for the left side of the main character
+   */
   for (double radius = (M_PI/ (double) 2); radius < ((double) 3 * (M_PI / (double) 2)); radius += increment)
   {
     /* scale to discover the row in realtion to the col */
@@ -131,8 +143,10 @@ void ray_cast (int map_width, char traveled_path[][map_width], char **map, int r
         else
         {
           col --;
-          /* The location of y in realtion to x     */
-          /* Resets the row value to acert the line */
+          /**
+           * The location of y in realtion to x
+           * Resets the row value to acert the line
+           */
           destination_row = player.y;
           destination_row += scale * (col - player.x);
         }
@@ -149,8 +163,10 @@ void ray_cast (int map_width, char traveled_path[][map_width], char **map, int r
         else
         {
           col --;
-          /* The location of y in realtion to x     */
-          /* Resets the row value to acert the line */
+          /**
+           * The location of y in realtion to x
+           * Resets the row value to acert the line
+           */
           destination_row = player.y;
           destination_row += scale * (col - player.x);
         }
@@ -188,15 +204,15 @@ void ray_cast (int map_width, char traveled_path[][map_width], char **map, int r
 
 
 /*
-* a104188 - Ana Cerqueira
-*   Function that defines and print the range of vision around
-* the character and the different colors that are displayed. 
-*   Displays the vision of the character on the screen according
-* some restrictions like step up above the enemies or eliminate
-* the charactes that define the differents lands.
-*   Save the path that the character have discovered already on 
-* the array traveled_path so it can be displayed on the screen.
-*/
+ * a104188 - Ana Cerqueira
+ * Function that defines and print the range of vision around
+ * the character and the different colors that are displayed. 
+ * Displays the vision of the character on the screen according
+ * some restrictions like step up above the enemies or eliminate
+ * the charactes that define the differents lands.
+ * Save the path that the character have discovered already on 
+ * the array traveled_path so it can be displayed on the screen.
+ */
 void vision_color (WINDOW *main_window, Character *character, char **map, int map_width ,char traveled_path[][map_width])
 {
   int y, x;

@@ -4,9 +4,10 @@
 #include "path_finder.h"
 #include <stdlib.h>
 
-/*
-a104541-José António Fernandes Alves Lopes
-*/
+/**
+ * a104541-José António Fernandes Alves Lopes
+ * Initializes the array is_awake for awaken enemies
+ */
 void init_is_awake (int number_of_enemies, Awake *is_awake)
 {
   is_awake -> enemies_awaken = malloc (sizeof (Enemy) * number_of_enemies);
@@ -14,10 +15,11 @@ void init_is_awake (int number_of_enemies, Awake *is_awake)
   is_awake -> current_size = 0; /* Starts with 0 enemies in the awaken array */ 
 }
 
-/* 
-  a104541-José António Fernandes Alves Lopes
-  When the enemy is in a certain range from the player, it awakens (is added to the
-  awaken array, inicating that it will pursue the player to kill him) */
+/**
+ * a104541-José António Fernandes Alves Lopes
+ * When the enemy is in a certain range from the player, it awakens (is added to the
+ * awaken array, inicating that it will pursue the player to kill him)
+ */
 void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake, char **map_static_obstacles)
 {
   int index, distance;
@@ -43,11 +45,12 @@ void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake,
   }
 }
 
-/* 
-  a104541-José António Fernandes Alves Lopes
-  Calculates the closest path to an enemy, for use both in the smart AI and genius AI.
-  When an enemy needs to call out for suport, be it by screaming or by reagruping, this 
-  function finds the closest enemies who are not awaken yet */
+/** 
+ * a104541-José António Fernandes Alves Lopes
+ * Calculates the closest path to an enemy, for use both in the smart AI and genius AI.
+ * When an enemy needs to call out for suport, be it by screaming or by reagruping, this 
+ * function finds the closest enemies who are not awaken yet
+ */
 Node closest_enemy (char **map, char **map_static_obstacles, Node *place_holder, Path_queue *path, Point start, Enemy *enemies, Awake *is_awake, Node origin_node)
 {
   int ended_without_path = 0;  /* dont check diferent paths */
@@ -100,11 +103,12 @@ Node closest_enemy (char **map, char **map_static_obstacles, Node *place_holder,
   return origin_node;
 }
 
-/* 
-  a104541-José António Fernandes Alves Lopes
-  Takes the path build from the pathfinder and builds it backwards,
-  from the previous  called objective (now suposed starting point) to 
-  the previous start (now suposed objective) */
+/**
+ * a104541-José António Fernandes Alves Lopes
+ * Takes the path build from the pathfinder and builds it backwards,
+ * from the previous  called objective (now suposed starting point) to 
+ * the previous start (now suposed objective)
+ */
 void display_enemy_path (Node top_node, char **map, char traveled_path[][MAP_WIDTH], Enemy *enemy)
 {
   int old_y = enemy -> y, old_x = enemy -> x;
@@ -131,9 +135,11 @@ void display_enemy_path (Node top_node, char **map, char traveled_path[][MAP_WID
     }
   }
 }
-/*
-a104541-José António Fernandes Alves Lopes
-*/
+
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * Conects all of the AI related functions to build paths for the enemies
+ */
 void build_path (Awake *is_awake, Character *character, char **map, char traveled_path[][MAP_WIDTH], char **map_whithout_mobs, Node *place_holder, Enemy *enemies)
 {
   Node top_node;
@@ -147,15 +153,15 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
 
   for (int index = 0; index < is_awake -> current_size; index ++)
   {
-    /* 
-      If an enemy has group desire (it will only attack once there are a certain
-      number of enemies awaken), it searches for that required desire, be it by
-      warning out the enemies and starting to fight, if they are smart, or by
-      running away to the nearest enemy spawn point, expecting to bring someone to
-      fight with them, if they are genius. This, ofcourse, only happens when the
-      group desire isn't already achieved by the current awaken enemies or the
-      number of enemy's in the game is suficient to reach the desired number */
-
+    /**
+     * If an enemy has group desire (it will only attack once there are a certain
+     * number of enemies awaken), it searches for that required desire, be it by
+     * warning out the enemies and starting to fight, if they are smart, or by
+     * running away to the nearest enemy spawn point, expecting to bring someone to
+     * fight with them, if they are genius. This, ofcourse, only happens when the
+     * group desire isn't already achieved by the current awaken enemies or the
+     * number of enemy's in the game is suficient to reach the desired number
+     */
     group_desire = is_awake -> enemies_awaken[index].tag -> group_desire;
 
     if (is_awake -> current_size <  group_desire &&
@@ -168,10 +174,11 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
       /* The node to be used as the first in the future constructed path */
       top_node = closest_enemy (map, map_whithout_mobs, place_holder, &path, start, enemies, is_awake, origin_node);
     }
-    /* 
-      If the enemy isn't dumb, it searches for a path to trap the player,
-      if it doesnt dinf anything, it just acts like a dumb enemy, and goes
-      straight for the player without thinking about other enemies positions */
+    /**
+     * If the enemy isn't dumb, it searches for a path to trap the player,
+     * if it doesnt dinf anything, it just acts like a dumb enemy, and goes
+     * straight for the player without thinking about other enemies positions
+     */
     else
     {
       /*Starting the single first node */
@@ -216,10 +223,11 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
             path.nodes = temp -> prev;
           }
         }
-        /* 
-          If there is no path to trap the player, this version of the map with
-          no enemies will be able to find something. The path will be checked later
-          for colisions enemy to enemy */
+        /** 
+         * If there is no path to trap the player, this version of the map with
+         * no enemies will be able to find something. The path will be checked later
+         * for colisions enemy to enemy
+         */
         if (ended_without_path == 0 || distance_from_player > D_INTEL_RANGE)
         {
           /* Resets path if it was not found but the player is still on land */
@@ -254,10 +262,11 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
             path.nodes = temp -> prev;
           }
         }
-        /* 
-          If there is no path to trap the player, this version of the map with
-          no enemies will be able to find something. The path will be checked later
-          for colisions enemy to enemy */
+        /** 
+         * If there is no path to trap the player, this version of the map with
+         * no enemies will be able to find something. The path will be checked later
+         * for colisions enemy to enemy
+         */
         if (ended_without_path == 0 || distance_from_player > S_INTEL_RANGE)
         {
           /* Resets path if it was not found but the player is still on land */
@@ -292,10 +301,11 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
             path.nodes = temp -> prev;
           }
         }
-        /* 
-          If there is no path to trap the player, this version of the map with
-          no enemies will be able to find something. The path will be checked later
-          for colisions enemy to enemy */
+        /** 
+         * If there is no path to trap the player, this version of the map with
+         * no enemies will be able to find something. The path will be checked later
+         * for colisions enemy to enemy
+         */
         if (ended_without_path == 0 || distance_from_player > G_INTEL_RANGE)
         {
           /* Resets path if it was not found but the player is still on land */

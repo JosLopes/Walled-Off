@@ -250,6 +250,7 @@ void handle_attack_input(Character *player, Enemy *enemy, Awake *is_awake, Enemy
     }
   }
 }
+
 void handle_special_power_input(Character *player)
 {
   char input;

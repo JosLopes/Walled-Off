@@ -59,10 +59,10 @@ char *titulo[] = {
 
 int n_titulo = sizeof(titulo)/ sizeof(char *);
 
-/*
-* a104188 - Ana Cerqueira
-* Function that prints the menu on the screen
-*/
+/**
+ * a104188 - Ana Cerqueira
+ * Function that prints the menu on the screen
+ */
 void print_menu(WINDOW *menu_win, int highlight)
 {
   int x, y, i;
@@ -109,10 +109,10 @@ void print_menu(WINDOW *menu_win, int highlight)
   wrefresh(menu_win);
 }
 
-/*
-* a104188 - Ana Cerqueira
-* Display instructions when "HOW TO PLAY" is selected 
-*/
+/**
+ * a104188 - Ana Cerqueira
+ * Display instructions when "HOW TO PLAY" is selected 
+ */
 void print_instructions (WINDOW *menu_win)
 {
   werase(menu_win); /*clear the window*/
@@ -158,12 +158,12 @@ void print_instructions (WINDOW *menu_win)
   }
 }
 
-/*
-* a104188 - Ana Cerqueira
+/**
+ * a104188 - Ana Cerqueira
  * Function that is activated when press ENTER_KEY and 
  * selects the way the game should go acording the selected
  * option
-*/
+ */
 void select_way (WINDOW *menu_win, int choice, int *in_game, int *in_menu){
   /* Handle choice */
   switch (choice)
@@ -184,12 +184,12 @@ void select_way (WINDOW *menu_win, int choice, int *in_game, int *in_menu){
   }
 }
 
-/*
-* a104188 - Ana Cerqueira
-* Function where the movement of the keys in the menu 
-* is defined and it's responsible for connecting 
-* the previous functions.
-*/
+/**
+ * a104188 - Ana Cerqueira
+ * Function where the movement of the keys in the menu 
+ * is defined and it's responsible for connecting 
+ * the previous functions.
+ */
 int start_menu (void)
 {
   WINDOW *menu_win;

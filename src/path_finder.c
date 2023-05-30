@@ -3,42 +3,54 @@
 #include "datatypes.h"
 #include <stdlib.h>
 #include <math.h>
-/*
-a104541-José António Fernandes Alves Lopes
-*/
+/**
+ * a104541-José António Fernandes Alves Lopes
+ * subtracts two values
+ */
 int subtract_to_max (int x, int y)
 {
   if (x > y) return x - y;
   else return y - x;
 }
 
-/*
- a104541-José António Fernandes Alves Lopes
- Calculates the distance from the player to the enemy */
+/**
+ * a104541-José António Fernandes Alves Lopes
+ * Calculates the distance from the player to the enemy
+ */
 int distance_from_objective (Point objective, Point start)
 {
-  /* 
-    a104541-José António Fernandes Alves Lopes
-    Manhattan distance for one time's calculations, it will be used for some instances refering to 
-    the Pathfinder in this module, but the euclindian distance will be preferred */
+  /**
+   * Manhattan distance for one time's calculations, it will be used for some instances refering to 
+   * the Pathfinder in this module, but the euclindian distance will be preferred
+   */
   return subtract_to_max (objective.y, start.y) + subtract_to_max (objective.x, start.x);
 }
 
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * Initializes the queue to build the path
+ */
 void init_queue (Path_queue *path)
 {
   path -> nodes = malloc (sizeof (Path_queue) * (MAP_HEIGHT * MAP_WIDTH));
   path -> head = 0;
-  path -> tail = -1; /* When the queue is empty there is no tail */
+  path -> tail = -1;  /* When the queue is empty there is no tail */
   path -> number_of_nodes = 0;
 }
 
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * Initializes the node of origin
+ */
 void init_origin_node (Point *objective, Point *start, Node *origin)
 {
   origin -> row = start -> y;
   origin -> col = start -> x;
 
-  /* As this is the starting point, the costs are irrelevant except for h, */
-  /* h needs to be superior to 10 to dont stop the path loop               */
+  /**
+   * As this is the starting point, the costs are irrelevant except for h,
+   * h needs to be superior to 10 to dont stop the path loop
+  */
   origin -> h = (10 * distance_from_objective (*objective, *start));
   origin -> g = 0;
   origin -> f = 0;
@@ -47,17 +59,22 @@ void init_origin_node (Point *objective, Point *start, Node *origin)
   origin -> prev = NULL;  /* No previous node exists, this is the origin */
 }
 
-/* 
-  a104541-José António Fernandes Alves Lopes
-  Initialize a place holder wich the only purpose is to wait for another
-  node to take its place. Every other node created will have a f cost lower
-  than the place_holder node */
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * Initialize a place holder wich the only purpose is to wait for another
+ * node to take its place. Every other node created will have a f cost lower
+ * than the place_holder node
+ */
 void init_place_holder_node (Node *place_holder)
 {
   place_holder -> f = MAP_HEIGHT * MAP_WIDTH; /* Bigher than the bigher possible f */
   place_holder -> explored = 1; /* False, never explored given the nature of the algorithm */
 }
 
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * Dequeues an element from the path queue
+ */
 int dequeue (Path_queue *path)
 {
   if (path -> number_of_nodes != 0)
@@ -72,28 +89,31 @@ int dequeue (Path_queue *path)
   }
 }
 
-/* 
-a104541-José António Fernandes Alves Lopes
-Insert sort's a new node in the queue to make sure it stays a priority queue */
+/**
+ * a104541-José António Fernandes Alves Lopes
+ * Insert sort's a new node in the queue to make sure it stays a priority queue
+ */
 void insert_queue (Path_queue *path, Node node)
 {
   int index;
-  /* There is no need for verifying if the queue is full since the size 
-     is equal to the number of nodes in the full map (walkable or not),
-     ence its impossible to reach the end of the queue */
-
+  /**
+   * There is no need for verifying if the queue is full since the size 
+   * is equal to the number of nodes in the full map (walkable or not),
+   *  ence its impossible to reach the end of the queue
+   */
   path -> tail ++;
   for (index = path -> tail; index > path -> head && path -> nodes[index-1].f > node.f; index --)
   {
     path -> nodes[index] = path -> nodes[index - 1];
   }
-  path -> nodes[index] = node; //talvez precise do pointer para a node ao inves, but idk;
+  path -> nodes[index] = node;
   path -> number_of_nodes ++;
 }
 
-/* 
-a104541-José António Fernandes Alves Lopes
-Create a new node to insert in the queue */
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * Create a new node to insert in the queue
+ */
 Node init_new_node (int new_row, int new_col, Point *objective, Node node, Node *prev)
 {
   Node new_node;
@@ -110,10 +130,11 @@ Node init_new_node (int new_row, int new_col, Point *objective, Node node, Node 
   return new_node;
 }
 
-/* 
-   a104541-José António Fernandes Alves Lopes
-   Insert the nodes surrounding the origin in the queue,
-   in the first iteraction it inserts only the origin */
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ *  Insert the nodes surrounding the origin in the queue,
+ *  in the first iteraction it inserts only the origin
+ */
 Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *path, int *ended_without_path)
 {
   Node *prev;
@@ -139,7 +160,6 @@ Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *pa
     }
   }
 
-  // Construir os nodos à volta da origin e colocar na *priority* queue;
   do
   {
     prev = &(path -> nodes[path -> head]);
@@ -154,10 +174,11 @@ Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *pa
 
     int current_row_plus = current_row + 1;
 
-    /*
-      If the node in the map array is valid to walk by enemies and
-      the node in the same position was not yet explored, create a
-      new node and verify another condition */
+    /**
+     * If the node in the map array is valid to walk by enemies and
+     * the node in the same position was not yet explored, create a
+     * new node and verify another condition
+     */
     if (map[current_row_plus][current_col] == FLOOR_CHAR &&
         node_array[current_row_plus][current_col].explored == 1)
     {

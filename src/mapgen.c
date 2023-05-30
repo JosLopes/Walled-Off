@@ -11,13 +11,13 @@
 #include "MOBs.h"
 
 /*  
-a103999 - Ivo Filipe Mendes Vieira
-This function is responsible for filling the map with the floor character (FLOOR_CHAR).
-It iterates through all positions of the map and checks if the current character is not the wall character (WALL_CHAR)
-or the floor character (FLOOR_CHAR). If it is neither of those, it fills the position with the character '%',
-indicating that the space has not been filled yet.  */
-
-              
+ * a103999 - Ivo Filipe Mendes Vieira
+ * This function is responsible for filling the map with the floor character (FLOOR_CHAR).
+ * It iterates through all positions of the map and checks if the current character is not
+ * the wall character (WALL_CHAR) or the floor character (FLOOR_CHAR). If it is neither of
+ * those, it fills the position with the character '%', indicating that the space has not
+ * been filled yet.
+ */           
 void fillMap(int map_height, int map_width, char **map) {
     int i, j;
 
@@ -39,12 +39,13 @@ void fillMap(int map_height, int map_width, char **map) {
     }
 }
 
-/* 
-a103999 - Ivo Filipe Mendes Vieira
-This function is responsible for filling the traveled path map with the undiscovered path character (UNDISCOVERED_PATH_CHAR).
-It iterates through all positions of the map and sets the character to UNDISCOVERED_PATH_CHAR, indicating that the path
-at that position has not been traversed yet. The function also fills the borders of the map with walls. */
-
+/*
+ * a103999 - Ivo Filipe Mendes Vieira
+ * This function is responsible for filling the traveled path map with the undiscovered path
+ * character (UNDISCOVERED_PATH_CHAR). It iterates through all positions of the map and sets
+ * the character to UNDISCOVERED_PATH_CHAR, indicating that the path at that position has not
+ * been traversed yet. The function also fills the borders of the map with walls.
+ */
 void fillTraveledPath(int map_height, int map_width, char traveled_path[][map_width]) {
     int i, j;
 
@@ -64,11 +65,12 @@ void fillTraveledPath(int map_height, int map_width, char traveled_path[][map_wi
         traveled_path[i][map_width - 1] = WALL_CHAR;
     }
 }
-/* 
-a103999 - Ivo Filipe Mendes Vieira
-This function generates rooms on the game map based on the given parameters. 
-It returns the number of non-overlapping rooms generated. */
 
+/**
+ * a103999 - Ivo Filipe Mendes Vieira
+ * This function generates rooms on the game map based on the given parameters. 
+ * It returns the number of non-overlapping rooms generated.
+ */
 int generateRooms(int map_height, int map_width, char **map, Room rooms[], int numRooms) {
     int i, j, k, number_of_non_overlapping_rooms = 0;
 
@@ -90,13 +92,13 @@ int generateRooms(int map_height, int map_width, char **map, Room rooms[], int n
                 roomX + room_Width > rooms[j].x &&
                 roomY < rooms[j].y + rooms[j].height &&
                 roomY + room_Height > rooms[j].y) {
-                rooms[i].is_overlapping = 1;
+                rooms[i].is_overlaping = 1;
                 overlap = 1;
             }
         }
 
         if (overlap == 0) {
-            rooms[i].is_overlapping = 0;
+            rooms[i].is_overlaping = 0;
             number_of_non_overlapping_rooms++;
 
             /* If there is no overlap, add the room to the map */
@@ -127,29 +129,31 @@ int generateRooms(int map_height, int map_width, char **map, Room rooms[], int n
     return number_of_non_overlapping_rooms;
 }
 
-/* 
-a103999 - Ivo Filipe Mendes Vieira
-This function initializes the list of non-overlapping rooms by extracting the midpoint coordinates of 
-each non-overlapping room from the generated rooms array.
-The extracted coordinates are stored in the no_overlpg array. */
-
-void init_non_overlapping_rooms(Room rooms[], int numRooms, Non_overlapping_rooms no_overlpg[], int nor_size) {
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * a104541 - Ivo Filipe Mendes Vieira
+ * This function initializes the list of non-overlapping rooms by extracting the midpoint coordinates of
+ * each non-overlapping room from the generated rooms array.
+ * The extracted coordinates are stored in the no_overlpg array.
+ */
+void init_non_overlaping_rooms (Room rooms[], int numRooms, Non_overlaping_rooms no_overlpg[], int nor_size) {
   int room_number = 0, overlapping_list = 0;
 
   for (; room_number < numRooms && overlapping_list < nor_size; room_number++) {
-    if (rooms[room_number].is_overlapping == 0) {
+    if (rooms[room_number].is_overlaping == 0) {
       no_overlpg[overlapping_list].midX = (rooms[room_number].width >> 1) + rooms[room_number].x;
       no_overlpg[overlapping_list].midY = (rooms[room_number].height >> 1) + rooms[room_number].y;
       overlapping_list++;
     }
   }
 }
-/* 
-a103999 - Ivo Filipe Mendes Vieira
-This function generates corridors between non-overlapping rooms on the game map. It takes the map, 
-the array of non-overlapping rooms, and the number of non-overlapping rooms as parameters. */
 
-void generateCorridors(char **map, Non_overlapping_rooms *no_overlpg, int nor_size) {
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * This function generates corridors between non-overlapping rooms on the game map. It takes the map, 
+ * the array of non-overlapping rooms, and the number of non-overlapping rooms as parameters. 
+ */
+void generateCorridors(char **map, Non_overlaping_rooms *no_overlpg, int nor_size) {
   int bridge_ind = 0, temp;
   Vector vector;
 
@@ -220,15 +224,16 @@ void generateCorridors(char **map, Non_overlapping_rooms *no_overlpg, int nor_si
     }
   }
 }
-/*
-a103999 - Ivo Filipe Mendes Vieira
-places the player on the map*/
+
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * places the player on the map
+ */
 void place_player(Non_overlaping_rooms room, char **map, Character *character) {
     character -> x = room.midX;
     character -> y = room.midY;
     map[character -> y][character -> x] = PLAYER_CHAR_UP;
 }
-
 
 WINDOW *create_window (int height, int width, int startingX, int startingY) {
   WINDOW *local_window;
@@ -242,11 +247,11 @@ WINDOW *create_window (int height, int width, int startingX, int startingY) {
   return local_window;
 }
 
-/*
-* a104188 - Ana Cerqueira
-* Function that defines the colors according to the different
-* character that is displaying on the screen.
-*/
+/**
+ * a104188 - Ana Cerqueira
+ * Function that defines the colors according to the different
+ * character that is displaying on the screen.
+ */
 void map_colors (WINDOW *main_window, int map_width, int j, int i, char traveled_path[][map_width]){
   switch (traveled_path[j][i])
   {
@@ -279,10 +284,10 @@ void map_colors (WINDOW *main_window, int map_width, int j, int i, char traveled
   }
 }
 
-/*
-* a104188 - Ana Cerqueira
-* Function that displays the map on the screen
-*/
+/**
+ * a104188 - Ana Cerqueira
+ * Function that displays the map on the screen
+ */
 void display_map (WINDOW *main_window, Character *character, char **map, int map_width, char traveled_path[][map_width]) 
 {
   int range = sets_range(character->life);

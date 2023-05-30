@@ -5,13 +5,14 @@
 #include <stdlib.h>
 #include <time.h>
 
-/* 
-  a104541-José António Fernandes Alves Lopes
-  locate_positions locates eveery possible position for an enemy to spawn, 
-  in a set number of rooms called non_overlaping_rooms (array '*no_overlpg').
-  This set of rooms as described before has the property of, when built, not
-  overlaping with any other room, aloying for a good candidate for placing
-  enemies */
+/** 
+ * a104541-José António Fernandes Alves Lopes
+ * locate_positions locates eveery possible position for an enemy to spawn, 
+ * in a set number of rooms called non_overlaping_rooms (array '*no_overlpg').
+ * This set of rooms as described before has the property of, when built, not
+ * overlaping with any other room, aloying for a good candidate for placing
+ * enemies
+ */
 int locate_positions (int map_heigth, int map_width, char **map, int number_of_enemies, Enemy *enemies, int nor_size, Non_overlaping_rooms no_overlpg[])
 {
   int index, already_placed = 1;
@@ -36,10 +37,11 @@ int locate_positions (int map_heigth, int map_width, char **map, int number_of_e
       /* Checks if the spawn point is valid */
       if (possible_x < map_width && possible_x > 0 && possible_y < map_heigth && possible_y > 0 && map[possible_y][possible_x] == FLOOR_CHAR)
       {
-        /* 
-          Checks if there is already an enemy in the same place,
-          due to the nature of the spawn and game builder, its
-          convenient to not spawn the enmies imidiatly */
+        /**
+         * Checks if there is already an enemy in the same place,
+         * due to the nature of the spawn and game builder, its
+         * convenient to not spawn the enmies imidiatly
+         */
         
         for (index = 0; index < enemies_ind; index ++)
         {
@@ -70,13 +72,13 @@ int locate_positions (int map_heigth, int map_width, char **map, int number_of_e
   return enemies_ind;
 }
 
-/* 
-  a104541-José António Fernandes Alves Lopes
-  The function 'Variable_stats *d_enemies_variable_stats' initalizes every dumb enemy
-  that is created manually by the programmer, its a special feature that allows
-  to add new enemies to the game without much trouble, add the enemy to the 'd_variables'
-  array and add +1 do D_ENMIES */
-
+/**
+ * a104541-José António Fernandes Alves Lopes
+ * The function 'Variable_stats *d_enemies_variable_stats' initalizes every dumb enemy
+ * that is created manually by the programmer, its a special feature that allows
+ * to add new enemies to the game without much trouble, add the enemy to the 'd_variables'
+ * array and add +1 do D_ENMIES
+ */
 Variable_stats *d_enemies_variable_stats ()
 {
   Variable_stats *d_variables = malloc (sizeof (Variable_stats) * D_ENEMIES);
@@ -91,12 +93,13 @@ Variable_stats *d_enemies_variable_stats ()
   return d_variables; 
 }
 
-/* 
-  The function 'Variable_stats *s_enemies_variable_stats' initalizes every smart enemy
-  that is created manually by the programmer, its a special feature that allows
-  to add new enemies to the game without much trouble: add the enemy to the 's_variables'
-  array and add +1 do S_ENMIES */
-
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * The function 'Variable_stats *s_enemies_variable_stats' initalizes every smart enemy
+ * that is created manually by the programmer, its a special feature that allows
+ * to add new enemies to the game without much trouble: add the enemy to the 's_variables'
+ * array and add +1 do S_ENMIES
+ */
 Variable_stats *s_enemies_variable_stats ()
 {
   Variable_stats *s_variables = malloc (sizeof (Variable_stats) * S_ENEMIES);
@@ -111,11 +114,13 @@ Variable_stats *s_enemies_variable_stats ()
   return s_variables; 
 }
 
-/* 
-  The function 'Variable_stats *g_enemies_variable_stats' initalizes every genius enemy
-  that is created manually by the programmer, its a special feature that allows
-  to add new enemies to the game without much trouble: add the enemy to the 'g_variables'
-  array and add +1 do G_ENMIES */
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * The function 'Variable_stats *g_enemies_variable_stats' initalizes every genius enemy
+ * that is created manually by the programmer, its a special feature that allows
+ * to add new enemies to the game without much trouble: add the enemy to the 'g_variables'
+ * array and add +1 do G_ENMIES
+ */
 
 Variable_stats *g_enemies_variable_stats ()
 {
@@ -131,25 +136,27 @@ Variable_stats *g_enemies_variable_stats ()
   return g_variables; 
 }
 
-/* 
-  a104541-José António Fernandes Alves Lopes
-  Initializes the tag to be used in the different enemies (depends only in the inteligence level)
-  with pre-made stats that are common to that set type of enemy and can be changed in 'defines.h' */
-
+/**
+ * a104541-José António Fernandes Alves Lopes
+ * Initializes the tag to be used in the different enemies (depends only in the inteligence level)
+ * with pre-made stats that are common to that set type of enemy and can be changed in 'defines.h'
+ */
 void init_tag (Tag *tag, char intel, int max_xp, int min_xp, int poison, int group_desire)
 {
   tag -> inteligence = intel; /* Initial for "tag" */
   tag -> xp_from_death = rand() % (max_xp - min_xp) + min_xp; /* Xp gained from killing this enemy type */
-  tag -> poison_level = poison;  /* Gives information about how long does it last, the higher the */
-                                 /* Number, the more steps the player needs to take to decipate   */
-                                 /* The poison and stop taking damage                             */
+  tag -> poison_level = poison;  /**
+                                  * Gives information about how long does it last, the higher the
+                                  * Number, the more steps the player needs to take to decipate
+                                  * The poison and stop taking damage
+                                 */
   tag -> group_desire = group_desire;
 }
 
-/*
-  a104541-José António Fernandes Alves Lopes
-  Initializes the stats that are unique to each diferent enemy */
-
+/**
+ * a104541-José António Fernandes Alves Lopes
+ * Initializes the stats that are unique to each diferent enemy
+ */
 void init_enemy_stats (Enemy *enemy, Tag *tag, Variable_stats *variables)
 {
   enemy -> tag = tag;
@@ -165,9 +172,10 @@ void init_enemy_stats (Enemy *enemy, Tag *tag, Variable_stats *variables)
   enemy -> awake = 1; /* Enemy starts sleeping*/
 }
 
-/* 
-  a104541-José António Fernandes Alves Lopes
-  Places every enemy somewhere on the map, if the terrain is apropried, i.e. a FLOOR_CHAR */
+/**
+ * a104541-José António Fernandes Alves Lopes
+ * Places every enemy somewhere on the map, if the terrain is apropried, i.e. a FLOOR_CHAR
+ */
 
 void place_enemies (int number_of_enemies, Enemy *enemies, char **map)
 {
@@ -179,12 +187,12 @@ void place_enemies (int number_of_enemies, Enemy *enemies, char **map)
   }
 }
 
-/*
-  a104541-José António Fernandes Alves Lopes
-  This is the "main function" of this module, it creates the tags that are attached to each
-  enemy and combines both the tags and the unique characteristcs of an indivual enemy and places
-  everyone on the map in the spots calculated before in the 'locate_positions' function */
-
+/**
+ * a104541-José António Fernandes Alves Lopes
+ * This is the "main function" of this module, it creates the tags that are attached to each
+ * enemy and combines both the tags and the unique characteristcs of an indivual enemy and places
+ * everyone on the map in the spots calculated before in the 'locate_positions' function
+ */
 Tag *init_enemies (int number_of_enemies, Enemy *enemies, Variable_stats *d_variables, Variable_stats *s_variables, Variable_stats *g_variables, char **map)
 {
   Tag *tag = malloc (sizeof (Tag) * number_of_enemies);
