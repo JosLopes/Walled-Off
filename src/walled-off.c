@@ -250,7 +250,7 @@ int main ()
       print_instructions_win (instructions_win, &character, available, is_awake,traveled_path, &previous_char, number_of_consumables);
       werase(instructions_win);
       print_displays (display_win, &character, is_awake, traveled_path);
-      werase(display_win);                                                                                                     
+      werase (display_win);
     }
 
 

@@ -55,7 +55,7 @@ Node closest_enemy (char **map, char **map_static_obstacles, Node *place_holder,
   for (index = 0; index < is_awake -> total_size; index ++)
   {
     if (enemies[index].awake == 1)
-      {
+    {
       objective.y = enemies[index].y;
       objective.x = enemies[index].x;
       init_origin_node (&objective, &start, &origin_node);
@@ -173,6 +173,14 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
       top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
       distance_from_player = top_node.g;
 
+      /* Cleans the path */
+      while (path.nodes != NULL)
+      {
+        Node *temp = path.nodes;
+        free (path.nodes);
+        path.nodes = temp -> prev;
+      }
+
       switch (is_awake -> enemies_awaken[index].tag -> inteligence)
       {
       case D_CHAR:
@@ -182,6 +190,14 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
           init_queue (&path);
           insert_queue (&path, origin_node);  /* Inserts first node in the queue */
           top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
+
+          /* Cleans the path */
+          while (path.nodes != NULL)
+          {
+            Node *temp = path.nodes;
+            free (path.nodes);
+            path.nodes = temp -> prev;
+          }
         }
         /* 
           If there is no path to trap the player, this version of the map with
@@ -194,6 +210,14 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
           insert_queue (&path, origin_node);  /* Inserts first node in the queue */
           top_node = find_path (&objective, map_whithout_mobs, place_holder, &path, &ended_without_path);
           ended_without_path = 1;
+        
+          /* Cleans the path */
+          while (path.nodes != NULL)
+          {
+            Node *temp = path.nodes;
+            free (path.nodes);
+            path.nodes = temp -> prev;
+          }
         }
         break;
       
@@ -204,6 +228,14 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
           init_queue (&path);
           insert_queue (&path, origin_node);  /* Inserts first node in the queue */
           top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
+        
+          /* Cleans the path */
+          while (path.nodes != NULL)
+          {
+            Node *temp = path.nodes;
+            free (path.nodes);
+            path.nodes = temp -> prev;
+          }
         }
         /* 
           If there is no path to trap the player, this version of the map with
@@ -216,6 +248,14 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
           insert_queue (&path, origin_node);  /* Inserts first node in the queue */
           top_node = find_path (&objective, map_whithout_mobs, place_holder, &path, &ended_without_path);
           ended_without_path = 1;
+        
+          /* Cleans the path */
+          while (path.nodes != NULL)
+          {
+            Node *temp = path.nodes;
+            free (path.nodes);
+            path.nodes = temp -> prev;
+          }
         }
         break;
       
@@ -226,6 +266,14 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
           init_queue (&path);
           insert_queue (&path, origin_node);  /* Inserts first node in the queue */
           top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
+        
+          /* Cleans the path */
+          while (path.nodes != NULL)
+          {
+            Node *temp = path.nodes;
+            free (path.nodes);
+            path.nodes = temp -> prev;
+          }
         }
         /* 
           If there is no path to trap the player, this version of the map with
@@ -238,6 +286,14 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
           insert_queue (&path, origin_node);  /* Inserts first node in the queue */
           top_node = find_path (&objective, map_whithout_mobs, place_holder, &path, &ended_without_path);
           ended_without_path = 1;
+        
+          /* Cleans the path */
+          while (path.nodes != NULL)
+          {
+            Node *temp = path.nodes;
+            free (path.nodes);
+            path.nodes = temp -> prev;
+          }
         }
         break;
       /* For every run, at least one of the above is choosen */
@@ -248,7 +304,11 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
 
     display_enemy_path (top_node, map, traveled_path, &(is_awake -> enemies_awaken[index]));
 
-    free (path.nodes);
-    path.nodes = NULL;
+    while (path.nodes != NULL)
+    {
+      Node *temp = path.nodes;
+      free (path.nodes);
+      path.nodes = temp -> prev;
+    }
   }
 }
