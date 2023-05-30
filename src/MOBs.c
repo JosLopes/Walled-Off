@@ -6,6 +6,7 @@
 #include <time.h>
 
 /* 
+  a104541-José António Fernandes Alves Lopes
   locate_positions locates eveery possible position for an enemy to spawn, 
   in a set number of rooms called non_overlaping_rooms (array '*no_overlpg').
   This set of rooms as described before has the property of, when built, not
@@ -70,6 +71,7 @@ int locate_positions (int map_heigth, int map_width, char **map, int number_of_e
 }
 
 /* 
+  a104541-José António Fernandes Alves Lopes
   The function 'Variable_stats *d_enemies_variable_stats' initalizes every dumb enemy
   that is created manually by the programmer, its a special feature that allows
   to add new enemies to the game without much trouble, add the enemy to the 'd_variables'
@@ -130,6 +132,7 @@ Variable_stats *g_enemies_variable_stats ()
 }
 
 /* 
+  a104541-José António Fernandes Alves Lopes
   Initializes the tag to be used in the different enemies (depends only in the inteligence level)
   with pre-made stats that are common to that set type of enemy and can be changed in 'defines.h' */
 
@@ -144,6 +147,7 @@ void init_tag (Tag *tag, char intel, int max_xp, int min_xp, int poison, int gro
 }
 
 /*
+  a104541-José António Fernandes Alves Lopes
   Initializes the stats that are unique to each diferent enemy */
 
 void init_enemy_stats (Enemy *enemy, Tag *tag, Variable_stats *variables)
@@ -162,6 +166,7 @@ void init_enemy_stats (Enemy *enemy, Tag *tag, Variable_stats *variables)
 }
 
 /* 
+  a104541-José António Fernandes Alves Lopes
   Places every enemy somewhere on the map, if the terrain is apropried, i.e. a FLOOR_CHAR */
 
 void place_enemies (int number_of_enemies, Enemy *enemies, char **map)
@@ -175,6 +180,7 @@ void place_enemies (int number_of_enemies, Enemy *enemies, char **map)
 }
 
 /*
+  a104541-José António Fernandes Alves Lopes
   This is the "main function" of this module, it creates the tags that are attached to each
   enemy and combines both the tags and the unique characteristcs of an indivual enemy and places
   everyone on the map in the spots calculated before in the 'locate_positions' function */
