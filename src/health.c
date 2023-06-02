@@ -103,12 +103,12 @@ void food_and_potions (Character *character, Consumables *available, char *previ
 void water_damage(char** map, Character *character, char *previous_char, int *count_water)
 {
   if (*previous_char == WATER_CHAR) {
-    count_water ++;
-  }
+    (*count_water) ++;
 
-  if (count_water == 4) {
-    character->life -= 5;
-    count_water = 0;
+    if ((*count_water) == 4 && character->life >= 5) {
+      character->life -= 5;
+      (*count_water) = 0;
+    }
   }
 }
 
