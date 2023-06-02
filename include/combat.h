@@ -13,7 +13,7 @@ void activate_special_power(Character *player);
 void handle_attack_input(Character *player, Enemy *enemy, Awake *is_awake, Enemy *enemies);
 void handle_special_power_input(Character *player);
 void attack(Character *player, Enemy *enemy, Awake *is_awake, Enemy *enemies);
-void enemy_sees_player(Character *player, Enemy *enemy);
+void enemy_sees_character(Character *player, Enemy *enemy);
 void remove_dead_enemy(int index, Awake *is_awake, Enemy *enemies);
 void check_enemy_direction(Character *player, Enemy *enemies[], int num_enemies);
 

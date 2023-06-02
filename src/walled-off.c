@@ -15,13 +15,44 @@
 #include "combat.h"
 #include "consumables.h"
 #include "health.h"
+#include <string.h>
 
-void init_character(Character *character)
+init_character(Character *character)
 {
-  character -> x = 0;
-  character -> y = 0;
-  character -> life = 80;
-  character -> initial_life = 100;
+  character->x = 0;
+  character->y = 0;
+  character->life = 100;
+  strcpy(character->name, "Player 1");
+  character->xp = 2 * character->life;
+  character->initial_life = 100 ;
+  
+
+
+strcpy(character->weapons[0].name, "Sword");
+  character->weapons[0].damage = 10;
+  character->weapons[0].range = 1.5;
+  strcpy(character->weapons[0].special_power, "None");
+  character->weapons[0].special_type = DamageBoost;
+  character->weapons[0].special_duration = 0;
+  character->weapons[0].turns_left = 0;
+
+  // Weapon 2
+  strcpy(character->weapons[1].name, "Bow");
+  character->weapons[1].damage = 8;
+  character->weapons[1].range = 2.0;
+  strcpy(character->weapons[1].special_power, "Fire Arrow");
+  character->weapons[1].special_type = Fire;
+  character->weapons[1].special_duration = 3;
+  character->weapons[1].turns_left = 0;
+
+  // Weapon 3
+  strcpy(character->weapons[2].name, "Dagger");
+  character->weapons[2].damage = 6;
+  character->weapons[2].range = 1.0;
+  strcpy(character->weapons[2].special_power, "Poison Blade");
+  character->weapons[2].special_type = Poison;
+  character->weapons[2].special_duration = 5;
+  character->weapons[2].turns_left = 0;
 }
 
 void init_ncurses() {
@@ -225,9 +256,14 @@ int main ()
 
     /*=================================== End of Initialization ===================================*/
     
+// int num_enemies =number_of_enemies;
+    // int awake_range = AWAKE_RANGE;
+    Enemy* enemy = enemies;
     /* GAME LOOP */
     int ch;  /* Input character read as an integer */
-
+    //choose_weapon(&character);
+    
+  
     while ((ch = wgetch(main_window)) != 'q')
     {
       /* Basic movement */
@@ -237,7 +273,17 @@ int main ()
       vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
 
       food_and_potions (&character, available, &previous_char, number_of_consumables);
-      
+       calculate_enemy_damage(&character,enemy);
+ //character_take_damage(&character, float damage);
+ enemy_attack(&character,enemy);
+ enemy_take_damage(&character,enemy, is_awake,enemies);
+ activate_special_power(&character);
+ handle_attack_input(&character, enemy,is_awake,enemies);
+ handle_special_power_input(&character);
+ attack(&character, enemy, is_awake, enemies);
+ enemy_sees_character(&character, enemy);
+ //remove_dead_enemy( index,is_awake,enemies);
+ //check_enemy_direction(&character,enemy, number_of_enemies,AWAKE_RANGE );
       if (previous_char != WATER_CHAR)
       {
         /* Initializes more enemies, if necessary, to the is_awaken struct */
