@@ -17,14 +17,14 @@
 #include "health.h"
 #include <string.h>
 
-init_character(Character *character)
+void init_character(Character *character)
 {
   character->x = 0;
   character->y = 0;
-  character->life = 100;
+  character->life = 400;
   strcpy(character->name, "Player 1");
   character->xp = 2 * character->life;
-  character->initial_life = 100 ;
+  character->initial_life = 400 ;
   
 
 
@@ -256,13 +256,9 @@ int main ()
 
     /*=================================== End of Initialization ===================================*/
     
-// int num_enemies =number_of_enemies;
-    // int awake_range = AWAKE_RANGE;
-    Enemy* enemy = enemies;
     /* GAME LOOP */
     int ch;  /* Input character read as an integer */
-    //choose_weapon(&character);
-    
+   
   
     while ((ch = wgetch(main_window)) != 'q')
     {
@@ -273,17 +269,13 @@ int main ()
       vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
 
       food_and_potions (&character, available, &previous_char, number_of_consumables);
-       calculate_enemy_damage(&character,enemy);
- //character_take_damage(&character, float damage);
- enemy_attack(&character,enemy);
- enemy_take_damage(&character,enemy, is_awake,enemies);
- activate_special_power(&character);
- handle_attack_input(&character, enemy,is_awake,enemies);
- handle_special_power_input(&character);
- attack(&character, enemy, is_awake, enemies);
- enemy_sees_character(&character, enemy);
- //remove_dead_enemy( index,is_awake,enemies);
- //check_enemy_direction(&character,enemy, number_of_enemies,AWAKE_RANGE );
+
+      // Initialize the attack function
+      attack(&character, enemies, is_awake);
+
+      // Initialize the check_enemy_direction function
+      //check_enemy_direction(&character, enemies, number_of_enemies, AWAKE_RANGE);
+
       if (previous_char != WATER_CHAR)
       {
         /* Initializes more enemies, if necessary, to the is_awaken struct */
