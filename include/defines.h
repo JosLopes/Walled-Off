@@ -19,6 +19,7 @@
 #define FLOOR_CHAR '.'
 #define WATER_CHAR '~'
 #define UNDISCOVERED_PATH_CHAR ' '
+#define STATIC_OBS_CHAR '!'
 
 #define FOOD_CHAR '='
 #define POTION_CHAR '@'
