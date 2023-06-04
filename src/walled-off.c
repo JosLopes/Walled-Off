@@ -29,32 +29,40 @@ void init_character(Character *character)
 
 
 strcpy(character->weapons[0].name, "Sword");
-  character->weapons[0].damage = 10;
-  character->weapons[0].range = 1.5;
-  strcpy(character->weapons[0].special_power, "None");
+  character->weapons[0].damage = 50;
+  character->weapons[0].range = 5.0;
+  strcpy(character->weapons[0].special_power, "Damage_Boost");
   character->weapons[0].special_type = DamageBoost;
-  character->weapons[0].special_duration = 0;
+  character->weapons[0].special_duration = 10;
   character->weapons[0].turns_left = 0;
 
   // Weapon 2
-  strcpy(character->weapons[1].name, "Bow");
-  character->weapons[1].damage = 8;
-  character->weapons[1].range = 2.0;
-  strcpy(character->weapons[1].special_power, "Fire Arrow");
-  character->weapons[1].special_type = Fire;
-  character->weapons[1].special_duration = 3;
+  strcpy(character->weapons[1].name, "Calhau");
+  character->weapons[1].damage = 13;
+  character->weapons[1].range = 1.0;
+  strcpy(character->weapons[1].special_power, "Healing");
+  character->weapons[1].special_type = Healing;
+  character->weapons[1].special_duration = 1;
   character->weapons[1].turns_left = 0;
 
   // Weapon 3
   strcpy(character->weapons[2].name, "Dagger");
-  character->weapons[2].damage = 6;
-  character->weapons[2].range = 1.0;
-  strcpy(character->weapons[2].special_power, "Poison Blade");
+  character->weapons[2].damage = 15;
+  character->weapons[2].range = 3.0;
+  strcpy(character->weapons[2].special_power, "Poison");
   character->weapons[2].special_type = Poison;
-  character->weapons[2].special_duration = 5;
+  character->weapons[2].special_duration = 30;
   character->weapons[2].turns_left = 0;
-}
 
+//Weapon
+  strcpy(character->weapons[3].name, "Ring");
+  character->weapons[3].damage = 0;
+  character->weapons[3].range = 5.0;
+  strcpy(character->weapons[3].special_power, "Teleport");
+  character->weapons[3].special_type = Teleport;
+  character->weapons[3].special_duration = 1;
+  character->weapons[3].turns_left = 0;
+}
 void init_ncurses() {
 
   initscr();
@@ -258,20 +266,19 @@ int main ()
     
     /* GAME LOOP */
     int ch;  /* Input character read as an integer */
-   
-  
+ 
+
     while ((ch = wgetch(main_window)) != 'q')
     {
       /* Basic movement */
       movement (&character, map, ch, &previous_char);
 
+ 
       /* Introducing vision */
       vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
 
       food_and_potions (&character, available, &previous_char, number_of_consumables);
 
-      // Initialize the attack function
-      attack(&character, enemies, is_awake);
 
       // Initialize the check_enemy_direction function
       //check_enemy_direction(&character, enemies, number_of_enemies, AWAKE_RANGE);
@@ -282,6 +289,9 @@ int main ()
         init_awaken_enemies (&character, enemies, is_awake, map_static_obstacles);
         build_path (is_awake, &character, map, traveled_path, map_static_obstacles, place_holder, enemies);
       }
+
+       // Initialize the attack function
+      attack(&character, enemies, is_awake, map, ch );
 
       /* At the end of every loop, refresh main_window, display_win and instructions_win */
       display_map (main_window, &character, map, MAP_WIDTH, traveled_path);

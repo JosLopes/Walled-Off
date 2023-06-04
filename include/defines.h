@@ -28,7 +28,7 @@
 #define PLAYER_CHAR_RIGHT '>'
 #define PLAYER_CHAR_UP '^'
 #define PLAYER_CHAR_DOWN 'V'
-#define PLAYER_VISION 3
+#define PLAYER_VISION 5
 
 /*== COLORS ==*/
 #define PLAYER_VISION_COLOR1 1

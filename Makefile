@@ -1,6 +1,6 @@
 IDIR = include
 CC = gcc
-CFLAGS = -g -Wall -Wextra -pedantic -O2 -I$(IDIR)
+CFLAGS = -g -Wall -Wextra -pedantic -O0 -I$(IDIR)
 
 all: walled-off
 

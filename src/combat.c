@@ -12,13 +12,13 @@
 #include <string.h>
 
 
-Weapon *choose_weapon(Character *character)
+ void choose_weapon(Character *character)
 {
   int current_weapon_index; /* Armazena o índice da arma escolhida pelo jogador */
 
   clear();
   printw("Selecione uma arma:\n");
-  for (int i = 0; i < 3; i++) /* Usa um loop for para imprimir as três armas disponíveis para o jogador escolher */
+  for (int i = 0; i < 4; i++) /* Usa um loop for para imprimir as três armas disponíveis para o jogador escolher */
   {
     printw("%d - %s\n", i + 1, character->weapons[i].name);
   }
@@ -27,15 +27,15 @@ Weapon *choose_weapon(Character *character)
   do /* Recebe um input e verifica se é válido. A variável current_weapon_index é atualizada com o valor de current_weapon_index da struct Character: */
   {
     current_weapon_index = getch() - '0';
-  } while (current_weapon_index < 1 || current_weapon_index > 3);
+  } while (current_weapon_index < 1 || current_weapon_index > 4);
 
-  return &(character->weapons[current_weapon_index - 1]);
+  character->current_weapon_index = current_weapon_index -1 ;
 }
 
 float calculate_enemy_damage(Character *character, Awake *is_awake)//mudar o resto das instâncias
 {
   float max_hp = character->initial_life;
-  float max_xp = character->initial_life * 4;
+  float max_xp = character->initial_life * 2;
   float base_damage = (max_hp + max_xp) * 0.00;
 
   float total_damage = 0.0;
@@ -57,9 +57,12 @@ This means that if the damage is greater than the character's xp, the xp will be
 If the character has xp left and the damage taken is less than or equal to the xp, the function simply deducts the damage from the character's xp.
 If the character has no xp left, the function simply subtracts the damage from the character's life attribute.*/
 
-void character_take_damage(Character *character, float total_damage)
+void character_take_damage(Character *character,Enemy *enemy, float total_damage)
 {
+float distance = sqrt(pow(enemy->x - character->x, 2)+ pow( enemy->y - character->y,2));
+
   float xp = character->xp;
+if (distance <= enemy->range){
   if (xp > 0)
   {
     if (total_damage > xp)
@@ -77,11 +80,12 @@ void character_take_damage(Character *character, float total_damage)
     character->life -= total_damage;
   }
 }
+}
 
-void enemy_attack(Character *character, Awake *is_awake)
+void enemy_attack(Character *character,Enemy *enemy, Awake *is_awake)
 {
   float damage = calculate_enemy_damage(character, is_awake);
-  character_take_damage(character, damage);
+  character_take_damage(character, enemy ,damage);
   if (character->life <= 0)
   {
     // Game over
@@ -108,243 +112,233 @@ in the array into the position of the dead enemy. The size of the is_awake->enem
 After that, checks whether the enemies array is not NULL. If it is not NULL, it means that the enemy is also present in the enemies array,
 so the function proceeds to remove it from there as well.
 To do this, it overwrites the enemy in the enemies array with the last enemy in the array and updates its index to reflect its new position in the array.*/
-void remove_dead_enemy(int index, Awake *is_awake, Enemy *enemies)
+void remove_dead_enemy(int index, Awake *is_awake, Enemy *enemies, char **map)
 {
   /* Swap the dead enemy with the last enemy in the array */
   is_awake->enemies_awaken[index] = is_awake->enemies_awaken[is_awake->current_size - 1];
   is_awake->current_size--;
+
   /* If the enemy is also in the 'enemies' array, remove it from there too */
   if (enemies != NULL)
   {
     enemies[is_awake->enemies_awaken[index].index] = enemies[is_awake->current_size];
     enemies[is_awake->current_size].index = is_awake->enemies_awaken[index].index;
   }
+
+  /* Remove the enemy from the map */
+  int enemyX = is_awake->enemies_awaken[index].x;
+  int enemyY = is_awake->enemies_awaken[index].y;
+  map[enemyY][enemyX] = FLOOR_CHAR; // Replace with the appropriate empty character or fill it with a special character
 }
 
-void enemy_take_damage(Character *character, Awake *is_awake)
+void enemy_take_damage(Character *character, Enemy *enemy, Awake *is_awake, char **map)
 {
-  int weapon_damage = character->weapons[character->current_weapon_index - 1].damage;
+  int weapon_damage = character->weapons[character->current_weapon_index].damage;
   float max_xp = character->initial_life * 4;
-  for (int i = 0; i < is_awake->current_size; i++)
+
+  enemy->life -= weapon_damage;
+
+  if (enemy->life > 0)
+  {
+    enemy->awake = 0;
+    enemy_attack(character, enemy, is_awake);
+  }
+  else
+  {
+    int enemy_index = enemy->index;
+    remove_dead_enemy(enemy_index, is_awake, NULL, map);
+    character->xp += enemy->tag->xp_from_death;
+  }
+
+  if (character->xp >= max_xp)
+  {
+    character->xp = max_xp;
+  }
+}
+
+
+
+void handle_attack_input(Character *character , Awake *is_awake, char **map)
+{
+   for (int i = 0; i < is_awake->current_size; i++)
   {
     Enemy *enemy = &(is_awake->enemies_awaken[i]);
+int dx = character->x - enemy->x;
+  int dy = character->y - enemy->y;
+  int distance = sqrt(dx * dx + dy * dy);
 
-    enemy->life -= weapon_damage;
-
-    if (enemy->life > 0)
-    {
-      enemy->awake = 0;
-      enemy_attack(character, is_awake);
-    }
-    else
-    {
-      remove_dead_enemy(i, is_awake, NULL);
-      character->xp += enemy->tag->xp_from_death;
-    }
-    if (character->xp >= max_xp)
-    {
-      character->xp = max_xp;
-    }
-    else
-    {
-      character->xp +=0;
-    }
-  }
-
-}
-
-/*The function first calls the choose_weapon function to get the currently equipped weapon of the character. If the character does not have enough XP to
-activate the special power (which requires at least the initial life value multiplied by 4), a message is printed and the function returns.
- Otherwise, a switch statement is used to identify the type of special power associated with the selected weapon and modify the weapon's damage and special duration fields accordingly.*/
-void activate_special_power(Character *character, Weapon *weapon)
-{
-  if (character->xp < character->initial_life * 2)
-  {
-    printf("Você não tem XP suficiente para usar o poder especial\n");
-    return;
-  }
-
-  switch (weapon->special_type)
-  {
-    case DamageBoost:
-      printf("Você usou o poder especial de aumento de dano da arma %s!\n", weapon->name);
-      weapon->damage *= 1.5;
-      weapon->special_duration = 3;
-      break;
-    case Fire:
-      printf("Você usou o poder especial de fogo da arma %s!\n", weapon->name);
-      weapon->damage *= 2;
-      weapon->special_duration = 2;
-      break;
-    case Poison:
-      printf("Você usou o poder especial de veneno da arma %s!\n", weapon->name);
-      weapon->damage *= 1.2;
-      weapon->special_duration = 4;
-      break;
-    default:
-      printf("Poder especial inválido!\n");
-      return;
-  }
-
-  weapon->turns_left = weapon->special_duration;
-  character->xp = 0;
-}
-
-void handle_attack_input(Character *character, Enemy *enemy, Awake *is_awake)
-{
-  char input;
-  input = getch();
-
-  if (input == 'e')
-  {
-    Weapon *weapon = choose_weapon(character);
-    float xp = character->xp;
-    float max_xp = character->initial_life * 4;
     
+        
+        float weapon_range = character->weapons[(character->current_weapon_index) ].range;
 
-    if (xp >= max_xp && strlen(weapon->special_power) > 0)
-    {
-      activate_special_power(character, weapon);
-    }
-    /*The function checks the direction of the character and determines whether the enemy is in front of the character. If the enemy is in front,
-    the function calls the enemy_take_damage function to deduct the enemy's life based on the character's attack power.
-    If the enemy's life is still above 0, then the function calls the enemy_attack function to allow the enemy to counter-attack the character.*/
-    if (character->direction == '^' && enemy->y < character->y)
-    {
-      enemy_take_damage(character, is_awake);
-    }
-    else if (character->direction == '>' && enemy->x > character->x)
-    {
-      enemy_take_damage(character, is_awake);
-    }
-    else if (character->direction == '<' && enemy->x < character->x)
-    {
-      enemy_take_damage(character, is_awake);
-    }
-    else if (character->direction == 'v' && enemy->y > character->y)
-    {
-      enemy_take_damage(character, is_awake);
-    }
-    /*If the character's life is reduced to 0 or below, then the game ends, and the function exits. Otherwise, the function calls
-    the character_take_damage function to deduct the character's life based on the enemy's attack power.
-    If the character's life is still above 0, the function continues to check if the enemy's life is reduced to 0 or below.
-    If it is, the function adds the XP gain to the character's XP and prints a message informing the character of the XP gain.*/
-    float damage = calculate_enemy_damage(character, is_awake);
-    character_take_damage(character, damage); // total damage
-    if (enemy->life > 0)
-    {
-      enemy_attack(character, is_awake);
-    }
-    else
-    {
-      printf("Você matou o inimigo e ganhou %d de XP!\n", enemy->tag->xp_from_death);
-    }
+        if (distance <= weapon_range)
+        {
+            // Check the direction of the character and determine if the enemy is in front
+            if (character->direction == PLAYER_CHAR_UP && enemy->y < character->y && enemy->x == character->x)
+            {
+                enemy_take_damage(character, enemy,is_awake, map);
+
+            }
+            else if (character->direction == PLAYER_CHAR_RIGHT && enemy->x > character->x && enemy->y == character->y)
+            {
+                enemy_take_damage(character,enemy, is_awake, map);
+              
+            }
+            else if (character->direction ==  PLAYER_CHAR_LEFT && enemy->x < character->x && enemy->y == character->y)
+            {
+                enemy_take_damage(character,enemy,  is_awake, map);
+                
+            }
+            else if (character->direction == PLAYER_CHAR_DOWN && enemy->y > character->y && enemy->x == character->x)
+            {
+                enemy_take_damage(character,enemy, is_awake, map);
+                
+            }
+
+            // If enemy's life is above 0, enemy attac,ks character
+            if (enemy->life > 0)
+            {
+                enemy_attack(character, enemy, is_awake);
+            }
+            else
+            {
+                printf("Você matou o inimigo e ganhou %d de XP!\n", enemy->tag->xp_from_death);
+            }
+        }
   }
+    
 }
 
-void handle_special_power_input(Character *character)
+void handle_special_power_input(Character *character, Enemy *enemy, char **map)
 {
-  char input;
-
-  input = getch();
-
-  if (input == 'i')
+  Weapon *weapon = &(character->weapons[character->current_weapon_index]); // Get the currently selected weapon
+  
+  if (character->xp >= character->initial_life * 0.3 && strlen(weapon->special_power) > 0)
   {
-    Weapon *weapon = choose_weapon(character);
-
-    if (character->xp >= character->initial_life * 4 && strlen(weapon->special_power) > 0)
+    if (weapon->turns_left > 0)
     {
-      switch (weapon->special_type)
-      {
+      printf("Você já está com o poder especial ativo na arma %s!\n", weapon->name);
+      return;
+    }
+
+    printf("Você usou o poder especial da arma %s!\n", weapon->name);
+
+    switch (weapon->special_type)
+    {
       case DamageBoost:
-        printf("Você já está com o poder especial de aumento de dano ativo na arma %s!\n", weapon->name);
+        printf("O dano da arma foi aumentado em 1.5 vezes!\n");
+        weapon->damage *= 1.5;
+        weapon->special_duration = character->weapons[0].special_duration;
         break;
-      case Fire:
-        printf("Você usou o poder especial de fogo da arma %s!\n", weapon->name);
-        // futuramente adicionar código para causar dano de fogo adicional aqui
-        weapon->turns_left = weapon->special_duration; // inicializa o campo "turnos restantes" com a duração do poder especial
+      case Healing:
+        printf("Vida boa!\n");
+        int healingAmount = character->initial_life * 0.5;
+        int maxLife = character->initial_life;
+        if (character->life + healingAmount > maxLife)
+        {
+          healingAmount = maxLife - character->life;
+        }
+        character->life += healingAmount;
+        printf("Você foi curado em %d pontos de vida!\n", healingAmount);
+        weapon->special_duration = character->weapons[1].special_duration;
         break;
       case Poison:
-        printf("Você usou o poder especial de veneno da arma %s!\n", weapon->name);
-        // futuramente adicionar código para envenenar o inimigo aqui
-        weapon->turns_left = weapon->special_duration;
+        printf("O inimigo foi envenenado e sofrerá dano a cada turno!\n");
+        enemy-> life -=5;
+        weapon->special_duration = character->weapons[2].special_duration;
+
+    break;
+      
+    case Teleport:
+{
+  int targetX, targetY;
+  do {
+    // Generate random coordinates within the map range
+    targetX = rand() % MAP_WIDTH;
+    targetY = rand() % MAP_HEIGHT;
+  } while (map[targetY][targetX] != FLOOR_CHAR); // Keep generating until a valid floor position is found
+
+  // Set the previous position to FLOOR_CHAR
+  map[character->y][character->x] = FLOOR_CHAR;
+
+  printf("Você foi teleportado para a posição (%d, %d)\n", targetX, targetY);
+  character->x = targetX;
+  character->y = targetY;
+
+  // Set the new position to the character's direction
+  map[targetY][targetX] = character->direction;
+
+  weapon->special_duration = character->weapons[3].special_duration;
+}
+
         break;
       default:
         printf("Poder especial inválido!\n");
         return;
-      }
+    }
 
-      character->xp = 0;
+    weapon->turns_left = weapon->special_duration; // Initialize the "turns left" field with the duration of the special power
+    character->xp -= character->initial_life * 0.3;
+  }
+  else
+  {
+    printf("Você não tem XP suficiente ou a arma não possui poder especial!\n");
+  }
+}
+void update_power(Character *character, Enemy *enemy)
+{
+  for (int i = 0; i < 4; i++) // Assuming there are three weapons
+  {
+    Weapon *weapon = &(character->weapons[i]);
+    
+    if (weapon->turns_left > 0)
+    {
+      weapon->turns_left--;
+      
+      if (weapon->turns_left == 0)
+      {
+        // The special power has reached zero
+        printf("O poder especial da arma %s acabou!\n", weapon->name);
+        
+        switch (weapon->special_type)
+        {
+          case DamageBoost:
+            weapon->damage /= 1.5;
+            break;
+          case Healing:
+            character->life+= 0;
+            break;
+          case Poison:
+          enemy->life+=0;
+
+          break;
+          case Teleport:
+           
+            break;
+          default:
+            break;
+        }
+      }
     }
   }
 }
 
-void attack(Character *character, Enemy *enemy, Awake *is_awake)
+void attack(Character *character, Enemy *enemy, Awake *is_awake, char **map, int ch)
 {
  
     enemy_sees_character(character, enemy);
+     update_power(character, enemy);
+if (ch == 'r'){
+   choose_weapon(character);
+  handle_attack_input(character, is_awake, map);
+}
+ if (ch == 'e'){
+  
+   handle_attack_input(character,is_awake, map);
+}
+if (ch =='i'){
+        handle_special_power_input(character, enemy, map);
 
-    if (enemy->awake)
-    {
-      int range = sets_range(character->life);
-      float weapon_range = character->weapons[character->current_weapon_index - 1].range;
-      if (weapon_range <= range)
-      {
-        handle_attack_input(character, enemy, is_awake);
-        handle_special_power_input(character);
-      }
-    }
+}
   
 }
-/*The function first gets the coordinates of the character and their current direction, as well as the damage of the current weapon they are using.
-It then iterates through the array of enemies and for each enemy, it calculates the distance between the enemy and the character.
-If the distance is within the "awake range", it checks if the enemy is located in the direction the character is facing.
-If the enemy is in the same row or column as the character and in the correct direction, the function calls the character_take_damage function,
-passing in the damage of the character's weapon.
-If an enemy is not in the awake range, or not located in the direction the character is facing, the function does not take any action and continues checking the remaining enemies in the array.*/
-
-
-/*void check_enemy_direction(Character *character, Enemy *enemies[], int num_enemies, int awake_range)
-{
-  int px = character->x;
-  int py = character->y;
-  char direction = character->direction;
-  int damage = character->weapons->damage;
-
-  for (int i = 0; i < num_enemies; i++)
-  {
-    int ex = enemies[i]->x;
-    int ey = enemies[i]->y;
-
-    // Check distance between character and enemy
-    int distance = sqrt(pow(ex - px, 2) + pow(ey - py, 2));
-    if (distance <= awake_range)
-    {
-      if (direction == '^' && ex == px && ey < py)
-      {
-        // Enemy is above character
-        character_take_damage(character, damage);
-        return;
-      }
-      else if (direction == '>' && ey == py && ex > px)
-      {
-        // Enemy is to the right of character
-        character_take_damage(character, damage);
-        return;
-      }
-      else if (direction == '<' && ey == py && ex < px)
-      {
-        // Enemy is to the left of character
-        character_take_damage(character, damage);
-        return;
-      }
-      else if (direction == 'v' && ex == px && ey > py)
-      {
-        // Enemy is below character
-        character_take_damage(character, damage);
-        return;
-      }
-    }
-  }
-}
-~~~~~~~~~~~~~*/
