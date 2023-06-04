@@ -154,7 +154,7 @@ int main ()
     Non_overlaping_rooms *not_overlpg = malloc (sizeof (Non_overlaping_rooms) * number_of_non_overlaping_rooms); // Free this memory later !!!
 
     /* Mob's (enemies) related initializations */
-    int max_number_of_enemies = number_of_non_overlaping_rooms * 3; /* Max number of enemies */
+    int max_number_of_enemies = number_of_non_overlaping_rooms * 4; /* Max number of enemies */
 
     /* Initializes a struct array that stores all non overlaping rooms */
     init_non_overlaping_rooms (rooms, numRooms, not_overlpg, number_of_non_overlaping_rooms);

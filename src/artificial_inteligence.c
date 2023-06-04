@@ -34,7 +34,7 @@ void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake,
     future_start.x = enemies[index].x;
     /* Distance between the player and the enemy */
     distance = distance_from_objective (objective, future_start);
-    if (distance < AWAKE_RANGE && enemies[index].awake == 1)
+    if (distance < AWAKE_RANGE && enemies[index].awake == 1) // && current_size < total_size
     {
       is_awake -> enemies_awaken[is_awake -> current_size] = enemies[index];
       is_awake -> current_size ++;
@@ -220,7 +220,9 @@ void build_obstacles (char **map, Node *node)
   {
     while (node -> prev != NULL)
     {
-      map[node -> row][node -> col] = STATIC_OBS_CHAR;
+      if (map[node -> row][node -> col] != FOOD_CHAR &&
+          map[node -> row][node -> col] != POTION_CHAR)
+        map[node -> row][node -> col] = STATIC_OBS_CHAR;
       node = node -> prev;
     }
   }

@@ -110,6 +110,15 @@ void insert_queue (Path_queue *path, Node node)
   path -> number_of_nodes ++;
 }
 
+int its_walkable (char **map, Point p)
+{
+  if (map[p.y][p.x] == FLOOR_CHAR ||
+      map[p.y][p.x] == POTION_CHAR ||
+      map[p.y][p.x] == FOOD_CHAR)
+      return 1;
+  return 0;
+}
+
 /**
  * a104541 - José António Fernandes Alves Lopes
  * Create a new node to insert in the queue
@@ -137,10 +146,12 @@ Node init_new_node (int new_row, int new_col, Point *objective, Node node, Node 
  */
 Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *path, int *ended_without_path)
 {
+  Point p;
   Node *prev;
   /* To be used in verifying paths in the loop */
   int current_row;
   int current_col;
+  int walk = 0;
 
   Node current_node;  /* Current origin */
   Node temp;  /* Temporary node */
@@ -173,13 +184,15 @@ Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *pa
     current_col = current_node.col;
 
     int current_row_plus = current_row + 1;
+    p.y = current_row_plus;
+    p.x = current_col;
 
     /**
      * If the node in the map array is valid to walk by enemies and
      * the node in the same position was not yet explored, create a
      * new node and verify another condition
      */
-    if (map[current_row_plus][current_col] == FLOOR_CHAR &&
+    if ((walk = its_walkable (map, p)) == 1 &&
         node_array[current_row_plus][current_col].explored == 1)
     {
       /* Temporary above node */
@@ -194,8 +207,10 @@ Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *pa
     }
 
     int current_row_less = current_row - 1;
+    p.y = current_row_less;
+    p.x = current_col;
 
-    if (map[current_row_less][current_col] == FLOOR_CHAR &&
+    if ((walk = its_walkable (map, p)) == 1 &&
         node_array[current_row_less][current_col].explored == 1)
     {
       /* Temporary bellow node */
@@ -210,8 +225,10 @@ Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *pa
     }
 
     int current_col_plus = current_col + 1;
+    p.y = current_row;
+    p.x = current_col_plus;
 
-    if (map[current_row][current_col_plus] == FLOOR_CHAR &&
+    if ((walk = its_walkable (map, p)) == 1 &&
         node_array[current_row][current_col_plus].explored == 1)
     {
       /* Temporary right node */
@@ -226,8 +243,10 @@ Node find_path (Point *objective, char **map, Node *place_holder, Path_queue *pa
     }
 
     int current_col_less = current_col -1;
+    p.y = current_row;
+    p.x = current_col_less;
 
-    if (map[current_row][current_col_less] == FLOOR_CHAR &&
+    if ((walk = its_walkable (map, p)) == 1 &&
         node_array[current_row][current_col_less].explored == 1)
     {
       /* temporary left node */
