@@ -13,6 +13,7 @@
 #include "vision.h"
 
 /*
+* a104086 - Daniel Silva
 * a104188 - Ana Cerqueira
 * Function to spawn foods and potions in the map (WITHOUT ROOMS)
 * Generates three random numbers, one for an index between 0 and
@@ -57,6 +58,7 @@ void place_foods_and_potions(char** map, int number_of_consumables, Consumables 
 }
 
 /*
+* a104086 - Daniel Silva
 * a104188 - Ana Cerqueira
 * a104541 - José António Fernandes Alves Lopes
 * Function responsible for eating.
@@ -74,11 +76,11 @@ void food_and_potions (Character *character, Consumables *available, char *previ
     /*makes the impact on character life*/
     if (available[i].y == character -> y && available[i].x == character -> x)
     {
-        if (character->life + available[i].impact_life < character -> initial_life)
+        if (character->life + available[i].impact_life <= character -> initial_life)
         {
           character->life += available[i].impact_life;
           character->xp += available[i].impact_xp;
-        } else if (character->life + available[i].impact_life > character -> initial_life) {
+        } else if (character->life + available[i].impact_life >= character -> initial_life) {
           character->life = character -> initial_life;
           character->xp += available[i].impact_xp;
         }
@@ -92,5 +94,22 @@ void food_and_potions (Character *character, Consumables *available, char *previ
   if (*previous_char == FOOD_CHAR || *previous_char == POTION_CHAR)
   {
     *previous_char = FLOOR_CHAR;
+  }
+}
+
+/*
+* a104086 - Daniel Silva
+* Function responsible for taking life when the player is on the water.
+* This function verifies if the player has been on the water for 4 plays and, if so, takes away 5 points of life
+*/
+void water_damage(char** map, Character *character, char *previous_char, int *count_water)
+{
+  if (*previous_char == WATER_CHAR) {
+    (*count_water) ++;
+
+    if ((*count_water) == 4 && character->life >= 5) {
+      character->life -= 5;
+      (*count_water) = 0;
+    }
   }
 }

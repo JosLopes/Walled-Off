@@ -228,6 +228,10 @@ int main ()
     /* GAME LOOP */
     int ch;  /* Input character read as an integer */
 
+    /* Initialize count_water variable */
+    int *count_water = (int*)malloc(sizeof(int));
+    *count_water = 0;
+
     while ((ch = wgetch(main_window)) != 'q')
     {
       /* Basic movement */
@@ -237,6 +241,8 @@ int main ()
       vision_color (main_window, &character, map, MAP_WIDTH, traveled_path);
 
       food_and_potions (&character, available, &previous_char, number_of_consumables);
+
+      water_damage(map, &character, &previous_char, count_water);
       
       if (previous_char != WATER_CHAR)
       {
