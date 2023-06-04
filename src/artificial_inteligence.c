@@ -109,20 +109,40 @@ Node closest_enemy (char **map, char **map_static_obstacles, Node *place_holder,
  * from the previous  called objective (now suposed starting point) to 
  * the previous start (now suposed objective)
  */
-void display_enemy_path (Node top_node, char **map, char traveled_path[][MAP_WIDTH], Enemy *enemy)
+void display_enemy_path (Consumables *available, Node top_node, char **map, char traveled_path[][MAP_WIDTH], Enemy *enemy)
 {
   int old_y = enemy -> y, old_x = enemy -> x;
-  
-  if (top_node.prev != NULL &&
-      map[top_node.row][top_node.col] == FLOOR_CHAR)
+  char next_char = ' ';
+
+  if (map[top_node.row][top_node.col] == FLOOR_CHAR ||
+      map[top_node.row][top_node.col] == STATIC_OBS_CHAR) next_char = FLOOR_CHAR;
+  if (map[top_node.row][top_node.col] == FOOD_CHAR) next_char = FOOD_CHAR;
+  if (map[top_node.row][top_node.col] == POTION_CHAR) next_char = POTION_CHAR;
+
+  if (top_node.prev != NULL && next_char != ' ')
   {
     /* Takes the enemy out of the map */
-    map[old_y][old_x] = FLOOR_CHAR;
+    map[old_y][old_x] = next_char;
     /* Changing the position of the enemy */
     enemy -> y = top_node.row;
     enemy -> x = top_node.col;
     /* Displaying the character of the enemy in the map */
     map[enemy -> y][enemy -> x] = enemy -> display;
+
+    /* Corrects the position of the food/potion */
+    if (next_char != FLOOR_CHAR)
+    {
+      for (int index = 0; index > -1; index++)
+      {
+        if (enemy -> y == available[index].y &&
+            enemy -> x == available[index].x)
+        {
+          available[index].x = old_x;
+          available[index].y = old_y;
+          index = -2;
+        }
+      }
+    }
 
     /* Make it so the enemy is only visible if it is in an area previously explored by the player */
     if (traveled_path[enemy -> y][enemy -> x] != UNDISCOVERED_PATH_CHAR)
@@ -131,7 +151,93 @@ void display_enemy_path (Node top_node, char **map, char traveled_path[][MAP_WID
     }
     if (traveled_path[old_y][old_x] != UNDISCOVERED_PATH_CHAR)
     {
-      traveled_path[old_y][old_x] = FLOOR_CHAR;
+      traveled_path[old_y][old_x] = next_char;
+    }
+  }
+}
+
+void simple_free (Path_queue path)
+{
+  /* Cleans the path */
+  while (path.nodes != NULL)
+  {
+    Node *temp = path.nodes;
+    free (path.nodes);
+    path.nodes = temp -> prev;
+  }
+}
+
+int calculate_distance (Enemy en, Character ch, char **map, Node *place_holder)
+{
+  Node top_node;
+  Path_queue path;  /* Path builder */
+  Node origin_node;
+  /* By default the objective is the main character */
+  Point objective, start;
+  int ended_without_path = 1;
+
+  /*Starting the single first node */
+  objective.y = en.y;
+  objective.x = en.x;
+  /* Starting node */
+  start.y = ch.y;
+  start.x = ch.x;
+
+  /* Initializes the path */
+  init_origin_node (&objective, &start, &origin_node);
+  init_queue (&path);
+  insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+
+  /* Calculates the distance from the player to the enemy */
+  top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
+  int distance_from_player = top_node.g;
+
+  simple_free (path);
+  
+  return distance_from_player;
+}
+
+void awaken_in_order (Awake *is_awake, Character ch, char **map, Node *place_holder)
+{
+  Enemy aux;
+  int index, comp_index, distance_from_player;
+
+  for (index = 0; index < is_awake -> current_size; index++)
+  {
+    aux = is_awake -> enemies_awaken[index];
+    distance_from_player = calculate_distance (aux, ch, map, place_holder);
+    for (comp_index = index; comp_index > 0 &&
+         calculate_distance (is_awake -> enemies_awaken[comp_index -1], ch, map, place_holder) > distance_from_player;
+         comp_index--)
+         is_awake -> enemies_awaken[comp_index] = is_awake -> enemies_awaken[comp_index -1];
+      is_awake -> enemies_awaken[comp_index] = aux;
+  }
+}
+
+void build_obstacles (char **map, Node *node)
+{
+  if (node != NULL)
+  {
+    while (node -> prev != NULL)
+    {
+      map[node -> row][node -> col] = STATIC_OBS_CHAR;
+      node = node -> prev;
+    }
+  }
+}
+
+void destroy_obstacles (char **map, Node *node_saver, int size)
+{
+  Node *top_node;
+
+  for (int index = 0; index < size; index++)
+  {
+    top_node = node_saver[index].prev;
+    while (top_node != NULL && top_node -> prev != NULL)
+    {
+      if (map[top_node -> row][top_node -> col] == STATIC_OBS_CHAR)
+        map[top_node -> row][top_node -> col] = FLOOR_CHAR;
+      top_node = top_node -> prev;
     }
   }
 }
@@ -140,16 +246,18 @@ void display_enemy_path (Node top_node, char **map, char traveled_path[][MAP_WID
  * a104541 - José António Fernandes Alves Lopes
  * Conects all of the AI related functions to build paths for the enemies
  */
-void build_path (Awake *is_awake, Character *character, char **map, char traveled_path[][MAP_WIDTH], char **map_whithout_mobs, Node *place_holder, Enemy *enemies)
+void build_path (Consumables *available, Awake *is_awake, Character *character, char **map, char traveled_path[][MAP_WIDTH], char **map_static_obstacles, Node *place_holder, Enemy *enemies)
 {
   Node top_node;
   Path_queue path;  /* Path builder */
+  Node node_saver[4]; /* Can save 4 paths at maximum */
   Node origin_node;
   /* By default the objective is the main character */
   Point objective, start;
   int group_desire = 0;
   int ended_without_path = 1;
   int distance_from_player = 0;
+  int ns_index = 0;
 
   for (int index = 0; index < is_awake -> current_size; index ++)
   {
@@ -172,7 +280,7 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
       start.x = is_awake -> enemies_awaken[index].x;
       
       /* The node to be used as the first in the future constructed path */
-      top_node = closest_enemy (map, map_whithout_mobs, place_holder, &path, start, enemies, is_awake, origin_node);
+      top_node = closest_enemy (map, map_static_obstacles, place_holder, &path, start, enemies, is_awake, origin_node);
     }
     /**
      * If the enemy isn't dumb, it searches for a path to trap the player,
@@ -197,30 +305,26 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
       top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
       distance_from_player = top_node.g;
 
-      /* Cleans the path */
-      while (path.nodes != NULL)
-      {
-        Node *temp = path.nodes;
-        free (path.nodes);
-        path.nodes = temp -> prev;
-      }
+      simple_free (path);
 
       switch (is_awake -> enemies_awaken[index].tag -> inteligence)
       {
       case D_CHAR:
-        if (distance_from_player <= D_INTEL_RANGE)
+        if (distance_from_player <= D_INTEL_RANGE && ns_index < 5)
         {
           /* Resets the path to find a smart way to get to the player */
           init_queue (&path);
           insert_queue (&path, origin_node);  /* Inserts first node in the queue */
           top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
 
-          /* Cleans the path */
-          while (path.nodes != NULL)
+          if (ended_without_path == 1)
           {
-            Node *temp = path.nodes;
-            free (path.nodes);
-            path.nodes = temp -> prev;
+            build_obstacles (map, &top_node);
+            node_saver[ns_index ++] = top_node;
+          }
+          else
+          {
+            simple_free (path);
           }
         }
         /** 
@@ -228,38 +332,34 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
          * no enemies will be able to find something. The path will be checked later
          * for colisions enemy to enemy
          */
-        if (ended_without_path == 0 || distance_from_player > D_INTEL_RANGE)
+        if (ended_without_path == 0 || distance_from_player > D_INTEL_RANGE || ns_index > 4)
         {
           /* Resets path if it was not found but the player is still on land */
           init_queue (&path);
           insert_queue (&path, origin_node);  /* Inserts first node in the queue */
-          top_node = find_path (&objective, map_whithout_mobs, place_holder, &path, &ended_without_path);
+          top_node = find_path (&objective, map_static_obstacles, place_holder, &path, &ended_without_path);
           ended_without_path = 1;
         
-          /* Cleans the path */
-          while (path.nodes != NULL)
-          {
-            Node *temp = path.nodes;
-            free (path.nodes);
-            path.nodes = temp -> prev;
-          }
+          simple_free (path);
         }
         break;
       
       case S_CHAR:
-        if (distance_from_player <= S_INTEL_RANGE)
+        if (distance_from_player <= S_INTEL_RANGE && ns_index < 5)
         {
           /* Resets the path to find a smart way to get to the player */
           init_queue (&path);
           insert_queue (&path, origin_node);  /* Inserts first node in the queue */
           top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
-        
-          /* Cleans the path */
-          while (path.nodes != NULL)
+
+          if (ended_without_path == 1)
           {
-            Node *temp = path.nodes;
-            free (path.nodes);
-            path.nodes = temp -> prev;
+            build_obstacles (map, &top_node);
+            node_saver[ns_index ++] = top_node;
+          }
+          else
+          {
+            simple_free (path);
           }
         }
         /** 
@@ -267,60 +367,50 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
          * no enemies will be able to find something. The path will be checked later
          * for colisions enemy to enemy
          */
-        if (ended_without_path == 0 || distance_from_player > S_INTEL_RANGE)
+        if (ended_without_path == 0 || distance_from_player > S_INTEL_RANGE || ns_index > 4)
         {
           /* Resets path if it was not found but the player is still on land */
           init_queue (&path);
           insert_queue (&path, origin_node);  /* Inserts first node in the queue */
-          top_node = find_path (&objective, map_whithout_mobs, place_holder, &path, &ended_without_path);
+          top_node = find_path (&objective, map_static_obstacles, place_holder, &path, &ended_without_path);
           ended_without_path = 1;
         
-          /* Cleans the path */
-          while (path.nodes != NULL)
-          {
-            Node *temp = path.nodes;
-            free (path.nodes);
-            path.nodes = temp -> prev;
-          }
+          simple_free (path);
         }
         break;
       
       case G_CHAR:
-        if (distance_from_player <= G_INTEL_RANGE)
+        if (distance_from_player <= G_INTEL_RANGE && ns_index < 5)
         {
           /* Resets the path to find a smart way to get to the player */
           init_queue (&path);
           insert_queue (&path, origin_node);  /* Inserts first node in the queue */
           top_node = find_path (&objective, map, place_holder, &path, &ended_without_path);
-        
-          /* Cleans the path */
-          while (path.nodes != NULL)
+
+          if (ended_without_path == 1)
           {
-            Node *temp = path.nodes;
-            free (path.nodes);
-            path.nodes = temp -> prev;
+            build_obstacles (map, &top_node);
+            node_saver[ns_index ++] = top_node;
+          }
+          else
+          {
+            simple_free (path);
           }
         }
-        /** 
+        /**
          * If there is no path to trap the player, this version of the map with
          * no enemies will be able to find something. The path will be checked later
          * for colisions enemy to enemy
          */
-        if (ended_without_path == 0 || distance_from_player > G_INTEL_RANGE)
+        if (ended_without_path == 0 || distance_from_player > G_INTEL_RANGE || ns_index > 4)
         {
           /* Resets path if it was not found but the player is still on land */
           init_queue (&path);
           insert_queue (&path, origin_node);  /* Inserts first node in the queue */
-          top_node = find_path (&objective, map_whithout_mobs, place_holder, &path, &ended_without_path);
+          top_node = find_path (&objective, map_static_obstacles, place_holder, &path, &ended_without_path);
           ended_without_path = 1;
         
-          /* Cleans the path */
-          while (path.nodes != NULL)
-          {
-            Node *temp = path.nodes;
-            free (path.nodes);
-            path.nodes = temp -> prev;
-          }
+          simple_free (path);
         }
         break;
       /* For every run, at least one of the above is choosen */
@@ -328,14 +418,8 @@ void build_path (Awake *is_awake, Character *character, char **map, char travele
         break;
       }
     }
-
-    display_enemy_path (top_node, map, traveled_path, &(is_awake -> enemies_awaken[index]));
-
-    while (path.nodes != NULL)
-    {
-      Node *temp = path.nodes;
-      free (path.nodes);
-      path.nodes = temp -> prev;
-    }
+    display_enemy_path (available, top_node, map, traveled_path, &(is_awake -> enemies_awaken[index]));
   }
+
+  destroy_obstacles (map, node_saver, ns_index);
 }

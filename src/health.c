@@ -102,7 +102,7 @@ void food_and_potions (Character *character, Consumables *available, char *previ
 * Function responsible for taking life when the player is on the water.
 * This function verifies if the player has been on the water for 4 plays and, if so, takes away 5 points of life
 */
-void water_damage(char** map, Character *character, char *previous_char, int *count_water)
+void water_damage(Character *character, char *previous_char, int *count_water)
 {
   if (*previous_char == WATER_CHAR) {
     (*count_water) ++;

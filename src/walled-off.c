@@ -179,15 +179,6 @@ int main ()
     /* Initializes all the enemies stats, including pre-defined */
     Tag *tag = init_enemies (number_of_enemies, enemies, dumb_variables, smart_variables, genius_variables, map);
 
-    /* Foods and potions */
-    Consumables *consumables = consumablesHeap();
-    /* Array of available consumables that store the consumables generated */
-    /* Use this random number to determine the number of foods/potions in the map (it needs to be > 5) */
-    int number_of_consumables = number_of_enemies / 3;
-    Consumables *available = malloc (sizeof (Consumables) * number_of_consumables);
-    /* Placing consumables */
-    place_foods_and_potions (map, number_of_consumables, consumables, available);
-    
     /* Initializes a map with fixed obstacles */
     for (int index_y = 0; index_y < MAP_HEIGHT; index_y ++)
     {
@@ -196,6 +187,15 @@ int main ()
         map_static_obstacles[index_y][index_x] = map[index_y][index_x];
       }
     }
+
+    /* Foods and potions */
+    Consumables *consumables = consumablesHeap();
+    /* Array of available consumables that store the consumables generated */
+    /* Use this random number to determine the number of foods/potions in the map (it needs to be > 5) */
+    int number_of_consumables = number_of_enemies / 3;
+    Consumables *available = malloc (sizeof (Consumables) * number_of_consumables);
+    /* Placing consumables */
+    place_foods_and_potions (map, number_of_consumables, consumables, available);
     
     /* Initializes main character, placing it in the map */
     init_character (&character);
@@ -242,13 +242,14 @@ int main ()
 
       food_and_potions (&character, available, &previous_char, number_of_consumables);
 
-      water_damage(map, &character, &previous_char, count_water);
+      water_damage(&character, &previous_char, count_water);
       
       if (previous_char != WATER_CHAR)
       {
         /* Initializes more enemies, if necessary, to the is_awaken struct */
         init_awaken_enemies (&character, enemies, is_awake, map_static_obstacles);
-        build_path (is_awake, &character, map, traveled_path, map_static_obstacles, place_holder, enemies);
+        build_path (available, is_awake, &character, map, traveled_path, map_static_obstacles, place_holder, enemies);
+        awaken_in_order (is_awake, character, map, place_holder);
       }
 
       /* At the end of every loop, refresh main_window, display_win and instructions_win */
