@@ -15,14 +15,56 @@
 #include "combat.h"
 #include "consumables.h"
 #include "health.h"
+#include <string.h>
+
 
 void init_character(Character *character)
 {
-  character -> x = 0;
-  character -> y = 0;
-  character -> life = 80;
-  character -> initial_life = 100;
+  character->x = 0;
+  character->y = 0;
+  character->life = 100;
+  strcpy(character->name, "Player 1");
+  character->xp = 2 * character->life;
+  character->initial_life = 100 ;
+  
+
+
+strcpy(character->weapons[0].name, "Sword");
+  character->weapons[0].damage = 22.5;
+  character->weapons[0].range = 5.0;
+  strcpy(character->weapons[0].special_power, "Damage_Boost");
+  character->weapons[0].special_type = DamageBoost;
+  character->weapons[0].special_duration = 10;
+  character->weapons[0].turns_left = 0;
+
+  // Weapon 2
+  strcpy(character->weapons[1].name, "Calhau");
+  character->weapons[1].damage = 15;
+  character->weapons[1].range = 1.0;
+  strcpy(character->weapons[1].special_power, "Healing");
+  character->weapons[1].special_type = Healing;
+  character->weapons[1].special_duration = 1;
+  character->weapons[1].turns_left = 0;
+
+  // Weapon 3
+  strcpy(character->weapons[2].name, "Dagger");
+  character->weapons[2].damage = 15;
+  character->weapons[2].range = 3.0;
+  strcpy(character->weapons[2].special_power, "Poison");
+  character->weapons[2].special_type = Poison;
+  character->weapons[2].special_duration = 30;
+  character->weapons[2].turns_left = 0;
+
+//Weapon
+  strcpy(character->weapons[3].name, "Ring");
+  character->weapons[3].damage = 0;
+  character->weapons[3].range = 5.0;
+  strcpy(character->weapons[3].special_power, "Teleport");
+  character->weapons[3].special_type = Teleport;
+  character->weapons[3].special_duration = 1;
+  character->weapons[3].turns_left = 0;
 }
+
 
 void init_ncurses() {
 
@@ -251,6 +293,9 @@ int main ()
         build_path (available, is_awake, &character, map, traveled_path, map_static_obstacles, place_holder, enemies);
         awaken_in_order (is_awake, character, map, place_holder);
       }
+
+        // Initialize the attack function
+      attack(&character, enemies, is_awake, map, ch);
 
       /* At the end of every loop, refresh main_window, display_win and instructions_win */
       display_map (main_window, &character, map, MAP_WIDTH, traveled_path);

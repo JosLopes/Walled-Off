@@ -85,10 +85,10 @@ Variable_stats *d_enemies_variable_stats ()
 
   d_variables[0] = (Variable_stats){'A',{"Albertino"},
                     {"D: Albertino                                     "},
-                    0, 0, 0};
+                    45, 2, 5};
   d_variables[1] = (Variable_stats){'J',{"Josefino"},
                     {"D: Josefino                                      "},
-                    0, 0, 0};
+                    45, 2, 5};
 
   return d_variables; 
 }
@@ -106,10 +106,10 @@ Variable_stats *s_enemies_variable_stats ()
 
   s_variables[0] = (Variable_stats){'C',{"Carambol"},
                     {"S: Carambol                                      "},
-                    0, 0, 0};
+                    30, 4, 18};
   s_variables[1] = (Variable_stats){'S',{"SegmatationFault"},
                     {"S: Creates a segmentation fault                  "},
-                    0, 0, 0};
+                    30, 4, 18};
 
   return s_variables; 
 }
@@ -128,10 +128,10 @@ Variable_stats *g_enemies_variable_stats ()
 
   g_variables[0] = (Variable_stats){'I',{"IMO"},
                     {"G: IMO                                           "},
-                    0, 0, 0};
+                    60, 5, 25};
   g_variables[1] = (Variable_stats){'J',{"JGod"},
                     {"G: JGod                                          "},
-                    0, 0, 0};
+                    60, 5, 25};
 
   return g_variables; 
 }

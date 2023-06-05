@@ -36,9 +36,10 @@ typedef struct {
 } Consumables;
 
 enum SpecialPowerType {
-  DamageBoost, // poder especial que aumenta o dano da arma em 1,5 vezes
-  Fire, // poder especial que causa dano de fogo adicional
-  Poison // poder especial que envenena o inimigo, causando dano a cada turno
+  DamageBoost,
+  Poison,
+  Healing,
+  Teleport
 };
 
 typedef struct {
