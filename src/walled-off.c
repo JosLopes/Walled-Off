@@ -229,8 +229,8 @@ int main ()
     int ch;  /* Input character read as an integer */
 
     /* Initialize count_water variable */
-    int *count_water = (int*)malloc(sizeof(int));
-    *count_water = 0;
+    int *count_water;
+    count_water = 0;
 
     while ((ch = wgetch(main_window)) != 'q')
     {
@@ -268,10 +268,24 @@ int main ()
     for (current_line = 0; current_line < MAP_HEIGHT; current_line ++)
     {
       free (map[current_line]);
+      free (map_static_obstacles[current_line]);
       map[current_line] = NULL;
     }
     free (map);
     map = NULL;
+    free (map_static_obstacles);
+    map_static_obstacles = NULL;
+
+    /* Free awaken enemies */
+    free (is_awake -> enemies_awaken);
+    is_awake -> enemies_awaken = NULL;
+    free (is_awake);
+    is_awake = NULL;
+
+    free (consumables);
+    consumables = NULL;
+    free (available);
+    available = NULL;
 
     /* Free tag */
     free (tag);

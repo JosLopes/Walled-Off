@@ -161,9 +161,9 @@ void simple_free (Path_queue path)
   /* Cleans the path */
   while (path.nodes != NULL)
   {
-    Node *temp = path.nodes;
+    Node *temp = path.nodes -> prev;
     free (path.nodes);
-    path.nodes = temp -> prev;
+    path.nodes = temp;
   }
 }
 
@@ -244,6 +244,14 @@ void destroy_obstacles (char **map, Node *node_saver, int size)
   }
 }
 
+void simple_free_paths (Path_queue *paths_array, int size)
+{
+  for (int index = 0; index < size; index++)
+  {
+    simple_free (paths_array[index]);
+  }
+}
+
 /**
  * a104541 - José António Fernandes Alves Lopes
  * Conects all of the AI related functions to build paths for the enemies
@@ -253,6 +261,7 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
   Node top_node;
   Path_queue path;  /* Path builder */
   Node node_saver[4]; /* Can save 4 paths at maximum */
+  Path_queue save_to_free[4];
   Node origin_node;
   /* By default the objective is the main character */
   Point objective, start;
@@ -322,6 +331,7 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
           if (ended_without_path == 1)
           {
             build_obstacles (map, &top_node);
+            save_to_free[ns_index] = path;
             node_saver[ns_index ++] = top_node;
           }
           else
@@ -357,6 +367,7 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
           if (ended_without_path == 1)
           {
             build_obstacles (map, &top_node);
+            save_to_free[ns_index] = path;
             node_saver[ns_index ++] = top_node;
           }
           else
@@ -392,6 +403,7 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
           if (ended_without_path == 1)
           {
             build_obstacles (map, &top_node);
+            save_to_free[ns_index] = path;
             node_saver[ns_index ++] = top_node;
           }
           else
@@ -423,5 +435,6 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
     display_enemy_path (available, top_node, map, traveled_path, &(is_awake -> enemies_awaken[index]));
   }
 
-  destroy_obstacles (map, node_saver, ns_index);
+  destroy_obstacles (map, node_saver, ns_index);  
+  simple_free_paths (save_to_free, ns_index);
 }
