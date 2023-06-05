@@ -13,11 +13,11 @@
 
 
 
-/*
-* a103999 - Ivo Filipe Mendes Vieira
-*This function displays a menu for the player to choose a weapon for the character. It takes input from the
-*player and updates the character's current weapon based on the chosen index.
-*/
+/**
+ *a103999 - Ivo Filipe Mendes Vieira
+ *This function displays a menu for the player to choose a weapon for the character. It takes input from the
+ *player and updates the character's current weapon based on the chosen index.
+ */
 
 void choose_weapon(Character *character)
 {
@@ -38,11 +38,11 @@ void choose_weapon(Character *character)
 
   character->current_weapon_index = current_weapon_index - 1;
 }
-/*
-* a103999 - Ivo Filipe Mendes Vieira
-*This function calculates the damage inflicted by an enemy based on the character's maximum health points (hp),
-*maximum experience points (xp), and a base damage formula.
-*/
+/**
+ *a103999 - Ivo Filipe Mendes Vieira
+ *This function calculates the damage inflicted by an enemy based on the character's maximum health points (hp),
+ *maximum experience points (xp), and a base damage formula.
+ */
 float calculate_enemy_damage(Character *character, Enemy *enemy) // mudar o resto das instâncias
 {
   float max_hp = character->initial_life;
@@ -57,12 +57,12 @@ float calculate_enemy_damage(Character *character, Enemy *enemy) // mudar o rest
   return total_damage;
 }
 
-/*
-* a103999 - Ivo Filipe Mendes Vieira
-*This function calculates the damage taken by the character based on the total damage inflicted by an enemy.
-*It considers the character's xp and subtracts it from the damage if it is greater than zero.
-*Otherwise, it subtracts the damage directly from the character's life.
-*/
+/**
+ *a103999 - Ivo Filipe Mendes Vieira
+ *This function calculates the damage taken by the character based on the total damage inflicted by an enemy.
+ *It considers the character's xp and subtracts it from the damage if it is greater than zero.
+ *Otherwise, it subtracts the damage directly from the character's life.
+ */
 
 void character_take_damage(Character *character, Enemy *enemy, float total_damage)
 {
@@ -89,11 +89,11 @@ void character_take_damage(Character *character, Enemy *enemy, float total_damag
     }
   }
 }
-/*
-* a103999 - Ivo Filipe Mendes Vieira
-*This function initiates an enemy attack by calculating the enemy's damage and calling character_take_damage()
-*to apply the damage to the character. If the character's life reaches zero or below, the game ends.
-*/
+/**
+ *a103999 - Ivo Filipe Mendes Vieira
+ *This function initiates an enemy attack by calculating the enemy's damage and calling character_take_damage()
+ *to apply the damage to the character. If the character's life reaches zero or below, the game ends.
+ */
 void enemy_attack(Character *character, Enemy *enemy)
 {
   float damage = calculate_enemy_damage(character, enemy);
@@ -106,11 +106,12 @@ void enemy_attack(Character *character, Enemy *enemy)
   }
 }
 
-/*
-*This function removes a dead enemy from the game. It replaces the enemy's position on the map with a floor
-*character, shifts the remaining enemies in the array to fill the gap,
-*and decrements the current size of the enemies array.
-*/
+/**
+ *a103999 - Ivo Filipe Mendes Vieira
+ *This function removes a dead enemy from the game. It replaces the enemy's position on the map with a floor
+ *character, shifts the remaining enemies in the array to fill the gap,
+ *and decrements the current size of the enemies array.
+ */
 void remove_dead_enemy(Awake *is_awake, int index, char **map)
 {
   
@@ -125,11 +126,11 @@ void remove_dead_enemy(Awake *is_awake, int index, char **map)
   
   is_awake->current_size--;
 }
-/*
-* a103999 - Ivo Filipe Mendes Vieira
-*This function applies damage to an enemy based on the character's current weapon's damage. 
-*If the enemy's life reaches zero, it calls remove_dead_enemy() and increments the character's xp.
-*/
+/**
+ *a103999 - Ivo Filipe Mendes Vieira
+ *This function applies damage to an enemy based on the character's current weapon's damage. 
+ *If the enemy's life reaches zero, it calls remove_dead_enemy() and increments the character's xp.
+ */
 void enemy_take_damage(Character *character, Enemy *enemy, Awake *is_awake, char **map)
 {
   int weapon_damage = character->weapons[character->current_weapon_index].damage;
@@ -153,12 +154,12 @@ void enemy_take_damage(Character *character, Enemy *enemy, Awake *is_awake, char
     character->xp = max_xp;
   }
 }
-/*
-* a103999 - Ivo Filipe Mendes Vieira
-*This function handles the player's attack input. It checks if an enemy is within range and calls 
-*enemy_take_damage() to attack the enemy. If the enemy's life is still above zero, 
-*it calls enemy_attack() to initiate the enemy's counterattack.
-*/
+/**
+ *a103999 - Ivo Filipe Mendes Vieira
+ *This function handles the player's attack input. It checks if an enemy is within range and calls 
+ *enemy_take_damage() to attack the enemy. If the enemy's life is still above zero, 
+ *it calls enemy_attack() to initiate the enemy's counterattack.
+ */
 void handle_attack_input(Character *character, Awake *is_awake, char **map)
 {
   for (int i = 0; i < is_awake->current_size; i++)
@@ -202,11 +203,12 @@ void handle_attack_input(Character *character, Awake *is_awake, char **map)
     }
   }
 }
-/*
-*This function handles the player's input to use a special power associated with the current weapon. 
-*It checks if the player has enough xp and the weapon has a special power. If conditions are met, 
-*it applies the special power, such as increasing damage, healing the character, poisoning the enemy, or teleporting the character.
-*/
+/**
+ *a103999 - Ivo Filipe Mendes Vieira
+ *This function handles the player's input to use a special power associated with the current weapon. 
+ *It checks if the player has enough xp and the weapon has a special power. If conditions are met, 
+ *it applies the special power, such as increasing damage, healing the character, poisoning the enemy, or teleporting the character.
+ */
 void handle_special_power_input(Character *character, Enemy *enemy, char **map)
 {
   Weapon *weapon = &(character->weapons[character->current_weapon_index]); 
@@ -283,11 +285,11 @@ void handle_special_power_input(Character *character, Enemy *enemy, char **map)
   }
 }
 
-/*
-* a103999 - Ivo Filipe Mendes Vieira
-*This function updates the duration of any active special powers of the character's weapons. 
-*If a special power's duration reaches zero, it reverts the associated effects.
-*/
+/**
+ *a103999 - Ivo Filipe Mendes Vieira
+ *This function updates the duration of any active special powers of the character's weapons. 
+ *If a special power's duration reaches zero, it reverts the associated effects.
+ */
 void update_power(Character *character, Enemy *enemy)
 {
   for (int i = 0; i < 4; i++) 
@@ -325,12 +327,12 @@ void update_power(Character *character, Enemy *enemy)
     }
   }
 }
-/*
-* a103999 - Ivo Filipe Mendes Vieira
-*This function handles the overall attack process. It calls update_power() to update active special powers, 
-*and based on the player's input (ch), it calls other functions such as choose_weapon(),
-*handle_attack_input(), or handle_special_power_input().
-*/
+/**
+ *a103999 - Ivo Filipe Mendes Vieira
+ *This function handles the overall attack process. It calls update_power() to update active special powers, 
+ *and based on the player's input (ch), it calls other functions such as choose_weapon(),
+ *handle_attack_input(), or handle_special_power_input().
+ */
 void attack(Character *character, Enemy *enemy, Awake *is_awake, char **map, int ch)
 {
 
@@ -350,3 +352,4 @@ void attack(Character *character, Enemy *enemy, Awake *is_awake, char **map, int
     handle_special_power_input(character, enemy, map);
   }
 }
+
