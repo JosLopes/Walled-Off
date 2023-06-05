@@ -229,8 +229,8 @@ int main ()
     int ch;  /* Input character read as an integer */
 
     /* Initialize count_water variable */
-    int *count_water;
-    count_water = 0;
+    int *count_water = (int*) malloc(sizeof(int));
+    *count_water = 0;
 
     while ((ch = wgetch(main_window)) != 'q')
     {
