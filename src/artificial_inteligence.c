@@ -167,7 +167,7 @@ void simple_free (Path_queue path)
   }
 }
 
-int calculate_distance (Enemy en, Character ch, char **map, Node *place_holder)
+int calculate_distance (Enemy en, Character ch, char **map, char **map_static_obstacles, Node *place_holder)
 {
   Node top_node;
   Path_queue path;  /* Path builder */
@@ -193,11 +193,25 @@ int calculate_distance (Enemy en, Character ch, char **map, Node *place_holder)
   int distance_from_player = top_node.g;
 
   simple_free (path);
+
+  if (ended_without_path == 0)
+  {
+    /* Initializes the path */
+    init_origin_node (&objective, &start, &origin_node);
+    init_queue (&path);
+    insert_queue (&path, origin_node);  /* Inserts first node in the queue */
+
+    /* Calculates the distance from the player to the enemy */
+    top_node = find_path (&objective, map_static_obstacles, place_holder, &path, &ended_without_path);
+    distance_from_player = top_node.g;
+
+    simple_free (path);
+  }
   
   return distance_from_player;
 }
 
-void awaken_in_order (Awake *is_awake, Character ch, char **map, Node *place_holder)
+void awaken_in_order (Awake *is_awake, Character ch, char **map, char **map_static_obstacles, Node *place_holder)
 {
   Enemy aux;
   int index, comp_index, distance_from_player;
@@ -205,9 +219,9 @@ void awaken_in_order (Awake *is_awake, Character ch, char **map, Node *place_hol
   for (index = 0; index < is_awake -> current_size; index++)
   {
     aux = is_awake -> enemies_awaken[index];
-    distance_from_player = calculate_distance (aux, ch, map, place_holder);
+    distance_from_player = calculate_distance (aux, ch, map, map_static_obstacles, place_holder);
     for (comp_index = index; comp_index > 0 &&
-         calculate_distance (is_awake -> enemies_awaken[comp_index -1], ch, map, place_holder) > distance_from_player;
+         calculate_distance (is_awake -> enemies_awaken[comp_index -1], ch, map, map_static_obstacles, place_holder) > distance_from_player;
          comp_index--)
          is_awake -> enemies_awaken[comp_index] = is_awake -> enemies_awaken[comp_index -1];
       is_awake -> enemies_awaken[comp_index] = aux;

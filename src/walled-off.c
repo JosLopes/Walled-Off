@@ -290,8 +290,8 @@ int main ()
       {
         /* Initializes more enemies, if necessary, to the is_awaken struct */
         init_awaken_enemies (&character, enemies, is_awake, map_static_obstacles);
+        awaken_in_order (is_awake, character, map, map_static_obstacles, place_holder);
         build_path (available, is_awake, &character, map, traveled_path, map_static_obstacles, place_holder, enemies);
-        awaken_in_order (is_awake, character, map, place_holder);
       }
 
         // Initialize the attack function
@@ -345,6 +345,9 @@ int main ()
 
     free (place_holder);
     place_holder = NULL;
+
+    free (count_water);
+    count_water = NULL;
   
     delwin (main_window);
   }
