@@ -61,7 +61,7 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
   y++;
   mvwprintw(display_win, y, x, "XP: %d", (int) character->xp);
   y++;
-  mvwprintw(display_win, y, x, character->weapons[character->current_weapon_index].name);
+  mvwprintw(display_win, y, x, "Arma: %s", character->weapons[character->current_weapon_index].name);
   y=y+5;
   mvwprintw(display_win, y, x, "   Inimigos");
   y++;
