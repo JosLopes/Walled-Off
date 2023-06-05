@@ -85,10 +85,10 @@ Variable_stats *d_enemies_variable_stats ()
 
   d_variables[0] = (Variable_stats){'A',{"Albertino"},
                     {"D: Albertino                                     "},
-                    100, 5, 30};
+                    45, 2, 5};
   d_variables[1] = (Variable_stats){'J',{"Josefino"},
                     {"D: Josefino                                      "},
-                    100, 5, 30};
+                    45, 2, 5};
 
   return d_variables; 
 }
@@ -106,10 +106,10 @@ Variable_stats *s_enemies_variable_stats ()
 
   s_variables[0] = (Variable_stats){'C',{"Carambol"},
                     {"S: Carambol                                      "},
-                    100, 5, 30};
+                    30, 4, 18};
   s_variables[1] = (Variable_stats){'S',{"SegmatationFault"},
                     {"S: Creates a segmentation fault                  "},
-                    100, 5, 30};
+                    30, 4, 18};
 
   return s_variables; 
 }
@@ -128,10 +128,10 @@ Variable_stats *g_enemies_variable_stats ()
 
   g_variables[0] = (Variable_stats){'I',{"IMO"},
                     {"G: IMO                                           "},
-                    100, 5, 30};
+                    60, 5, 25};
   g_variables[1] = (Variable_stats){'J',{"JGod"},
                     {"G: JGod                                          "},
-                    100, 5, 30};
+                    60, 5, 25};
 
   return g_variables; 
 }
@@ -227,3 +227,4 @@ Tag *init_enemies (int number_of_enemies, Enemy *enemies, Variable_stats *d_vari
   place_enemies (number_of_enemies, enemies, map);
   return tag;
 }
+
