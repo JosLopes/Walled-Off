@@ -312,6 +312,10 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
   int distance_from_player = 0;
   int ns_index = 0;
 
+  top_node.row = 0;
+  top_node.col = 0;
+  top_node.prev = NULL;
+
   for (int index = 0; index < is_awake -> current_size; index ++)
   {
     /**
