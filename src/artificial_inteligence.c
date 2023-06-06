@@ -45,6 +45,17 @@ void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake,
   }
 }
 
+void simple_free (Path_queue path)
+{
+  /* Cleans the path */
+  while (path.nodes != NULL)
+  {
+    Node *temp = path.nodes -> prev;
+    free (path.nodes);
+    path.nodes = temp;
+  }
+}
+
 /** 
  * a104541-José António Fernandes Alves Lopes
  * Calculates the closest path to an enemy, for use both in the smart AI and genius AI.
@@ -53,7 +64,7 @@ void init_awaken_enemies (Character *character, Enemy *enemies, Awake *is_awake,
  */
 Node closest_enemy (char **map, char **map_static_obstacles, Node *place_holder, Path_queue *path, Point start, Enemy *enemies, Awake *is_awake, Node origin_node)
 {
-  int ended_without_path = 0;  /* dont check diferent paths */
+  int ended_without_path = 1;  /* dont check diferent paths */
   int index;
   int count, min_count = MAP_HEIGHT * MAP_WIDTH; /* Counters to find out which path is shorter */
   Point objective;
@@ -62,7 +73,7 @@ Node closest_enemy (char **map, char **map_static_obstacles, Node *place_holder,
 
   for (index = 0; index < is_awake -> total_size; index ++)
   {
-    ended_without_path = 0;
+    ended_without_path = 1;
     if (enemies[index].awake == 1)
     {
       objective.y = enemies[index].y;
@@ -74,19 +85,13 @@ Node closest_enemy (char **map, char **map_static_obstacles, Node *place_holder,
       Node node = find_path (&objective, map, place_holder, path, &ended_without_path);
       count = node.f; /* f distance from the starting point to the last node */
 
-      if (count < min_count && ended_without_path == 0)
+      if (count < min_count && ended_without_path == 1)
       {
         min_count = count;
         choosen_one = index;
       }
 
-      /* Cleans the path */
-      while (path -> nodes != NULL)
-      {
-        Node *temp = path -> nodes;
-        free (path -> nodes);
-        path -> nodes = temp -> prev;
-      }
+      simple_free (*path);
     }
   }
 
@@ -153,17 +158,6 @@ void display_enemy_path (Consumables *available, Node top_node, char **map, char
     {
       traveled_path[old_y][old_x] = next_char;
     }
-  }
-}
-
-void simple_free (Path_queue path)
-{
-  /* Cleans the path */
-  while (path.nodes != NULL)
-  {
-    Node *temp = path.nodes -> prev;
-    free (path.nodes);
-    path.nodes = temp;
   }
 }
 
@@ -274,8 +268,8 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
 {
   Node top_node;
   Path_queue path;  /* Path builder */
-  Node node_saver[4]; /* Can save 4 paths at maximum */
-  Path_queue save_to_free[4];
+  Node node_saver[5]; /* Can save 4 paths at maximum */
+  Path_queue save_to_free[5];
   Node origin_node;
   /* By default the objective is the main character */
   Point objective, start;
@@ -346,7 +340,8 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
           {
             build_obstacles (map, &top_node);
             save_to_free[ns_index] = path;
-            node_saver[ns_index ++] = top_node;
+            node_saver[ns_index] = top_node;
+            ns_index ++;
           }
           else
           {
@@ -382,7 +377,8 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
           {
             build_obstacles (map, &top_node);
             save_to_free[ns_index] = path;
-            node_saver[ns_index ++] = top_node;
+            node_saver[ns_index] = top_node;
+            ns_index ++;
           }
           else
           {
@@ -418,7 +414,8 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
           {
             build_obstacles (map, &top_node);
             save_to_free[ns_index] = path;
-            node_saver[ns_index ++] = top_node;
+            node_saver[ns_index] = top_node;
+            ns_index ++;
           }
           else
           {
