@@ -257,6 +257,7 @@ void build_obstacles (char **map, Node *node)
  * Destroys the obstacles build in build_obstacles(...) to clean the map, making it
  * what it was before the enemies calculated their paths
  */
+/*
 void destroy_obstacles (char **map, Node *node_saver, int size)
 {
   Node *top_node;
@@ -272,6 +273,7 @@ void destroy_obstacles (char **map, Node *node_saver, int size)
     }
   }
 }
+*/
 
 /**
  * a104541 - José António Fernades Alves Lopes
@@ -302,7 +304,7 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
 {
   Node top_node;
   Path_queue path;  /* Path builder */
-  Node node_saver[5]; /* Can save 4 paths at maximum */
+  //Node node_saver[5]; /* Can save 4 paths at maximum */
   Path_queue save_to_free[5];
   Node origin_node;
   /* By default the objective is the main character */
@@ -314,6 +316,7 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
 
   top_node.row = 0;
   top_node.col = 0;
+  top_node.explored = 0;
   top_node.prev = NULL;
 
   for (int index = 0; index < is_awake -> current_size; index ++)
@@ -378,7 +381,7 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
           {
             build_obstacles (map, &top_node);
             save_to_free[ns_index] = path;
-            node_saver[ns_index] = top_node;
+            //node_saver[ns_index] = top_node;
             ns_index ++;
           }
           else
@@ -415,7 +418,7 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
           {
             build_obstacles (map, &top_node);
             save_to_free[ns_index] = path;
-            node_saver[ns_index] = top_node;
+            //node_saver[ns_index] = top_node;
             ns_index ++;
           }
           else
@@ -452,7 +455,7 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
           {
             build_obstacles (map, &top_node);
             save_to_free[ns_index] = path;
-            node_saver[ns_index] = top_node;
+            //node_saver[ns_index] = top_node;
             ns_index ++;
           }
           else
@@ -483,8 +486,7 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
     }
     display_enemy_path (available, top_node, map, traveled_path, &(is_awake -> enemies_awaken[index]));
   }
-
-  destroy_obstacles (map, node_saver, ns_index);  
+  
   simple_free_paths (save_to_free, ns_index);
   verify_destruction (map);
 }
