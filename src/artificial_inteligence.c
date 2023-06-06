@@ -252,6 +252,14 @@ void destroy_obstacles (char **map, Node *node_saver, int size)
   }
 }
 
+void verify_destruction (char **map)
+{
+  for (int row = 0; row < MAP_HEIGHT; row++)
+    for (int col = 0; col < MAP_WIDTH; col++)
+      if (map[row][col] == STATIC_OBS_CHAR)
+        map[row][col] = FLOOR_CHAR;
+}
+
 void simple_free_paths (Path_queue *paths_array, int size)
 {
   for (int index = 0; index < size; index++)
@@ -448,4 +456,5 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
 
   destroy_obstacles (map, node_saver, ns_index);  
   simple_free_paths (save_to_free, ns_index);
+  verify_destruction (map);
 }
