@@ -13,7 +13,7 @@
 
 /*
 * a104188 - Ana Cerqueira
-* It define the consumables available in the game
+* It defines the consumables available in the game
 */
 Consumables *consumablesHeap(void) {
   

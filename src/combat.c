@@ -12,14 +12,11 @@
 #include <math.h>
 #include <string.h>
 
-
-
 /**
  *a103999 - Ivo Filipe Mendes Vieira
  *This function displays a menu for the player to choose a weapon for the character. It takes input from the
  *player and updates the character's current weapon based on the chosen index.
  */
-
 void choose_weapon(Character *character)
 {
   int current_weapon_index; 
@@ -39,6 +36,7 @@ void choose_weapon(Character *character)
 
   character->current_weapon_index = current_weapon_index - 1;
 }
+
 /**
  *a103999 - Ivo Filipe Mendes Vieira
  *This function calculates the damage inflicted by an enemy based on the character's maximum health points (hp),
@@ -64,7 +62,6 @@ float calculate_enemy_damage(Character *character, Enemy *enemy) // mudar o rest
  *It considers the character's xp and subtracts it from the damage if it is greater than zero.
  *Otherwise, it subtracts the damage directly from the character's life.
  */
-
 void character_take_damage(Character *character, Enemy *enemy, float total_damage)
 {
   float distance = sqrt(pow(enemy->x - character->x, 2) + pow(enemy->y - character->y, 2));
@@ -90,6 +87,7 @@ void character_take_damage(Character *character, Enemy *enemy, float total_damag
     }
   }
 }
+
 /**
  *a103999 - Ivo Filipe Mendes Vieira
  *This function initiates an enemy attack by calculating the enemy's damage and calling character_take_damage()
@@ -121,6 +119,7 @@ void remove_dead_enemy(Awake *is_awake, int index, char **map)
 
   is_awake->current_size--;
 }
+
 /**
  *a103999 - Ivo Filipe Mendes Vieira
  *This function applies damage to an enemy based on the character's current weapon's damage. 
@@ -148,6 +147,7 @@ void enemy_take_damage(Character *character, Enemy *enemy, int index, Awake *is_
     character->xp = max_xp;
   }
 }
+
 /**
  *a103999 - Ivo Filipe Mendes Vieira
  *This function handles the player's attack input. It checks if an enemy is within range and calls 
@@ -198,6 +198,7 @@ void handle_attack_input(Character *character, WINDOW *instructions_win, Awake *
     }
   }
 }
+
 /**
  *a103999 - Ivo Filipe Mendes Vieira
  *This function handles the player's input to use a special power associated with the current weapon. 

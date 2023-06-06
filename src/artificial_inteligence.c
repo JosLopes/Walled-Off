@@ -161,6 +161,11 @@ void display_enemy_path (Consumables *available, Node top_node, char **map, char
   }
 }
 
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * Calculates the distance that would take to reach the player, taking obstacles
+ * into acount
+ */
 int calculate_distance (Enemy en, Character ch, char **map, char **map_static_obstacles, Node *place_holder)
 {
   Node top_node;
@@ -205,6 +210,10 @@ int calculate_distance (Enemy en, Character ch, char **map, char **map_static_ob
   return distance_from_player;
 }
 
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * Uses calculate_distance (...) to put the  awaken enemies in order
+ */
 void awaken_in_order (Awake *is_awake, Character ch, char **map, char **map_static_obstacles, Node *place_holder)
 {
   Enemy aux;
@@ -222,6 +231,13 @@ void awaken_in_order (Awake *is_awake, Character ch, char **map, char **map_stat
   }
 }
 
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * The enemys closer to the player build their path to him, this function serves
+ * as an "warning" to the oder awaken enemies. By builing the path that the closest
+ * enemies are gonna make, the other AI know if they have the chance to reach the player
+ * or not
+ */
 void build_obstacles (char **map, Node *node)
 {
   if (node != NULL)
@@ -236,6 +252,11 @@ void build_obstacles (char **map, Node *node)
   }
 }
 
+/**
+ * a104541 - José António Fernandes Alves Lopes
+ * Destroys the obstacles build in build_obstacles(...) to clean the map, making it
+ * what it was before the enemies calculated their paths
+ */
 void destroy_obstacles (char **map, Node *node_saver, int size)
 {
   Node *top_node;
@@ -252,6 +273,11 @@ void destroy_obstacles (char **map, Node *node_saver, int size)
   }
 }
 
+/**
+ * a104541 - José António Fernades Alves Lopes
+ * The function destroy_obstacles(...) uses a smart way to clear the unnecessary paths,
+ * but to be sure that there aren't any mistakes, this function verifies the whole map 
+ */
 void verify_destruction (char **map)
 {
   for (int row = 0; row < MAP_HEIGHT; row++)

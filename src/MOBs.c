@@ -69,6 +69,36 @@ int locate_positions (int map_heigth, int map_width, char **map, int number_of_e
       }
     }
   }
+
+  int top = 0;
+  while (enemies_ind < number_of_enemies && top < 6)
+  {
+    int possible_x = rand() % MAP_WIDTH;
+    int possible_y = rand() % MAP_HEIGHT;
+
+    if (possible_x < map_width &&
+        possible_x > 0 &&
+        possible_y < map_heigth && possible_y > 0 &&
+        map[possible_y][possible_x] == FLOOR_CHAR)
+    {
+      for (index = 0; index < enemies_ind; index ++)
+      {
+        if (enemies[index].y == possible_y && enemies[index].x == possible_x)
+        {
+          already_placed = 0; /* True, there is already an enemy in this location */
+        }
+      }
+
+      if (already_placed == 1)
+      {
+        enemies[enemies_ind].x = possible_x;
+        enemies[enemies_ind].y = possible_y;
+        enemies_ind ++;
+        top ++;
+      }
+      already_placed = 1;
+    }
+  }
   return enemies_ind;
 }
 

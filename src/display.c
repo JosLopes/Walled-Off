@@ -30,6 +30,7 @@ WINDOW* start_display(void) {
 
     return display_win;
 }
+
 /*
 * a104188 - Ana Cerqueira
 * Function that prints the vertical window.
@@ -135,6 +136,7 @@ WINDOW* start_instructions (void)
 
   return instructions_win;
 }
+
 /*
 * a104188 - Ana Cerqueira
 * Function that prints the horizontal window

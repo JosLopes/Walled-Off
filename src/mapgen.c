@@ -68,6 +68,7 @@ void fillTraveledPath(int map_height, int map_width, char traveled_path[][map_wi
 
 /**
  * a103999 - Ivo Filipe Mendes Vieira
+ * a104541 - José António Fernandes Alves Lopes
  * This function generates rooms on the game map based on the given parameters. 
  * It returns the number of non-overlapping rooms generated.
  */
@@ -131,7 +132,7 @@ int generateRooms(int map_height, int map_width, char **map, Room rooms[], int n
 
 /**
  * a104541 - José António Fernandes Alves Lopes
- * a104541 - Ivo Filipe Mendes Vieira
+ * a103999 - Ivo Filipe Mendes Vieira
  * This function initializes the list of non-overlapping rooms by extracting the midpoint coordinates of
  * each non-overlapping room from the generated rooms array.
  * The extracted coordinates are stored in the no_overlpg array.
@@ -227,7 +228,7 @@ void generateCorridors(char **map, Non_overlaping_rooms *no_overlpg, int nor_siz
 
 /**
  * a104541 - José António Fernandes Alves Lopes
- * places the player on the map
+ * Places the player on the map
  */
 void place_player(Non_overlaping_rooms room, char **map, Character *character) {
     character -> x = room.midX;
