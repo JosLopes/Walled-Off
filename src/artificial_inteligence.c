@@ -268,8 +268,8 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
 {
   Node top_node;
   Path_queue path;  /* Path builder */
-  Node node_saver[4]; /* Can save 4 paths at maximum */
-  Path_queue save_to_free[4];
+  Node node_saver[5]; /* Can save 4 paths at maximum */
+  Path_queue save_to_free[5];
   Node origin_node;
   /* By default the objective is the main character */
   Point objective, start;
@@ -340,7 +340,8 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
           {
             build_obstacles (map, &top_node);
             save_to_free[ns_index] = path;
-            node_saver[ns_index ++] = top_node;
+            node_saver[ns_index] = top_node;
+            ns_index ++;
           }
           else
           {
@@ -376,7 +377,8 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
           {
             build_obstacles (map, &top_node);
             save_to_free[ns_index] = path;
-            node_saver[ns_index ++] = top_node;
+            node_saver[ns_index] = top_node;
+            ns_index ++;
           }
           else
           {
@@ -412,7 +414,8 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
           {
             build_obstacles (map, &top_node);
             save_to_free[ns_index] = path;
-            node_saver[ns_index ++] = top_node;
+            node_saver[ns_index] = top_node;
+            ns_index ++;
           }
           else
           {
