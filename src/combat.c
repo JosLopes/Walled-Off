@@ -8,6 +8,7 @@
 #include "mapgen.h"
 #include "defines.h"
 #include "vision.h"
+#include "display.h"
 #include <math.h>
 #include <string.h>
 
@@ -160,7 +161,7 @@ void enemy_take_damage(Character *character, Enemy *enemy, Awake *is_awake, char
  *enemy_take_damage() to attack the enemy. If the enemy's life is still above zero, 
  *it calls enemy_attack() to initiate the enemy's counterattack.
  */
-void handle_attack_input(Character *character, Awake *is_awake, char **map)
+void handle_attack_input(Character *character, WINDOW *instructions_win, Awake *is_awake, char **map)
 {
   for (int i = 0; i < is_awake->current_size; i++)
   {
@@ -198,7 +199,8 @@ void handle_attack_input(Character *character, Awake *is_awake, char **map)
       }
       else
       {
-        printf("Você matou o inimigo e ganhou %d de XP!\n", enemy->tag->xp_from_death);
+        //printf("Você matou o inimigo e ganhou %d de XP!\n", enemy->tag->xp_from_death);
+        mvwprintw (instructions_win, 2, 1, "Você matou o inimigo e ganhou %d de XP!", enemy->tag->xp_from_death);
       }
     }
   }
@@ -209,7 +211,7 @@ void handle_attack_input(Character *character, Awake *is_awake, char **map)
  *It checks if the player has enough xp and the weapon has a special power. If conditions are met, 
  *it applies the special power, such as increasing damage, healing the character, poisoning the enemy, or teleporting the character.
  */
-void handle_special_power_input(Character *character, Enemy *enemy, char **map)
+void handle_special_power_input(Character *character, WINDOW *instructions_win, Enemy *enemy, char **map)
 {
   Weapon *weapon = &(character->weapons[character->current_weapon_index]); 
 
@@ -217,21 +219,27 @@ void handle_special_power_input(Character *character, Enemy *enemy, char **map)
   {
     if (weapon->turns_left > 0)
     {
-      printf("Você já está com o poder especial ativo na arma %s!\n", weapon->name);
+      //printf("Você já está com o poder especial ativo na arma %s!\n", weapon->name);
+      mvwprintw (instructions_win, 2, 1, "Você já está com o poder especial ativo na arma %s!", weapon->name);
       return;
     }
-
-    printf("Você usou o poder especial da arma %s!\n", weapon->name);
+    //printf("Você usou o poder especial da arma %s!\n", weapon->name);
+    mvwprintw (instructions_win, 2, 1, "Você usou o poder especial da arma %s!", weapon->name);
 
     switch (weapon->special_type)
     {
     case DamageBoost:
-      printf("O dano da arma foi aumentado em 1.5 vezes!\n");
+
+      //printf("O dano da arma foi aumentado em 1.5 vezes!\n");
+      mvwprintw (instructions_win, 2, 1, "O dano da arma foi aumentado em 1.5 vezes!");
+
       weapon->damage *= 1.5;
       weapon->special_duration = character->weapons[0].special_duration;
       break;
     case Healing:
-      printf("Vida boa!\n");
+
+      //printf("Vida boa!\n");
+      mvwprintw (instructions_win, 2, 1, "Vida boa!");
       int healingAmount = character->initial_life * 0.5;
       int maxLife = character->initial_life;
       if (character->life + healingAmount > maxLife)
@@ -239,11 +247,17 @@ void handle_special_power_input(Character *character, Enemy *enemy, char **map)
         healingAmount = maxLife - character->life;
       }
       character->life += healingAmount;
-      printf("Você foi curado em %d pontos de vida!\n", healingAmount);
+
+      //printf("Você foi curado em %d pontos de vida!\n", healingAmount);
+      mvwprintw (instructions_win, 2, 1, "Você foi curado em %d pontos de vida!", healingAmount);
+
       weapon->special_duration = character->weapons[1].special_duration;
       break;
     case Poison:
-      printf("O inimigo foi envenenado e sofrerá dano a cada turno!\n");
+
+      //printf("O inimigo foi envenenado e sofrerá dano a cada turno!\n");
+      mvwprintw (instructions_win, 2, 1, "O inimigo foi envenenado e sofrerá dano a cada turno!");
+
       enemy->life -= 15;
       weapon->special_duration = character->weapons[2].special_duration;
 
@@ -260,7 +274,9 @@ void handle_special_power_input(Character *character, Enemy *enemy, char **map)
         targetY = rand() % MAP_HEIGHT;
       } while (map[targetY][targetX] != FLOOR_CHAR); 
 
-      printf("Você foi teleportado para a posição (%d, %d)\n", targetX, targetY);
+      //printf("Você foi teleportado para a posição (%d, %d)\n", targetX, targetY);
+      mvwprintw (instructions_win, 2, 1, "Você foi teleportado para a posição (%d, %d)", targetX, targetY);
+
       character->x = targetX;
       character->y = targetY;
 
@@ -272,7 +288,9 @@ void handle_special_power_input(Character *character, Enemy *enemy, char **map)
 
     break;
     default:
-      printf("Poder especial inválido!\n");
+      //printf("Poder especial inválido!\n");
+      mvwprintw (instructions_win, 2, 1, "Poder especial inválido!");
+
       return;
     }
 
@@ -281,7 +299,10 @@ void handle_special_power_input(Character *character, Enemy *enemy, char **map)
   }
   else
   {
-    printf("Você não tem XP suficiente ou a arma não possui poder especial!\n");
+    //printf("Você não tem XP suficiente ou a arma não possui poder especial!\n");
+    mvwprintw (instructions_win, 2, 1, "Você não tem XP suficiente ou a arma não possui poder especial!");
+
+
   }
 }
 
@@ -290,7 +311,7 @@ void handle_special_power_input(Character *character, Enemy *enemy, char **map)
  *This function updates the duration of any active special powers of the character's weapons. 
  *If a special power's duration reaches zero, it reverts the associated effects.
  */
-void update_power(Character *character, Enemy *enemy)
+void update_power(Character *character, WINDOW *instructions_win, Enemy *enemy)
 {
   for (int i = 0; i < 4; i++) 
   {
@@ -303,7 +324,9 @@ void update_power(Character *character, Enemy *enemy)
       if (weapon->turns_left == 0)
       {
         
-        printf("O poder especial da arma %s acabou!\n", weapon->name);
+        //printf("O poder especial da arma %s acabou!\n", weapon->name);
+        mvwprintw (instructions_win, 2, 1, "O poder especial da arma %s acabou!", weapon->name);
+
 
         switch (weapon->special_type)
         {
@@ -333,23 +356,26 @@ void update_power(Character *character, Enemy *enemy)
  *and based on the player's input (ch), it calls other functions such as choose_weapon(),
  *handle_attack_input(), or handle_special_power_input().
  */
-void attack(Character *character, Enemy *enemy, Awake *is_awake, char **map, int ch)
+void attack(Character *character, WINDOW *instructions_win, Enemy *enemy, Awake *is_awake, char **map, int ch)
 {
+  wattron(instructions_win, COLOR_PAIR(BACKGROUND_COLOR));
 
-  update_power(character, enemy);
+  update_power(character, instructions_win, enemy);
   if (ch == 'r')
   {
     choose_weapon(character);
-    handle_attack_input(character, is_awake, map);
+    handle_attack_input(character, instructions_win, is_awake, map);
   }
   if (ch == 'e')
   {
 
-    handle_attack_input(character, is_awake, map);
+    handle_attack_input(character, instructions_win, is_awake, map);
   }
   if (ch == 'i')
   {
-    handle_special_power_input(character, enemy, map);
+    handle_special_power_input(character, instructions_win, enemy, map);
   }
+  wattroff(instructions_win, COLOR_PAIR(BACKGROUND_COLOR));
+
 }
 

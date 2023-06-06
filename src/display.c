@@ -62,7 +62,15 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
   mvwprintw(display_win, y, x, "XP: %d", (int) character->xp);
   y++;
   mvwprintw(display_win, y, x, "Arma: %s", character->weapons[character->current_weapon_index].name);
-  y=y+5;
+  y++;
+  mvwprintw(display_win, y, x, " Dano: %d", (int) character->weapons[character->current_weapon_index].damage);
+  y++;
+  mvwprintw(display_win, y, x, " Alcance: %d", (int) character->weapons[character->current_weapon_index].range);
+  y++;
+  mvwprintw(display_win, y, x, " Poder especial: %s", character->weapons[character->current_weapon_index].special_power);
+  y++;
+  mvwprintw(display_win, y, x, " Duração: %d", (int) character->weapons[character->current_weapon_index].special_duration);
+  y+=5;
   mvwprintw(display_win, y, x, "   Inimigos");
   y++;
   
@@ -71,6 +79,9 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
     for (int j = y_min; j < y_max; j++) {
       int dist = sqrt(pow(i - character ->x, 2) + pow(j - character->y, 2));
       
+      if (y == 35) {
+        y = 15;
+      }
       if (dist<=range){
         switch (traveled_path[j][i])
         {
@@ -87,10 +98,10 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
             {
               mvwprintw (display_win, y, x, "%s", is_awake -> enemies_awaken[index].name[0]);
               y ++;
-              mvwprintw (display_win, y, x, "%d", (int) is_awake -> enemies_awaken[index].life);
+              mvwprintw (display_win, y, x, "vida: %d", (int) is_awake -> enemies_awaken[index].life);
               y ++;
-              mvwprintw (display_win, y, x, "%d", (int) is_awake -> enemies_awaken[index].damage);
-              y ++;
+              mvwprintw (display_win, y, x, "dano: %d", (int) is_awake -> enemies_awaken[index].damage);
+              y+=2;
             }
           }
           break;
@@ -117,7 +128,7 @@ WINDOW* start_instructions (void)
   WINDOW *instructions_win;
   int startx = 0;
   int starty = MAP_HEIGHT;
-  instructions_win = newwin(9, MAP_WIDTH, starty, startx);
+  instructions_win = newwin(11, MAP_WIDTH, starty, startx);
 
   refresh ();
   wrefresh (instructions_win);
@@ -151,12 +162,14 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Cons
   mvwprintw(instructions_win, y, x, "Hello and welcome to walled off adventure!");
   y++;
 
+  y++;
+
   /* range of vision of character */
   for (int i = x_min; i < x_max; i++) {
     for (int j = y_min; j < y_max; j++) {
 
       if (y == 8) {
-        y = 2;
+        y = 3;
       }
 
       switch (traveled_path[j][i])

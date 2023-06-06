@@ -295,7 +295,7 @@ int main ()
       }
 
         // Initialize the attack function
-      attack(&character, enemies, is_awake, map, ch);
+      attack(&character, instructions_win, enemies, is_awake, map, ch);
 
       /* At the end of every loop, refresh main_window, display_win and instructions_win */
       display_map (main_window, &character, map, MAP_WIDTH, traveled_path);
