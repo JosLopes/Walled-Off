@@ -160,7 +160,7 @@ void enemy_take_damage(Character *character, Enemy *enemy, Awake *is_awake, char
  *enemy_take_damage() to attack the enemy. If the enemy's life is still above zero, 
  *it calls enemy_attack() to initiate the enemy's counterattack.
  */
-void handle_attack_input(Character *character, Awake *is_awake, char **map)
+void handle_attack_input(Character *character, /*WINDOW *instructions_win,*/ Awake *is_awake, char **map)
 {
   for (int i = 0; i < is_awake->current_size; i++)
   {
@@ -199,6 +199,7 @@ void handle_attack_input(Character *character, Awake *is_awake, char **map)
       else
       {
         printf("Você matou o inimigo e ganhou %d de XP!\n", enemy->tag->xp_from_death);
+        //print_intruction(instructions_win, "Você matou o inimigo e ganhou %d de XP!\n", enemy->tag->xp_from_death);
       }
     }
   }
@@ -333,19 +334,19 @@ void update_power(Character *character, Enemy *enemy)
  *and based on the player's input (ch), it calls other functions such as choose_weapon(),
  *handle_attack_input(), or handle_special_power_input().
  */
-void attack(Character *character, Enemy *enemy, Awake *is_awake, char **map, int ch)
+void attack(Character *character, /*WINDOW *instructions_win,*/ Enemy *enemy, Awake *is_awake, char **map, int ch)
 {
 
   update_power(character, enemy);
   if (ch == 'r')
   {
     choose_weapon(character);
-    handle_attack_input(character, is_awake, map);
+    handle_attack_input(character, /*instructions_win,*/ is_awake, map);
   }
   if (ch == 'e')
   {
 
-    handle_attack_input(character, is_awake, map);
+    handle_attack_input(character, /*instructions_win,*/ is_awake, map);
   }
   if (ch == 'i')
   {

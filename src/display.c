@@ -62,9 +62,16 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
   mvwprintw(display_win, y, x, "XP: %d", (int) character->xp);
   y++;
   mvwprintw(display_win, y, x, "Arma: %s", character->weapons[character->current_weapon_index].name);
-  y=y+5;
-  mvwprintw(display_win, y, x, "   Inimigos");
   y++;
+  mvwprintw(display_win, y, x, " Dano: %d", (int) character->weapons[character->current_weapon_index].damage);
+  y++;
+  mvwprintw(display_win, y, x, " Alcance: %d", (int) character->weapons[character->current_weapon_index].range);
+  y++;
+  mvwprintw(display_win, y, x, " Poder especial: %s", character->weapons[character->current_weapon_index].special_power);
+  y++;
+  mvwprintw(display_win, y, x, " Duração: %d", (int) character->weapons[character->current_weapon_index].special_duration);
+  y+=5;
+  mvwprintw(display_win, y, x, "   Inimigos");
   
   /* range of vision of character */
   for (int i = x_min; i < x_max; i++) {
@@ -87,10 +94,10 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
             {
               mvwprintw (display_win, y, x, "%s", is_awake -> enemies_awaken[index].name[0]);
               y ++;
-              mvwprintw (display_win, y, x, "%d", (int) is_awake -> enemies_awaken[index].life);
+              mvwprintw (display_win, y, x, "vida: %d", (int) is_awake -> enemies_awaken[index].life);
               y ++;
-              mvwprintw (display_win, y, x, "%d", (int) is_awake -> enemies_awaken[index].damage);
-              y ++;
+              mvwprintw (display_win, y, x, "dano: %d", (int) is_awake -> enemies_awaken[index].damage);
+              y+=2;
             }
           }
           break;
@@ -155,7 +162,7 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Cons
   for (int i = x_min; i < x_max; i++) {
     for (int j = y_min; j < y_max; j++) {
 
-      if (y == 8) {
+      if (y == 7) {
         y = 2;
       }
 
@@ -202,3 +209,7 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Cons
   wrefresh(instructions_win);
   refresh(); 
 }
+
+//void print_intruction(WINDOW *instructions_win, char instruction[]){
+//  mvwprintw (instructions_win, 8, 1, "%s", instruction[0]);
+//}

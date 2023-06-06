@@ -39,6 +39,19 @@ char *instructions[]={
   "  Each game is unique and challenging in its own way. Explore, strategize, and above all,         ",
   " have fun!                                                                                        ",
   "                                                                                                  ",
+  "                                                                                                  ",
+  "  Keys                                                                                            ",
+  " 'a' and 'd' is used to select the vision of character                                            ",
+  " 'r' is used to select weapon and attack                                                          ",
+  " 'e' is used to attack                                                                            ",
+  " 'i' activates the unique special power each weapon has                                           ",
+  "                                                                                                  ",
+  "  Weapons                                                                                         ",
+  " sword -> its power is a temporary damage increase                                                ",
+  " pebble -> its power is to heal life                                                              ",
+  " dagger -> poisons enemies                                                                        ",
+  " ring -> it doesn't make any damage but can teleport you to any room on the map                   ",
+  "                                                                                                  ",
   "                                                                                                  "};
 int n_instructions = sizeof(instructions)/ sizeof(char *);
 
