@@ -2,8 +2,8 @@
 #define DEFINES_H
 
 /* Max range for the vision */
-#define AWAKE_RANGE 900
-#define VISION_RANGE 900
+#define AWAKE_RANGE 4
+#define VISION_RANGE 5
 
 /* Defines PI */
 #define M_PI 3.14159265358979323846
