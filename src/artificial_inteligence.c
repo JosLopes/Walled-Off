@@ -102,7 +102,7 @@ Node closest_enemy (char **map, char **map_static_obstacles, Node *place_holder,
     is_awake -> current_size ++;
     enemies[choosen_one].awake = 0;
     /* This enemy is no longer an obstacle as it searches for the player */
-    map_static_obstacles[enemies[index].y][enemies[index].x] = FLOOR_CHAR;
+    map_static_obstacles[enemies[choosen_one].y][enemies[choosen_one].x] = FLOOR_CHAR;
   }
 
   return origin_node;

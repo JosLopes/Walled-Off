@@ -103,7 +103,6 @@ void enemy_attack(Character *character, Enemy *enemy)
   {
     // Game over
     printf("Você morreu!\n");
-    exit(0);
   }
 }
 

@@ -61,7 +61,7 @@ typedef struct {
   float life;
   float initial_life;
   float xp;
-  Weapon weapons[3];
+  Weapon weapons[4];
   char weapon_special_powers[3][50];
   int current_weapon_index; // novo campo adicionado
 } Character;

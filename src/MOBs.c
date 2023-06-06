@@ -84,10 +84,10 @@ Variable_stats *d_enemies_variable_stats ()
   Variable_stats *d_variables = malloc (sizeof (Variable_stats) * D_ENEMIES);
 
   d_variables[0] = (Variable_stats){'A',{"Albertino"},
-                    {"D: Used to work in a post office"},
+                    {"A: (type D) Used to work in a post office"},
                     45, 2, 5};
   d_variables[1] = (Variable_stats){'J',{"Josefino"},
-                    {"D: Falled down a hole while playing MagicTG"},
+                    {"J: (type D) Falled down a hole while playing MagicTG"},
                     45, 2, 5};
 
   return d_variables; 
@@ -105,10 +105,10 @@ Variable_stats *s_enemies_variable_stats ()
   Variable_stats *s_variables = malloc (sizeof (Variable_stats) * S_ENEMIES);
 
   s_variables[0] = (Variable_stats){'C',{"Canario"},
-                    {"S: Just a bird without wings"},
+                    {"C: (type S) Just a bird without wings"},
                     30, 4, 18};
   s_variables[1] = (Variable_stats){'S',{"Segmatation_Fault"},
-                    {"S: Used to lurk around this C program"},
+                    {"S: (type S) Used to lurk around this C program"},
                     30, 4, 18};
 
   return s_variables; 
@@ -127,10 +127,10 @@ Variable_stats *g_enemies_variable_stats ()
   Variable_stats *g_variables = malloc (sizeof (Variable_stats) * G_ENEMIES);
 
   g_variables[0] = (Variable_stats){'I',{"IMO"},
-                    {"G: Gives really bad opinions on twitter"},
+                    {"I: (type G) Gives really bad opinions on twitter"},
                     60, 5, 25};
   g_variables[1] = (Variable_stats){'J',{"JGod"},
-                    {"G: Its god! But this time with 'J'"},
+                    {"J: (type G) Its god! But this time with 'J'"},
                     60, 5, 25};
 
   return g_variables; 
