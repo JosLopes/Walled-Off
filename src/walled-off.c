@@ -146,15 +146,15 @@ void init_ncurses() {
 
 int main ()
 {
+  int ch;  /* Input character read as an integer */
   int run = 1; /* Default to True */
 
   while (run == 1)
   {
     /* WINDOWS to be used */
-    WINDOW *main_window;
+    WINDOW *main_window;  /* Window to run the main game */
     WINDOW *display_win;
     WINDOW *instructions_win;
-
 
     /* Guarantees a new sequence of "random" numbers */
     srand(time(NULL));
@@ -272,15 +272,13 @@ int main ()
       /*=================================== End of Initialization ===================================*/
       
       /* GAME LOOP */
-      int ch;  /* Input character read as an integer */
-
       /* Initialize count_water variable */
       int *count_water = (int*) malloc(sizeof(int));
       *count_water = 0;
 
       while ((ch = wgetch(main_window)) != 'q' &&
-              character.life > 0 &&
-              is_awake -> total_size > 0)
+             character.life > 0 &&
+             is_awake -> total_size > 0)
       {
         /* Basic movement */
         movement (&character, map, ch, &previous_char);
@@ -357,7 +355,6 @@ int main ()
       delwin (main_window);
     }
     else run = 0; /* Ends the game by quit */
-
     endwin ();
   }
   return 0;

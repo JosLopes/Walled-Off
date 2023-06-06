@@ -99,11 +99,6 @@ void enemy_attack(Character *character, Enemy *enemy)
 {
   float damage = calculate_enemy_damage(character, enemy);
   character_take_damage(character, enemy, damage);
-  if (character->life <= 0)
-  {
-    // Game over
-    printf("Você morreu!\n");
-  }
 }
 
 /**
@@ -114,16 +109,16 @@ void enemy_attack(Character *character, Enemy *enemy)
  */
 void remove_dead_enemy(Awake *is_awake, int index, char **map)
 {
-  
-  map[is_awake->enemies_awaken[index].y][is_awake->enemies_awaken[index].x] = FLOOR_CHAR;
+  if (index < is_awake -> current_size)
+  {
+    map[is_awake->enemies_awaken[index].y][is_awake->enemies_awaken[index].x] = FLOOR_CHAR;
+  }
 
- 
   for (int i = index; i < is_awake->current_size - 1; i++)
   {
     is_awake->enemies_awaken[i] = is_awake->enemies_awaken[i + 1];
   }
 
-  
   is_awake->current_size--;
 }
 /**
@@ -131,7 +126,7 @@ void remove_dead_enemy(Awake *is_awake, int index, char **map)
  *This function applies damage to an enemy based on the character's current weapon's damage. 
  *If the enemy's life reaches zero, it calls remove_dead_enemy() and increments the character's xp.
  */
-void enemy_take_damage(Character *character, Enemy *enemy, Awake *is_awake, char **map)
+void enemy_take_damage(Character *character, Enemy *enemy, int index, Awake *is_awake, char **map)
 {
   int weapon_damage = character->weapons[character->current_weapon_index].damage;
   float max_xp = character->initial_life * 2;
@@ -144,8 +139,7 @@ void enemy_take_damage(Character *character, Enemy *enemy, Awake *is_awake, char
   }
   else
   {
-    int enemy_index = enemy->index;
-    remove_dead_enemy(is_awake, enemy_index, map);
+    remove_dead_enemy(is_awake, index, map);
     character->xp += enemy->tag->xp_from_death;
   }
 
@@ -176,19 +170,19 @@ void handle_attack_input(Character *character, WINDOW *instructions_win, Awake *
       
       if (character->direction == PLAYER_CHAR_UP && enemy->y < character->y && enemy->x == character->x)
       {
-        enemy_take_damage(character, enemy, is_awake, map);
+        enemy_take_damage(character, enemy, i, is_awake, map);
       }
       else if (character->direction == PLAYER_CHAR_RIGHT && enemy->x > character->x && enemy->y == character->y)
       {
-        enemy_take_damage(character, enemy, is_awake, map);
+        enemy_take_damage(character, enemy, i, is_awake, map);
       }
       else if (character->direction == PLAYER_CHAR_LEFT && enemy->x < character->x && enemy->y == character->y)
       {
-        enemy_take_damage(character, enemy, is_awake, map);
+        enemy_take_damage(character, enemy, i, is_awake, map);
       }
       else if (character->direction == PLAYER_CHAR_DOWN && enemy->y > character->y && enemy->x == character->x)
       {
-        enemy_take_damage(character, enemy, is_awake, map);
+        enemy_take_damage(character, enemy, i, is_awake, map);
       }
 
       
