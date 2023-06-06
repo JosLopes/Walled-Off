@@ -72,12 +72,16 @@ void print_displays(WINDOW *display_win, Character *character, Awake *is_awake, 
   mvwprintw(display_win, y, x, " Duração: %d", (int) character->weapons[character->current_weapon_index].special_duration);
   y+=5;
   mvwprintw(display_win, y, x, "   Inimigos");
+  y++;
   
   /* range of vision of character */
   for (int i = x_min; i < x_max; i++) {
     for (int j = y_min; j < y_max; j++) {
       int dist = sqrt(pow(i - character ->x, 2) + pow(j - character->y, 2));
       
+      if (y == 35) {
+        y = 15;
+      }
       if (dist<=range){
         switch (traveled_path[j][i])
         {
@@ -158,12 +162,14 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Cons
   mvwprintw(instructions_win, y, x, "Hello and welcome to walled off adventure!");
   y++;
 
+  y++;
+
   /* range of vision of character */
   for (int i = x_min; i < x_max; i++) {
     for (int j = y_min; j < y_max; j++) {
 
-      if (y == 7) {
-        y = 2;
+      if (y == 8) {
+        y = 3;
       }
 
       switch (traveled_path[j][i])

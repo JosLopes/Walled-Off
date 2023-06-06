@@ -200,7 +200,7 @@ void handle_attack_input(Character *character, WINDOW *instructions_win, Awake *
       else
       {
         //printf("Você matou o inimigo e ganhou %d de XP!\n", enemy->tag->xp_from_death);
-        mvwprintw (instructions_win, 8, 1, "Você matou o inimigo e ganhou %d de XP!", enemy->tag->xp_from_death);
+        mvwprintw (instructions_win, 2, 1, "Você matou o inimigo e ganhou %d de XP!", enemy->tag->xp_from_death);
       }
     }
   }
@@ -220,18 +220,18 @@ void handle_special_power_input(Character *character, WINDOW *instructions_win, 
     if (weapon->turns_left > 0)
     {
       //printf("Você já está com o poder especial ativo na arma %s!\n", weapon->name);
-      mvwprintw (instructions_win, 8, 1, "Você já está com o poder especial ativo na arma %s!", weapon->name);
+      mvwprintw (instructions_win, 2, 1, "Você já está com o poder especial ativo na arma %s!", weapon->name);
       return;
     }
     //printf("Você usou o poder especial da arma %s!\n", weapon->name);
-    mvwprintw (instructions_win, 8, 1, "Você usou o poder especial da arma %s!", weapon->name);
+    mvwprintw (instructions_win, 2, 1, "Você usou o poder especial da arma %s!", weapon->name);
 
     switch (weapon->special_type)
     {
     case DamageBoost:
 
       //printf("O dano da arma foi aumentado em 1.5 vezes!\n");
-      mvwprintw (instructions_win, 8, 1, "O dano da arma foi aumentado em 1.5 vezes!");
+      mvwprintw (instructions_win, 2, 1, "O dano da arma foi aumentado em 1.5 vezes!");
 
       weapon->damage *= 1.5;
       weapon->special_duration = character->weapons[0].special_duration;
@@ -239,7 +239,7 @@ void handle_special_power_input(Character *character, WINDOW *instructions_win, 
     case Healing:
 
       //printf("Vida boa!\n");
-      mvwprintw (instructions_win, 8, 1, "Vida boa!");
+      mvwprintw (instructions_win, 2, 1, "Vida boa!");
       int healingAmount = character->initial_life * 0.5;
       int maxLife = character->initial_life;
       if (character->life + healingAmount > maxLife)
@@ -249,14 +249,14 @@ void handle_special_power_input(Character *character, WINDOW *instructions_win, 
       character->life += healingAmount;
 
       //printf("Você foi curado em %d pontos de vida!\n", healingAmount);
-      mvwprintw (instructions_win, 8, 1, "Você foi curado em %d pontos de vida!", healingAmount);
+      mvwprintw (instructions_win, 2, 1, "Você foi curado em %d pontos de vida!", healingAmount);
 
       weapon->special_duration = character->weapons[1].special_duration;
       break;
     case Poison:
 
       //printf("O inimigo foi envenenado e sofrerá dano a cada turno!\n");
-      mvwprintw (instructions_win, 8, 1, "O inimigo foi envenenado e sofrerá dano a cada turno!");
+      mvwprintw (instructions_win, 2, 1, "O inimigo foi envenenado e sofrerá dano a cada turno!");
 
       enemy->life -= 15;
       weapon->special_duration = character->weapons[2].special_duration;
@@ -275,7 +275,7 @@ void handle_special_power_input(Character *character, WINDOW *instructions_win, 
       } while (map[targetY][targetX] != FLOOR_CHAR); 
 
       //printf("Você foi teleportado para a posição (%d, %d)\n", targetX, targetY);
-      mvwprintw (instructions_win, 8, 1, "Você foi teleportado para a posição (%d, %d)", targetX, targetY);
+      mvwprintw (instructions_win, 2, 1, "Você foi teleportado para a posição (%d, %d)", targetX, targetY);
 
       character->x = targetX;
       character->y = targetY;
@@ -289,7 +289,7 @@ void handle_special_power_input(Character *character, WINDOW *instructions_win, 
     break;
     default:
       //printf("Poder especial inválido!\n");
-      mvwprintw (instructions_win, 8, 1, "Poder especial inválido!");
+      mvwprintw (instructions_win, 2, 1, "Poder especial inválido!");
 
       return;
     }
@@ -300,7 +300,7 @@ void handle_special_power_input(Character *character, WINDOW *instructions_win, 
   else
   {
     //printf("Você não tem XP suficiente ou a arma não possui poder especial!\n");
-    mvwprintw (instructions_win, 8, 1, "Você não tem XP suficiente ou a arma não possui poder especial!");
+    mvwprintw (instructions_win, 2, 1, "Você não tem XP suficiente ou a arma não possui poder especial!");
 
 
   }
@@ -325,7 +325,7 @@ void update_power(Character *character, WINDOW *instructions_win, Enemy *enemy)
       {
         
         //printf("O poder especial da arma %s acabou!\n", weapon->name);
-        mvwprintw (instructions_win, 8, 1, "O poder especial da arma %s acabou!", weapon->name);
+        mvwprintw (instructions_win, 2, 1, "O poder especial da arma %s acabou!", weapon->name);
 
 
         switch (weapon->special_type)
@@ -358,6 +358,7 @@ void update_power(Character *character, WINDOW *instructions_win, Enemy *enemy)
  */
 void attack(Character *character, WINDOW *instructions_win, Enemy *enemy, Awake *is_awake, char **map, int ch)
 {
+  wattron(instructions_win, COLOR_PAIR(BACKGROUND_COLOR));
 
   update_power(character, instructions_win, enemy);
   if (ch == 'r')
@@ -374,5 +375,7 @@ void attack(Character *character, WINDOW *instructions_win, Enemy *enemy, Awake 
   {
     handle_special_power_input(character, instructions_win, enemy, map);
   }
+  wattroff(instructions_win, COLOR_PAIR(BACKGROUND_COLOR));
+
 }
 
