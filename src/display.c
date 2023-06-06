@@ -124,7 +124,7 @@ WINDOW* start_instructions (void)
   WINDOW *instructions_win;
   int startx = 0;
   int starty = MAP_HEIGHT;
-  instructions_win = newwin(9, MAP_WIDTH, starty, startx);
+  instructions_win = newwin(11, MAP_WIDTH, starty, startx);
 
   refresh ();
   wrefresh (instructions_win);
@@ -209,7 +209,3 @@ void print_instructions_win(WINDOW *instructions_win, Character *character, Cons
   wrefresh(instructions_win);
   refresh(); 
 }
-
-//void print_intruction(WINDOW *instructions_win, char instruction[]){
-//  mvwprintw (instructions_win, 8, 1, "%s", instruction[0]);
-//}
