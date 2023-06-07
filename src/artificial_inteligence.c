@@ -319,8 +319,11 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
   top_node.explored = 0;
   top_node.prev = NULL;
 
+  int doesnt_have_close_enemies;
+
   for (int index = 0; index < is_awake -> current_size; index ++)
   {
+    doesnt_have_close_enemies = 1;
     /**
      * If an enemy has group desire (it will only attack once there are a certain
      * number of enemies awaken), it searches for that required desire, be it by
@@ -341,13 +344,17 @@ void build_path (Consumables *available, Awake *is_awake, Character *character, 
       
       /* The node to be used as the first in the future constructed path */
       top_node = closest_enemy (map, map_static_obstacles, place_holder, &path, start, enemies, is_awake, origin_node);
+
+      if (top_node.row < MAP_HEIGHT && top_node.row > 0 &&
+          top_node.col < MAP_WIDTH && top_node.col > 0)
+          doesnt_have_close_enemies = 0;
     }
     /**
      * If the enemy isn't dumb, it searches for a path to trap the player,
      * if it doesnt dinf anything, it just acts like a dumb enemy, and goes
      * straight for the player without thinking about other enemies positions
      */
-    else
+    if (doesnt_have_close_enemies == 1)
     {
       /*Starting the single first node */
       objective.y = is_awake -> enemies_awaken[index].y;
